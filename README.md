@@ -1,6 +1,6 @@
 # NasInfinity AI
 
-A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
+A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Cyber Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Commercial%20Ready-emerald.svg)]()
@@ -24,22 +24,31 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **Conversational Chemical Intelligence (NasInfinity-CI):** Ask any element question directly in chat (e.g., *"Tell me about Gold"*, *"Element 79"*, *"What is Titanium?"*) for structured scientific dossiers with zero delay.
    * **Audio Pronunciation & AI Querying:** Listen to element names and details read aloud or click *"Ask AI"* to delve into deep chemical bonding, thermodynamics, and real-world industrial applications.
 
-3. **🎙️ Voice Recognition & Text-to-Speech (Audio NLP):**
+3. **🎮 Offline Arcade: Cyber Runner Zero Gravity (100% Offline Game):**
+   * **Automatic Disconnect Detection:** When your network drops (`navigator.onLine === false`), an animated offline banner automatically slides into view with a one-click launcher to play.
+   * **60 FPS Canvas Physics Engine:** High-performance procedural endless runner featuring a Cyber Bot avatar with mechanical leg physics, jet booster sparks, single/double jump, and crouch/ducking mechanics.
+   * **Dynamic Obstacles & Powerups:** Avoid ground laser spikes and firewall pillars, duck under mid-air glitch drones, collect floating energy crystals (+50 pts), and grab holographic shields that absorb lethal impacts.
+   * **Synthesized Retro Audio (Web Audio API):** Procedural 8-bit sound effects (jump, double-jump, coin chime, shield warble, crash) generated live with zero audio files or CDN downloads.
+   * **Multi-Input Controls:** Full keyboard (<kbd>Space</kbd>/<kbd>&uarr;</kbd> to jump, <kbd>&darr;</kbd> to crouch, <kbd>Esc</kbd> to exit) and responsive touch buttons for mobile devices.
+   * **High Score Persistence:** Best runs are saved locally to `localStorage ('nasinfinity_runner_high')`.
+   * **On-Demand Access:** Launch anytime from the top navigation bar (`🎮 Arcade`), welcome suggestions, or conversational prompts (*"play game"*, *"offline game"*, *"bored"*).
+
+4. **🎙️ Voice Recognition & Text-to-Speech (Audio NLP):**
    * **Speech-to-Text (STT):** Click the microphone button (`🎙️`) to speak prompts naturally into the chat input.
    * **Text-to-Speech (TTS):** Click the speaker button (`🔊`) below any message to have the assistant read the text aloud.
 
-4. **💬 Conversational Understanding & Natural Context (NasInfinity-CI):**
+5. **💬 Conversational Understanding & Natural Context (NasInfinity-CI):**
    * **Dialogue Memory & Anaphora:** Resolves follow-up queries referencing previous context (e.g., *"What is recursion?"* &rarr; *"Give me an example"* delivers code).
    * **Personal Profile Memory:** Remembers your name, vocation, and favorite programming language across sessions using client-side `localStorage`.
    * **Conversational Math & Conversions:** Instant calculation of percentages, arithmetic expressions, and metric/imperial unit conversions (°C/°F, mi/km, kg/lbs).
    * **Emotional Empathy:** Detects stress, celebrations, boredom, and offers calming, practical frameworks (such as the 4-7-8 breathing method or study techniques).
    * **Technical & Scientific Knowledge:** Deep explanations for Core CS (Recursion, OOP, Big-O, Docker, APIs, SQL vs NoSQL, Git) and science (Rayleigh scattering, aerodynamics, photosynthesis, GPS).
 
-5. **🧮 Interactive Code Sandbox:**
+6. **🧮 Interactive Code Sandbox:**
    * Full Markdown table support (`<table>`) and code highlighting.
    * One-click **"Copy Code"** and **"▶ Run / Preview Live"** interactive sandbox modal to execute HTML/CSS/JavaScript components instantly without leaving the browser.
 
-6. **🌐 Multi-Engine Online AI:**
+7. **🌐 Multi-Engine Online AI:**
    * **Online First (Zero-Login):** Free, instant public text generation powered by Pollinations.ai.
    * **Google Gemini API:** Direct browser integration with Gemini 2.5 Flash using your personal API key.
    * **OpenAI API:** Direct browser integration with GPT-4o mini using your personal API key.
