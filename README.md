@@ -1,6 +1,6 @@
 # NasInfinity AI
 
-A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
+A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Commercial%20Ready-emerald.svg)]()
@@ -16,22 +16,30 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **Readability & Complexity Metrics:** Automated reading grade levels and estimated reading duration.
    * **Live Input NLP Stats:** Real-time word and token counter updating dynamically as you type.
 
-2. **🎙️ Voice Recognition & Text-to-Speech (Audio NLP):**
+2. **🧪 Interactive Periodic Table of Elements Studio (118 Elements):**
+   * **Full IUPAC 18-Column Grid:** Standard periods 1 to 7 with Lanthanides (57-71) and Actinides (89-103) f-block rows.
+   * **Comprehensive Element Dossiers:** Atomic mass, electron configuration, Bohr shell distributions (K through Q), electronegativity (Pauling), melting/boiling points, density, oxidation states, and discovery dates for all 118 elements.
+   * **Real-Time Chemical Filtering:** Instant filtering by chemical category (Alkali, Alkaline Earth, Transition, Post-Transition, Metalloids, Nonmetals, Halogens, Noble Gases, Lanthanides, Actinides) and standard state (Solid, Liquid, Gas, Synthetic).
+   * **Dual View Mode:** Standard 18-column Table Grid or responsive Card/List View with multi-property sorting.
+   * **Conversational Chemical Intelligence (NasInfinity-CI):** Ask any element question directly in chat (e.g., *"Tell me about Gold"*, *"Element 79"*, *"What is Titanium?"*) for structured scientific dossiers with zero delay.
+   * **Audio Pronunciation & AI Querying:** Listen to element names and details read aloud or click *"Ask AI"* to delve into deep chemical bonding, thermodynamics, and real-world industrial applications.
+
+3. **🎙️ Voice Recognition & Text-to-Speech (Audio NLP):**
    * **Speech-to-Text (STT):** Click the microphone button (`🎙️`) to speak prompts naturally into the chat input.
    * **Text-to-Speech (TTS):** Click the speaker button (`🔊`) below any message to have the assistant read the text aloud.
 
-3. **💬 Conversational Understanding & Natural Context (NasInfinity-CI):**
+4. **💬 Conversational Understanding & Natural Context (NasInfinity-CI):**
    * **Dialogue Memory & Anaphora:** Resolves follow-up queries referencing previous context (e.g., *"What is recursion?"* &rarr; *"Give me an example"* delivers code).
    * **Personal Profile Memory:** Remembers your name, vocation, and favorite programming language across sessions using client-side `localStorage`.
    * **Conversational Math & Conversions:** Instant calculation of percentages, arithmetic expressions, and metric/imperial unit conversions (°C/°F, mi/km, kg/lbs).
    * **Emotional Empathy:** Detects stress, celebrations, boredom, and offers calming, practical frameworks (such as the 4-7-8 breathing method or study techniques).
    * **Technical & Scientific Knowledge:** Deep explanations for Core CS (Recursion, OOP, Big-O, Docker, APIs, SQL vs NoSQL, Git) and science (Rayleigh scattering, aerodynamics, photosynthesis, GPS).
 
-4. **🧮 Interactive Code Sandbox:**
+5. **🧮 Interactive Code Sandbox:**
    * Full Markdown table support (`<table>`) and code highlighting.
    * One-click **"Copy Code"** and **"▶ Run / Preview Live"** interactive sandbox modal to execute HTML/CSS/JavaScript components instantly without leaving the browser.
 
-5. **🌐 Multi-Engine Online AI:**
+6. **🌐 Multi-Engine Online AI:**
    * **Online First (Zero-Login):** Free, instant public text generation powered by Pollinations.ai.
    * **Google Gemini API:** Direct browser integration with Gemini 2.5 Flash using your personal API key.
    * **OpenAI API:** Direct browser integration with GPT-4o mini using your personal API key.
