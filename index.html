@@ -423,7 +423,20 @@
 
         <!-- Score & Quick Controls -->
         <div class="flex items-center gap-2 sm:gap-3">
-          <div class="hidden xs:flex items-center gap-2 text-xs font-mono">
+          <!-- Live FPS Counter -->
+          <div id="gameFpsBadge" class="bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg flex items-center gap-1.5 font-mono text-[11px]" title="Live Game Frame Rate (FPS)">
+            <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="gameFpsDisplay" class="font-bold text-emerald-400">60</span>
+            <span class="text-slate-500 text-[10px]">FPS</span>
+          </div>
+
+          <!-- Speed & Pace Selector -->
+          <button id="gameSpeedBtn" onclick="runner.toggleSpeedMode()" class="px-2 sm:px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/50 text-indigo-300 font-mono text-[11px] flex items-center gap-1 transition active:scale-95" title="Switch Game Velocity / Frame Rate Pace">
+            <span id="gameSpeedIcon">⚡</span>
+            <span id="gameSpeedLabel" class="font-semibold hidden xs:inline">Turbo (1.3x)</span>
+          </button>
+
+          <div class="hidden sm:flex items-center gap-2 text-xs font-mono">
             <div class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg">
               <span class="text-slate-500 text-[10px]">SCORE:</span>
               <span id="gameScoreDisplay" class="font-bold text-teal-400">0</span>
@@ -448,7 +461,7 @@
 
       <!-- Game Canvas Container -->
       <div class="relative bg-slate-950 flex items-center justify-center overflow-hidden select-none touch-none aspect-[2/1] max-h-[60vh] w-full">
-        <canvas id="gameCanvas" width="800" height="400" class="w-full h-full object-contain block cursor-pointer"></canvas>
+        <canvas id="gameCanvas" width="800" height="400" style="transform: translateZ(0); will-change: transform; image-rendering: -webkit-optimize-contrast; backface-visibility: hidden;" class="w-full h-full object-contain block cursor-pointer"></canvas>
       </div>
 
       <!-- Controls bar & Mobile Touch Buttons -->
@@ -5969,12 +5982,16 @@
 
 
     // =========================================================================
-    // 🎮 Cyber Runner: Zero Gravity (Ultra-Smooth Offline Arcade Engine)
+    // 🎮 Cyber Runner: Zero Gravity (Ultra-High Frame Rate Arcade Engine)
     // =========================================================================
     const gameModal = document.getElementById('gameModal');
     const gameCanvas = document.getElementById('gameCanvas');
     const gameScoreDisplay = document.getElementById('gameScoreDisplay');
     const gameHighScoreDisplay = document.getElementById('gameHighScoreDisplay');
+    const gameFpsDisplay = document.getElementById('gameFpsDisplay');
+    const gameSpeedBtn = document.getElementById('gameSpeedBtn');
+    const gameSpeedIcon = document.getElementById('gameSpeedIcon');
+    const gameSpeedLabel = document.getElementById('gameSpeedLabel');
     const gameAudioBtn = document.getElementById('gameAudioBtn');
     const gameAudioIcon = document.getElementById('gameAudioIcon');
     const touchJumpBtn = document.getElementById('touchJumpBtn');
@@ -6090,7 +6107,7 @@
 
     const gameAudio = new ArcadeAudio();
 
-    // High-Performance Butter-Smooth Runner Engine
+    // High-Performance Butter-Smooth Runner Engine with Multi-Tier Speed & Live FPS
     const runner = {
       canvas: null,
       ctx: null,
@@ -6105,11 +6122,32 @@
       lastScoreInt: -1,
       highScore: parseInt(localStorage.getItem('nasinfinity_runner_high') || '0', 10),
       orbsCollected: 0,
-      speed: 7.0,
       frame: 0,
       screenShake: 0,
       lastTime: 0,
       animId: null,
+
+      // Live Real-Time FPS Measurement
+      fps: 60,
+      fpsFrames: 0,
+      fpsLastTime: 0,
+
+      // High-Velocity Speed Modes
+      speedModes: [
+        { name: 'Normal', mult: 1.0, icon: '🏃', baseSpeed: 8.0 },
+        { name: 'Turbo', mult: 1.3, icon: '⚡', baseSpeed: 10.5 },
+        { name: 'Hyper', mult: 1.6, icon: '🚀', baseSpeed: 13.5 }
+      ],
+      speedModeIndex: 1, // Start on Turbo (1.3x) for ultra-fast, fluid arcade experience
+      speed: 10.5,
+
+      toggleSpeedMode() {
+        this.speedModeIndex = (this.speedModeIndex + 1) % this.speedModes.length;
+        const currentMode = this.speedModes[this.speedModeIndex];
+        this.speed = currentMode.baseSpeed;
+        if (gameSpeedIcon) gameSpeedIcon.textContent = currentMode.icon;
+        if (gameSpeedLabel) gameSpeedLabel.textContent = currentMode.name + ' (' + currentMode.mult + 'x)';
+      },
 
       stars: [],
       buildings: [],
@@ -6151,7 +6189,18 @@
 
       init(canvasEl) {
         this.canvas = canvasEl;
-        this.ctx = canvasEl.getContext('2d', { alpha: false });
+        // Low-latency desynchronized 2D canvas context
+        try {
+          this.ctx = canvasEl.getContext('2d', {
+            alpha: false,
+            desynchronized: true
+          });
+        } catch (e) {
+          this.ctx = canvasEl.getContext('2d', { alpha: false });
+        }
+        if (this.ctx) {
+          this.ctx.imageSmoothingEnabled = false;
+        }
         this.resize();
 
         // Generate stars
@@ -6194,13 +6243,16 @@
         this.score = 0;
         this.lastScoreInt = -1;
         this.orbsCollected = 0;
-        this.speed = 7.0;
+        const currentMode = this.speedModes[this.speedModeIndex];
+        this.speed = currentMode.baseSpeed;
         this.frame = 0;
         this.isGameOver = false;
         this.isPaused = false;
         this.screenShake = 0;
         this.groundScroll = 0;
         this.lastTime = 0;
+        this.fpsFrames = 0;
+        this.fpsLastTime = performance.now();
 
         const p = this.player;
         p.y = this.groundY - 46;
@@ -6254,7 +6306,7 @@
         this.player.isDucking = active;
         // Fast-drop if holding duck in mid-air for crisp platformer responsiveness
         if (active && !this.player.isGrounded) {
-          this.player.vy = Math.max(this.player.vy, 8.5);
+          this.player.vy = Math.max(this.player.vy, 9.0);
         }
       },
 
@@ -6339,9 +6391,9 @@
         this.frame++;
 
         // Increase score & speed smoothly
-        this.score += 0.18 * dt;
-        if (this.frame % 320 === 0 && this.speed < 11.5) {
-          this.speed += 0.3;
+        this.score += 0.22 * dt;
+        if (this.frame % 300 === 0 && this.speed < 16.0) {
+          this.speed += 0.25;
         }
 
         // Screen shake decay (integer rounded)
@@ -6371,7 +6423,7 @@
           p.vy = 0;
           p.jumpCount = 0;
           if (!p.isDucking) {
-            p.runCycle += 0.28 * dt;
+            p.runCycle += 0.32 * dt;
           }
         }
 
@@ -6405,14 +6457,14 @@
         }
 
         // Spawn obstacles
-        const minGap = Math.max(80, 150 - Math.floor(this.speed * 4));
+        const minGap = Math.max(90, 160 - Math.floor(this.speed * 3.5));
         const lastObs = this.obstacles[this.obstacles.length - 1];
-        if (!lastObs || (this.width - lastObs.x > minGap && Math.random() < 0.026)) {
+        if (!lastObs || (this.width - lastObs.x > minGap && Math.random() < 0.028)) {
           this.spawnObstacle();
         }
 
         // Spawn orbs
-        if (Math.random() < 0.015) {
+        if (Math.random() < 0.016) {
           this.spawnOrb();
         }
 
@@ -6771,28 +6823,29 @@
         }
         ctx.globalAlpha = 1.0;
 
-        // In-Game HUD (Crisp Canvas Font Rendering)
+        // In-Game HUD (Crisp Canvas Font Rendering with Live FPS)
         ctx.fillStyle = '#f8fafc';
         ctx.font = 'bold 13px ui-monospace, monospace';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
-        ctx.fillText('DIST: ' + Math.floor(this.score) + 'm', 16, 16);
+        ctx.fillText('FPS: ' + this.fps + '  •  DIST: ' + Math.floor(this.score) + 'm', 16, 16);
 
         if (this.orbsCollected > 0) {
           ctx.fillStyle = '#fbbf24';
-          ctx.fillText('💎 ' + this.orbsCollected, 140, 16);
+          ctx.fillText('💎 ' + this.orbsCollected, 215, 16);
         }
 
         if (p.hasShield) {
           ctx.fillStyle = '#2dd4bf';
-          ctx.fillText('🛡️ SHIELD ACTIVE', 210, 16);
+          ctx.fillText('🛡️ SHIELD ACTIVE', 275, 16);
         }
 
-        // Speed indicator
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '11px ui-monospace, monospace';
+        // Speed indicator with active mode
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 11px ui-monospace, monospace';
         ctx.textAlign = 'right';
-        ctx.fillText('SPEED: ' + (this.speed).toFixed(1) + 'x', this.width - 16, 16);
+        const mode = this.speedModes[this.speedModeIndex];
+        ctx.fillText(mode.icon + ' ' + (this.speed).toFixed(1) + 'x (' + mode.name + ')', this.width - 16, 16);
 
         // Game Over Banner
         if (this.isGameOver) {
@@ -6820,13 +6873,34 @@
       loop(timestamp) {
         if (!this.isRunning) return;
 
-        if (!this.lastTime) this.lastTime = timestamp;
+        if (!this.lastTime) {
+          this.lastTime = timestamp;
+          this.fpsLastTime = timestamp;
+        }
         const elapsed = timestamp - this.lastTime;
         this.lastTime = timestamp;
 
+        // Live Real-Time FPS Measurement
+        this.fpsFrames++;
+        if (timestamp - this.fpsLastTime >= 400) {
+          this.fps = Math.round((this.fpsFrames * 1000) / (timestamp - this.fpsLastTime));
+          this.fpsFrames = 0;
+          this.fpsLastTime = timestamp;
+          if (gameFpsDisplay) {
+            gameFpsDisplay.textContent = this.fps;
+            if (this.fps >= 90) {
+              gameFpsDisplay.className = 'font-bold text-cyan-400';
+            } else if (this.fps >= 55) {
+              gameFpsDisplay.className = 'font-bold text-emerald-400';
+            } else {
+              gameFpsDisplay.className = 'font-bold text-amber-400';
+            }
+          }
+        }
+
         // Normalized delta time where 1.0 represents 16.667ms (60 FPS)
-        // Clamped to avoid teleporting during tab defocus
-        const dt = Math.min(Math.max(elapsed / 16.6667, 0.25), 2.0);
+        // Fluidly adapts to 60Hz, 120Hz, 144Hz, and 240Hz monitors
+        const dt = Math.min(Math.max(elapsed / 16.6667, 0.1), 2.0);
 
         this.update(dt);
         this.draw();
@@ -6839,6 +6913,7 @@
           this.isRunning = true;
           this.reset();
           this.lastTime = 0;
+          this.fpsLastTime = performance.now();
           this.animId = requestAnimationFrame((ts) => this.loop(ts));
         }
       },
