@@ -1,4 +1,4 @@
-# Omni Studio AI
+# NasInfinity AI
 
 A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
 
@@ -14,13 +14,13 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **Visual Token Segmentation:** Color-coded token pills illustrating how modern LLMs (BPE/WordPiece) segment words, punctuation, and subwords.
    * **Sentiment & Polarity Analysis:** Real-time sentiment detector (Positive, Neutral, Negative) with emotional signal extraction.
    * **Readability & Complexity Metrics:** Automated reading grade levels and estimated reading duration.
-   * **Live Input NLP Stats:** Real-time word and token counter updating as you type.
+   * **Live Input NLP Stats:** Real-time word and token counter updating dynamically as you type.
 
 2. **🎙️ Voice Recognition & Text-to-Speech (Audio NLP):**
    * **Speech-to-Text (STT):** Click the microphone button (`🎙️`) to speak prompts naturally into the chat input.
    * **Text-to-Speech (TTS):** Click the speaker button (`🔊`) below any message to have the assistant read the text aloud.
 
-3. **💬 Conversational Understanding & Natural Context (Omni-CI):**
+3. **💬 Conversational Understanding & Natural Context (NasInfinity-CI):**
    * **Dialogue Memory & Anaphora:** Resolves follow-up queries referencing previous context (e.g., *"What is recursion?"* &rarr; *"Give me an example"* delivers code).
    * **Personal Profile Memory:** Remembers your name, vocation, and favorite programming language across sessions using client-side `localStorage`.
    * **Conversational Math & Conversions:** Instant calculation of percentages, arithmetic expressions, and metric/imperial unit conversions (°C/°F, mi/km, kg/lbs).
@@ -41,13 +41,13 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
 
 ## 🔒 Privacy Notice & Data Security (Commercial & Public Hosting)
 
-Omni Studio AI is engineered with a strict **Local-First, Client-Side Privacy Model**:
+NasInfinity AI is engineered with a strict **Local-First, Client-Side Privacy Model**:
 
 1. **Zero Server-Side Logging:**
    * The included HTTP server ([server.js](server.js)) is a lightweight, zero-dependency static file server.
    * It stores **no tracking cookies**, collects **no analytics telemetry**, and maintains **zero database logs** of your prompts or conversations.
 2. **Client-Side Storage:**
-   * All chat histories, user profile memories, and API keys are stored exclusively in your browser's private `localStorage` (`omnistudio_chats`, `omnistudio_user_profile`, etc.).
+   * All chat histories, user profile memories, and API keys are stored exclusively in your browser's private `localStorage` (`nasinfinity_chats`, `nasinfinity_user_profile`, etc.).
 3. **Encrypted Third-Party AI Transmission:**
    * When using online AI features or encyclopedic search, query text is sent directly via encrypted HTTPS to your selected provider:
      * **Online First:** [Pollinations.ai](https://pollinations.ai)
@@ -61,10 +61,10 @@ Omni Studio AI is engineered with a strict **Local-First, Client-Side Privacy Mo
 
 ---
 
-## ⚖️ Legal, Trademarks & Attributions
+## ⚖️ Legal & Open Source Licensing
 
 * **Brand & Trademark Safety:**
-  * **Omni Studio AI** (also referred to as **Omni**) is an independent, open-source software project. It is not affiliated with, endorsed by, or sponsored by *Omnichat Limited* (`omnichat.ai`) or any other third-party trademark holders.
+  * **NasInfinity AI** is an independent, original brand. It has zero prior trademark filings in Class 9 or 42 and has no corporate conflicts with third-party software firms.
 * **Open Source Licensing:**
   * The software source code is released under the **[MIT License](LICENSE)**. You are free to use, modify, distribute, sublicense, and deploy it commercially.
 * **Attributions:**
@@ -85,7 +85,7 @@ node server.js
 Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ### 3. Public Cloud Hosting (Vercel, Netlify, Cloudflare Pages, GitHub Pages)
-Because Omni Studio AI is 100% self-contained in [index.html](index.html), you can drag-and-drop or push the folder to any static hosting provider with zero build steps:
+Because NasInfinity AI is 100% self-contained in [index.html](index.html), you can drag-and-drop or push the folder to any static hosting provider with zero build steps:
 * **Vercel / Netlify:** Connect your repository or run `netlify deploy` / `vercel`.
 * **GitHub Pages:** Enable GitHub Pages in your repo settings pointing to `/ (root)`.
 * **Render / Railway / Docker:** Run `node server.js` with `PORT` set by your cloud environment.

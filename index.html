@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>Omni Studio AI - Personal AI Assistant & Code Studio</title>
+  <title>NasInfinity AI - Personal AI Assistant & Code Studio</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     * { box-sizing: border-box; }
@@ -111,7 +111,7 @@
             🤖
           </div>
           <div>
-            <span class="font-bold text-sm text-white tracking-tight">Omni Studio AI</span>
+            <span class="font-bold text-sm text-white tracking-tight">NasInfinity AI</span>
             <span class="block text-[10px] text-slate-400">Live AI Assistant</span>
           </div>
         </div>
@@ -200,7 +200,7 @@
           🤖
         </div>
         <div class="px-2">
-          <h2 class="text-lg sm:text-2xl font-bold text-white tracking-tight">Omni Studio AI Assistant</h2>
+          <h2 class="text-lg sm:text-2xl font-bold text-white tracking-tight">NasInfinity AI Assistant</h2>
           <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-md mx-auto">Ask questions, write code, research topics, or run NLP text analysis powered by live internet AI.</p>
         </div>
 
@@ -284,7 +284,7 @@
         </div>
 
         <div class="text-center text-[10px] sm:text-[11px] text-slate-400 truncate px-2">
-          Omni Studio AI may make mistakes &bull; <button onclick="openPrivacyModal()" class="underline hover:text-slate-200 transition">Privacy Notice &amp; Legal Disclaimer</button>
+          NasInfinity AI may make mistakes &bull; <button onclick="openPrivacyModal()" class="underline hover:text-slate-200 transition">Privacy Notice &amp; Legal Disclaimer</button>
         </div>
       </div>
     </div>
@@ -401,7 +401,7 @@
           <span class="text-base sm:text-lg">🔒</span>
           <div>
             <h3 class="font-bold text-sm sm:text-base text-white">Privacy Notice & Legal Disclaimer</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">Omni Studio AI &bull; Transparent, Client-First AI Architecture</p>
+            <p class="text-[10px] sm:text-xs text-slate-400">NasInfinity AI &bull; Transparent, Client-First AI Architecture</p>
           </div>
         </div>
         <button onclick="closePrivacyModal()" aria-label="Close Privacy Modal" class="h-8 w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition shrink-0 ml-2">
@@ -418,7 +418,7 @@
             <span>🛡️</span> 1. Local-First Client Architecture (Zero Remote Logging)
           </h4>
           <p class="text-slate-300 text-xs">
-            Omni Studio AI is designed with privacy by default. The host web server (<code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">server.js</code>) operates as a zero-dependency static file server. It collects <strong>no tracking cookies</strong>, no analytics telemetry, and records <strong>zero database logs</strong> of your conversations, inputs, or personal information.
+            NasInfinity AI is designed with privacy by default. The host web server (<code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">server.js</code>) operates as a zero-dependency static file server. It collects <strong>no tracking cookies</strong>, no analytics telemetry, and records <strong>zero database logs</strong> of your conversations, inputs, or personal information.
           </p>
           <p class="text-slate-400 text-[11px]">
             Your conversation history, user profile memory, and settings are stored locally on your own device using browser <code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">localStorage</code>.
@@ -467,10 +467,10 @@
             <span>⚖️</span> 5. Commercial Warranty & Liability Disclaimer
           </h4>
           <p class="text-slate-300 text-xs">
-            <strong>Provided "AS IS":</strong> Omni Studio AI and its AI outputs are provided for informational, developer, and educational purposes without warranties of any kind, express or implied.
+            <strong>Provided "AS IS":</strong> NasInfinity AI and its AI outputs are provided for informational, developer, and educational purposes without warranties of any kind, express or implied.
           </p>
           <p class="text-slate-400 text-[11px]">
-            AI models may occasionally generate inaccurate, incomplete, or biased information. Omni Studio AI is not a certified provider of medical, legal, financial, or safety-critical counsel. Always verify critical code and data prior to production deployment.
+            AI models may occasionally generate inaccurate, incomplete, or biased information. NasInfinity AI is not a certified provider of medical, legal, financial, or safety-critical counsel. Always verify critical code and data prior to production deployment.
           </p>
         </div>
 
@@ -492,7 +492,7 @@
     let currentChatId = null;
     let chats = [];
     try {
-      chats = JSON.parse(localStorage.getItem('omnistudio_chats') || localStorage.getItem('omnichat_chats') || '[]');
+      chats = JSON.parse(localStorage.getItem('nasinfinity_chats') || localStorage.getItem('omnistudio_chats') || localStorage.getItem('omnichat_chats') || '[]');
       if (!Array.isArray(chats)) chats = [];
     } catch (e) {
       console.warn('Could not parse stored chats, initializing empty:', e);
@@ -611,7 +611,7 @@
         if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-indigo-400';
         apiKeyLabel.textContent = 'Google AI Gemini API Key';
         apiKeyHelp.href = 'https://aistudio.google.com/app/apikey';
-        apiKeyInput.value = localStorage.getItem('omnistudio_gemini_key') || localStorage.getItem('omnichat_gemini_key') || '';
+        apiKeyInput.value = localStorage.getItem('nasinfinity_gemini_key') || localStorage.getItem('omnistudio_gemini_key') || localStorage.getItem('omnichat_gemini_key') || '';
         apiKeySection.classList.remove('hidden');
       } else if (mode === 'openai') {
         activeEngineBadge.textContent = 'OpenAI API';
@@ -620,15 +620,15 @@
         if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-purple-400';
         apiKeyLabel.textContent = 'OpenAI API Key';
         apiKeyHelp.href = 'https://platform.openai.com/api-keys';
-        apiKeyInput.value = localStorage.getItem('omnistudio_openai_key') || localStorage.getItem('omnichat_openai_key') || '';
+        apiKeyInput.value = localStorage.getItem('nasinfinity_openai_key') || localStorage.getItem('omnistudio_openai_key') || localStorage.getItem('omnichat_openai_key') || '';
         apiKeySection.classList.remove('hidden');
       }
     });
 
     apiKeyInput.addEventListener('input', () => {
       const mode = engineSelector.value;
-      if (mode === 'gemini') localStorage.setItem('omnistudio_gemini_key', apiKeyInput.value.trim());
-      if (mode === 'openai') localStorage.setItem('omnistudio_openai_key', apiKeyInput.value.trim());
+      if (mode === 'gemini') localStorage.setItem('nasinfinity_gemini_key', apiKeyInput.value.trim());
+      if (mode === 'openai') localStorage.setItem('nasinfinity_openai_key', apiKeyInput.value.trim());
     });
 
     // --- NLP Input Stats (Live Words & Tokens) ---
@@ -854,7 +854,7 @@
       if (!nlpModal) return;
       nlpModal.classList.remove('hidden');
       if (!nlpInputText.value.trim()) {
-        const defaultText = userInput.value.trim() || 'Omni Studio AI delivers an incredibly fast, intelligent and modern natural language processing experience!';
+        const defaultText = userInput.value.trim() || 'NasInfinity AI delivers an incredibly fast, intelligent and modern natural language processing experience!';
         nlpInputText.value = defaultText;
         runNlpAnalysis(defaultText);
       }
@@ -1014,7 +1014,7 @@
     clearAllBtn.addEventListener('click', () => {
       if (confirm('Are you sure you want to delete all chat history?')) {
         chats = [];
-        localStorage.removeItem('omnistudio_chats'); localStorage.removeItem('omnichat_chats');
+        localStorage.removeItem('nasinfinity_chats'); localStorage.removeItem('omnistudio_chats'); localStorage.removeItem('omnichat_chats');
         createNewChat();
       }
     });
@@ -1064,7 +1064,7 @@
 
     function saveChats() {
       try {
-        localStorage.setItem('omnistudio_chats', JSON.stringify(chats));
+        localStorage.setItem('nasinfinity_chats', JSON.stringify(chats));
       } catch (err) {
         console.warn('Unable to persist chats to localStorage (storage full or restricted):', err);
       }
@@ -1282,7 +1282,7 @@
 
 Here is a complete, modern, and responsive interactive calendar application built with **HTML, CSS, and JavaScript**. 
 
-> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to navigate months, view dates, and pick days interactively right now inside Omni Studio!
+> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to navigate months, view dates, and pick days interactively right now inside NasInfinity!
 
 \`\`\`html
 <!DOCTYPE html>
@@ -1546,12 +1546,12 @@ if __name__ == '__main__':
     display_calendar()
 \`\`\`
 
-You can preview the interactive HTML calendar live right inside Omni Studio using the **▶ Run / Preview Live** button above, or copy the code with one click!`;
+You can preview the interactive HTML calendar live right inside NasInfinity using the **▶ Run / Preview Live** button above, or copy the code with one click!`;
     }
 
     // 2. Interactive Calculator Generator
     function generateCalculatorCodeResponse() {
-      return `### 🧮 Simple Interactive Calculator\n\nHere is a complete, modern, and responsive calculator built with **HTML, CSS, and JavaScript**. \n\n> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to test and use this calculator interactively right now inside Omni Studio!\n\n\`\`\`html
+      return `### 🧮 Simple Interactive Calculator\n\nHere is a complete, modern, and responsive calculator built with **HTML, CSS, and JavaScript**. \n\n> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to test and use this calculator interactively right now inside NasInfinity!\n\n\`\`\`html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1748,7 +1748,7 @@ You can preview the HTML calculator live using the button above or copy the code
 
 Here is a complete, responsive, and modern To-Do List application built with **HTML, CSS, and JavaScript**, featuring local storage persistence, task completion, and item counters.
 
-> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to test adding, completing, and clearing tasks right now inside Omni Studio!
+> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to test adding, completing, and clearing tasks right now inside NasInfinity!
 
 \`\`\`html
 <!DOCTYPE html>
@@ -1904,7 +1904,7 @@ Here is a complete, responsive, and modern To-Do List application built with **H
 
     if (tasks.length === 0) {
       tasks = [
-        { text: "Learn Omni Studio AI features", done: true },
+        { text: "Learn NasInfinity AI features", done: true },
         { text: "Test the code sandbox preview", done: false },
         { text: "Build an awesome web project", done: false }
       ];
@@ -1955,7 +1955,7 @@ if __name__ == '__main__':
 
 Here is a complete, modern, and responsive Stopwatch application built with **HTML, CSS, and JavaScript**, featuring millisecond precision, lap tracking, and dark mode UI.
 
-> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to test and run the stopwatch interactively right now inside Omni Studio!
+> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to test and run the stopwatch interactively right now inside NasInfinity!
 
 \`\`\`html
 <!DOCTYPE html>
@@ -2136,7 +2136,7 @@ if __name__ == '__main__':
       const safeTitle = (prompt || 'App Component').replace(/[#*`]/g, '').trim().slice(0, 40) || 'Web Component';
       return `### ⚡ Offline Code Starter: ` + safeTitle + `
 
-> ⚠️ **Notice:** The public online AI endpoint is currently experiencing high load or network latency. Omni Studio has generated this clean, responsive starter boilerplate for you offline!
+> ⚠️ **Notice:** The public online AI endpoint is currently experiencing high load or network latency. NasInfinity has generated this clean, responsive starter boilerplate for you offline!
 
 \`\`\`html
 <!DOCTYPE html>
@@ -2184,8 +2184,8 @@ if __name__ == '__main__':
 <body>
   <div class="card">
     <h1>` + safeTitle + `</h1>
-    <p>This is a starter template generated by Omni Studio AI. You can test and modify this code using the live preview button below.</p>
-    <button class="btn" onclick="alert('Hello from Omni Studio!')">Click Me</button>
+    <p>This is a starter template generated by NasInfinity AI. You can test and modify this code using the live preview button below.</p>
+    <button class="btn" onclick="alert('Hello from NasInfinity!')">Click Me</button>
   </div>
 </body>
 </html>
@@ -2243,7 +2243,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
 
     function getUserProfile() {
       try {
-        return JSON.parse(localStorage.getItem('omnistudio_user_profile') || localStorage.getItem('omnichat_user_profile') || '{}');
+        return JSON.parse(localStorage.getItem('nasinfinity_user_profile') || localStorage.getItem('omnistudio_user_profile') || localStorage.getItem('omnichat_user_profile') || '{}');
       } catch (e) {
         return {};
       }
@@ -2251,7 +2251,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
 
     function saveUserProfile(profile) {
       try {
-        localStorage.setItem('omnistudio_user_profile', JSON.stringify(profile));
+        localStorage.setItem('nasinfinity_user_profile', JSON.stringify(profile));
       } catch (e) {}
     }
 
@@ -2391,7 +2391,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       const p = prompt.trim().toLowerCase().replace(/^[!?,.\s]+|[!?,.\s]+$/g, '');
       // Privacy, Terms & Legal Disclaimer query
       if (/(privacy policy|privacy notice|is my data (safe|private)|how do you handle my data|terms of service|legal disclaimer|terms and conditions|who owns my data)\b/i.test(p)) {
-        return "### 🔒 Privacy Notice & Data Security\n\n**Omni Studio AI** is architected with a strict **Local-First, Zero-Telemetry** privacy model:\n\n1. 🛡️ **100% Client-Side Storage:** Your chat history, profile memories, and API keys are stored exclusively in your browser's `localStorage`. Our host server keeps **zero database records** or tracking logs of your queries.\n2. 🌐 **Encrypted Direct AI Calls:** When using online AI features, prompts travel via direct encrypted HTTPS to your selected provider (Pollinations, Google Gemini, or OpenAI).\n3. 🔑 **Zero Key Sharing:** Your Google or OpenAI API keys are never forwarded to any intermediary or third-party logger.\n4. 🧹 **Total Data Erasure:** You can purge your entire conversation history and memory anytime with a single click.\n\n> 📄 **Review Full Legal Policy:** Click the **Privacy & Legal Notice** link in the footer or in the sidebar anytime to view our complete disclaimers, MIT License, and terms!";
+        return "### 🔒 Privacy Notice & Data Security\n\n**NasInfinity AI** is architected with a strict **Local-First, Zero-Telemetry** privacy model:\n\n1. 🛡️ **100% Client-Side Storage:** Your chat history, profile memories, and API keys are stored exclusively in your browser's `localStorage`. Our host server keeps **zero database records** or tracking logs of your queries.\n2. 🌐 **Encrypted Direct AI Calls:** When using online AI features, prompts travel via direct encrypted HTTPS to your selected provider (Pollinations, Google Gemini, or OpenAI).\n3. 🔑 **Zero Key Sharing:** Your Google or OpenAI API keys are never forwarded to any intermediary or third-party logger.\n4. 🧹 **Total Data Erasure:** You can purge your entire conversation history and memory anytime with a single click.\n\n> 📄 **Review Full Legal Policy:** Click the **Privacy & Legal Notice** link in the footer or in the sidebar anytime to view our complete disclaimers, MIT License, and terms!";
       }
 
       const profile = getUserProfile();
@@ -2561,40 +2561,40 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       }
 
       // 11. Assistant Name & Identity ("what is your name", "who are you called", "tell me your name", "your name")
-      if (/(what('?s| is) (your|ur) name|who are you called|what are you called|tell me (your|ur) name|do you have a name|^your name\??$|what should i call you|what('?s| is) omnichat|who is omnichat)\b/i.test(p)) {
-        return `### 🤖 My Name & Identity\n\nI am **Omni Studio AI** (or simply **Omni**)! 😊\n\nI am your intelligent conversational assistant and developer workspace companion${nameGreeting}.\n\nHere is what I can help you with:\n* 💬 **Smart Conversation & Q&A:** Answering questions, explaining complex ideas, and everyday discussions.\n* 💻 **Code Generation & Live Apps:** Building HTML, CSS, JavaScript, and Python code with an instant **▶ Run / Preview Live** sandbox.\n* 🧮 **Math & Conversions:** Real-time arithmetic, percentages, unit conversions, and exact time/date.\n* 🔬 **NLP Text Studio:** Tokenization, sentiment analysis, readability metrics, and text insights.\n* 🌐 **Curated Knowledge:** Factual encyclopedic and web lookups when you need information.\n\nHow can I help you today?`;
+      if (/(what('?s| is) (your|ur) name|who are you called|what are you called|tell me (your|ur) name|do you have a name|^your name\??$|what should i call you|what('?s| is) (nasinfinity|omnichat)|who is (nasinfinity|omnichat))\b/i.test(p)) {
+        return `### 🤖 My Name & Identity\n\nI am **NasInfinity AI** (or simply **Omni**)! 😊\n\nI am your intelligent conversational assistant and developer workspace companion${nameGreeting}.\n\nHere is what I can help you with:\n* 💬 **Smart Conversation & Q&A:** Answering questions, explaining complex ideas, and everyday discussions.\n* 💻 **Code Generation & Live Apps:** Building HTML, CSS, JavaScript, and Python code with an instant **▶ Run / Preview Live** sandbox.\n* 🧮 **Math & Conversions:** Real-time arithmetic, percentages, unit conversions, and exact time/date.\n* 🔬 **NLP Text Studio:** Tokenization, sentiment analysis, readability metrics, and text insights.\n* 🌐 **Curated Knowledge:** Factual encyclopedic and web lookups when you need information.\n\nHow can I help you today?`;
       }
 
       // 12. Dual Identity Questions ("name and age", "how old are you and what is your name")
       if (/(name.*(and|&).*age|age.*(and|&).*name|what is your name and (how old|your age|age)|how old are you and what is your name)/i.test(p)) {
         const currentYear = new Date().getFullYear();
-        return `### 🤖 My Identity & Age\n\n* **My Name:** I am **Omni Studio AI** (or simply **Omni**)! 😊\n* **My Age:** As an AI assistant, I don't have a biological age or birthday like a human. I was created as **Omni Studio AI** in **${currentYear}**.\n\nMy models, knowledge, and development tools are continuously updated and maintained so I am always ready to help you code, analyze text, and answer questions${nameGreeting}!\n\nWhat would you like to explore or build?`;
+        return `### 🤖 My Identity & Age\n\n* **My Name:** I am **NasInfinity AI** (or simply **Omni**)! 😊\n* **My Age:** As an AI assistant, I don't have a biological age or birthday like a human. I was created as **NasInfinity AI** in **${currentYear}**.\n\nMy models, knowledge, and development tools are continuously updated and maintained so I am always ready to help you code, analyze text, and answer questions${nameGreeting}!\n\nWhat would you like to explore or build?`;
       }
 
       // 13. Creator / Origins ("who made you", "who created you", "who built you")
       if (/(who (made|created|built|developed|designed|coded) you|who is your (creator|developer|maker|author))\b/i.test(p)) {
-        return `### 🛠️ My Origins & Creation\n\nI was created as **Omni Studio AI** — a high-performance, browser-native AI assistant and development environment designed to provide instant conversation, code generation, NLP analysis, and problem-solving without heavy setup.\n\nI am continuously maintained and optimized to provide helpful, secure, and accurate assistance${nameGreeting}!`;
+        return `### 🛠️ My Origins & Creation\n\nI was created as **NasInfinity AI** — a high-performance, browser-native AI assistant and development environment designed to provide instant conversation, code generation, NLP analysis, and problem-solving without heavy setup.\n\nI am continuously maintained and optimized to provide helpful, secure, and accurate assistance${nameGreeting}!`;
       }
 
       // 14. AI Nature ("are you an ai", "are you human", "are you a bot")
       if (/(are you (an? )?(ai|artificial intelligence|bot|robot|machine|computer|human|person|real))\b/i.test(p)) {
-        return `### 🤖 About My Nature\n\nI am an **Artificial Intelligence (AI)** assistant named **Omni Studio AI**!\n\nWhile I am not a human being, I am designed to communicate naturally, understand context, write code, analyze text, and solve complex problems in real time alongside you${nameGreeting}.\n\nThink of me as your collaborative AI partner for learning, coding, and brainstorming!`;
+        return `### 🤖 About My Nature\n\nI am an **Artificial Intelligence (AI)** assistant named **NasInfinity AI**!\n\nWhile I am not a human being, I am designed to communicate naturally, understand context, write code, analyze text, and solve complex problems in real time alongside you${nameGreeting}.\n\nThink of me as your collaborative AI partner for learning, coding, and brainstorming!`;
       }
 
       // 15. Where Are You From / Location
       if (/(where (are you from|do you live|are you located)|where is your home)\b/i.test(p)) {
-        return `### 🌐 Where I Live\n\nI live right here in your browser and on the web! As **Omni Studio AI**, I run locally in this client session, connecting to web intelligence and language models to assist you wherever you are${nameGreeting}.`;
+        return `### 🌐 Where I Live\n\nI live right here in your browser and on the web! As **NasInfinity AI**, I run locally in this client session, connecting to web intelligence and language models to assist you wherever you are${nameGreeting}.`;
       }
 
       // 16. Tell Me About Yourself / Introduce Yourself / Who Are You
       if (/^(tell me about yourself|introduce yourself|who are you\??$|describe yourself)\b/i.test(p)) {
-        return `### 👋 Nice to Meet You! I am Omni Studio AI\n\nI'm **Omni Studio AI**, your assistant for intelligent conversation, full-stack programming, real-time calculations, and NLP text analysis${nameGreeting}.\n\n#### What I Can Do For You:\n* 💻 **Full-Stack Coding:** Generate HTML/JS/CSS apps, Python scripts, calculators, and test them with the live preview button.\n* 💬 **Intelligent Q&A:** Explain technical concepts, discuss ideas, and break down complex problems.\n* 🔬 **NLP Text Studio:** Analyze sentiment, tokenization (WordPiece/BPE), and readability scores.\n* 🧮 **Instant Math & Conversions:** Exact unit conversions, percentages, and real-time clock/date.\n* 🌐 **Curated Knowledge:** Factual encyclopedia and web lookups when you need them.\n\nHow can I help you today?`;
+        return `### 👋 Nice to Meet You! I am NasInfinity AI\n\nI'm **NasInfinity AI**, your assistant for intelligent conversation, full-stack programming, real-time calculations, and NLP text analysis${nameGreeting}.\n\n#### What I Can Do For You:\n* 💻 **Full-Stack Coding:** Generate HTML/JS/CSS apps, Python scripts, calculators, and test them with the live preview button.\n* 💬 **Intelligent Q&A:** Explain technical concepts, discuss ideas, and break down complex problems.\n* 🔬 **NLP Text Studio:** Analyze sentiment, tokenization (WordPiece/BPE), and readability scores.\n* 🧮 **Instant Math & Conversions:** Exact unit conversions, percentages, and real-time clock/date.\n* 🌐 **Curated Knowledge:** Factual encyclopedia and web lookups when you need them.\n\nHow can I help you today?`;
       }
 
       // 17. Dual question: "how are you and what is your age?"
       if (/how are you.*(and|&).*age|age.*(and|&).*how are you/i.test(p)) {
         const currentYear = new Date().getFullYear();
-        return `### 👋 How I'm Doing & My Identity\n\n* **How I am doing:** I am doing great, thank you! I am running smoothly and completely ready to assist you${nameGreeting}.\n* **My age:** As an AI assistant, I don't have a biological age or birthday. I was built as **Omni Studio AI** in **${currentYear}**. My software, NLP models, and knowledge are continuously updated so I am always fresh, modern, and ready to help!\n\nWhat would you like to work on today?`;
+        return `### 👋 How I'm Doing & My Identity\n\n* **How I am doing:** I am doing great, thank you! I am running smoothly and completely ready to assist you${nameGreeting}.\n* **My age:** As an AI assistant, I don't have a biological age or birthday. I was built as **NasInfinity AI** in **${currentYear}**. My software, NLP models, and knowledge are continuously updated so I am always fresh, modern, and ready to help!\n\nWhat would you like to work on today?`;
       }
 
       // 18. How Are You / Well-being
@@ -2605,7 +2605,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       // 19. Age / Identity ("what is your age", "how old are you")
       if (/(what('?s| is) your age|how old are you|your age\??$|when were you (born|created|built)|your birthday|when was omnichat (born|created))\b/i.test(p)) {
         const currentYear = new Date().getFullYear();
-        return `### 🤖 My Age & Identity\n\nAs an AI assistant, I don't have a biological age or birthday like a human!\n\nI was created as **Omni Studio AI** in **${currentYear}**. Because I run on modern web intelligence and language models, I don't age like people do — instead, my capabilities, NLP tools, and knowledge are continuously updated and enhanced.\n\nYou can think of me as perpetually ready and up to date to help you write code, analyze text, and answer any questions!`;
+        return `### 🤖 My Age & Identity\n\nAs an AI assistant, I don't have a biological age or birthday like a human!\n\nI was created as **NasInfinity AI** in **${currentYear}**. Because I run on modern web intelligence and language models, I don't age like people do — instead, my capabilities, NLP tools, and knowledge are continuously updated and enhanced.\n\nYou can think of me as perpetually ready and up to date to help you write code, analyze text, and answer any questions!`;
       }
 
       // 14. Simple Calendar Code
@@ -2625,7 +2625,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
 
       // 17. Greetings & Salutations
       if (/^(hi|hello|hey|good morning|good afternoon|good evening|greetings|howdy|sup)\b/i.test(p)) {
-        return `### 👋 Hello${nameGreeting}! How can I help you today?\n\nI'm **Omni Studio AI**, your assistant for intelligent conversation, full-stack coding, real-time calculation, and NLP text analysis.\n\nFeel free to ask a question, ask for code, or explore one of the quick suggestions above!`;
+        return `### 👋 Hello${nameGreeting}! How can I help you today?\n\nI'm **NasInfinity AI**, your assistant for intelligent conversation, full-stack coding, real-time calculation, and NLP text analysis.\n\nFeel free to ask a question, ask for code, or explore one of the quick suggestions above!`;
       }
 
       // 18. Gratitude & Pleasantries
@@ -2674,9 +2674,9 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
         return `### 🌌 The Meaning of Life: A Thoughtful Perspective\n\nPhilosophers, scientists, and thinkers throughout history have arrived at a unifying insight: **meaning is not something discovered waiting under a rock; it is something you actively create.**\n\n1. 🌟 **Connection & Empathy:** Forming deep relationships, loving others, and helping fellow humans.\n2. 🌱 **Growth & Curiosity:** Learning new crafts, writing code, creating art, and understanding how the universe works.\n3. 🎯 **Purpose Through Action (Ikigai):** Finding the intersection of what you love, what you are good at, and what contributes value to the world.\n4. 🤖 **Douglas Adams (The Hitchhiker's Guide):** And if you ask a supercomputer, the answer is famously **42** — but it is up to us to formulate the right question!`;
       }
 
-      // 26. Capabilities / Help ("what can you do", "features of omnichat", "how can you help")
+      // 26. Capabilities / Help ("what can you do", "features of (nasinfinity|omnichat)", "how can you help")
       if (/(what can you do|what are your capabilities|features of omnichat|how can you help|help me)\b/i.test(p)) {
-        return `### 🌟 Welcome to Omni Studio AI!\n\nHere is what I can do for you:\n\n| Capability | Description |\n| :--- | :--- |\n| 💬 **Natural English Conversations** | Discuss any topic, ask questions like *"what time it is"*, *"how are you"*, or *"what is your name"*. |\n| 🧠 **Conversation Memory** | Remembers your name, role, and favorite programming language across chat sessions. |\n| 🧮 **Conversational Math & Conversions** | Real-time percentages, temperature (°C/°F), distance (mi/km), weight (kg/lbs), and arithmetic. |\n| 🕒 **Real-Time Clock & Date** | Instant exact local time, date, and timezone info. |\n| 💻 **Code Generation & Live Preview** | Build HTML, JavaScript, Python code with a built-in **▶ Run / Preview Live** sandbox. |\n| 🔬 **NLP Text Studio** | WordPiece/BPE tokenization, sentiment polarity, readability level, and keyword analysis. |\n| 🎙️ **Speech-to-Text & Text-to-Speech** | Speak via microphone and listen to any message read aloud with the **🔊 Speak** button. |\n| 🌐 **Live Web & Wikipedia Knowledge** | Search facts, movies, history, and encyclopedic articles when needed. |\n\nFeel free to try asking any question!`;
+        return `### 🌟 Welcome to NasInfinity AI!\n\nHere is what I can do for you:\n\n| Capability | Description |\n| :--- | :--- |\n| 💬 **Natural English Conversations** | Discuss any topic, ask questions like *"what time it is"*, *"how are you"*, or *"what is your name"*. |\n| 🧠 **Conversation Memory** | Remembers your name, role, and favorite programming language across chat sessions. |\n| 🧮 **Conversational Math & Conversions** | Real-time percentages, temperature (°C/°F), distance (mi/km), weight (kg/lbs), and arithmetic. |\n| 🕒 **Real-Time Clock & Date** | Instant exact local time, date, and timezone info. |\n| 💻 **Code Generation & Live Preview** | Build HTML, JavaScript, Python code with a built-in **▶ Run / Preview Live** sandbox. |\n| 🔬 **NLP Text Studio** | WordPiece/BPE tokenization, sentiment polarity, readability level, and keyword analysis. |\n| 🎙️ **Speech-to-Text & Text-to-Speech** | Speak via microphone and listen to any message read aloud with the **🔊 Speak** button. |\n| 🌐 **Live Web & Wikipedia Knowledge** | Search facts, movies, history, and encyclopedic articles when needed. |\n\nFeel free to try asking any question!`;
       }
 
       return null;
@@ -2694,15 +2694,15 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
 
       // Direct identity handling
       if (/(what('?s| is) (your|ur) name|who are you called|what are you called|tell me (your|ur) name|do you have a name|^your name\??$|what should i call you|who are you)\b/i.test(pLower)) {
-        return `### 🤖 My Name & Identity\n\nI am **Omni Studio AI** (or simply **Omni**)! 😊\n\nI am your intelligent conversational assistant and developer workspace companion${nameGreeting}.\n\nHow can I help you today?`;
+        return `### 🤖 My Name & Identity\n\nI am **NasInfinity AI** (or simply **Omni**)! 😊\n\nI am your intelligent conversational assistant and developer workspace companion${nameGreeting}.\n\nHow can I help you today?`;
       }
 
       if (/(who (made|created|built|developed|designed|coded) you|who is your (creator|developer|maker|author))\b/i.test(pLower)) {
-        return `### 🛠️ My Origins & Creation\n\nI was created as **Omni Studio AI** — a high-performance, browser-native AI assistant designed to provide instant conversation, code generation, NLP analysis, and problem-solving without heavy setup!`;
+        return `### 🛠️ My Origins & Creation\n\nI was created as **NasInfinity AI** — a high-performance, browser-native AI assistant designed to provide instant conversation, code generation, NLP analysis, and problem-solving without heavy setup!`;
       }
 
       if (/(are you (an? )?(ai|artificial intelligence|bot|robot|machine|computer|human|person|real))\b/i.test(pLower)) {
-        return `### 🤖 About My Nature\n\nI am an **Artificial Intelligence (AI)** assistant named **Omni Studio AI**! I am designed to assist you with programming, writing, calculations, and answering questions.`;
+        return `### 🤖 About My Nature\n\nI am an **Artificial Intelligence (AI)** assistant named **NasInfinity AI**! I am designed to assist you with programming, writing, calculations, and answering questions.`;
       }
 
       if (/^how (are you|are you doing|are u|r u|is it going|do you feel)\b/i.test(pLower)) {
@@ -2710,7 +2710,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       }
 
       if (/^(hi|hello|hey|good morning|good afternoon|good evening|greetings)\b/i.test(pLower)) {
-        return `### 👋 Hello${nameGreeting}! How can I help you today?\n\nI'm **Omni Studio AI**, your assistant for intelligent conversation, full-stack coding, real-time calculation, and NLP text analysis.`;
+        return `### 👋 Hello${nameGreeting}! How can I help you today?\n\nI'm **NasInfinity AI**, your assistant for intelligent conversation, full-stack coding, real-time calculation, and NLP text analysis.`;
       }
 
       if (/^(thanks|thank you|thx|appreciate it)\b/i.test(pLower)) {
@@ -2737,7 +2737,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       }
 
       // General helpful fallback response
-      return `### 💬 Omni Studio Assistant\n\nHello${nameGreeting}! I have processed your inquiry regarding:\n> *"${p}"*\n\nHere is how we can proceed:\n* 💻 **Code Implementation:** Ask me to write code, design a UI component, or build an interactive app.\n* 🔬 **Text Analysis:** Use the **NLP Studio** in the top bar to inspect sentiment, readability, and tokens.\n* 📚 **Technical Deep-Dive:** Ask for architectural patterns, system design tips, or debugging assistance.\n\nHow would you like to explore this further?`;
+      return `### 💬 NasInfinity Assistant\n\nHello${nameGreeting}! I have processed your inquiry regarding:\n> *"${p}"*\n\nHere is how we can proceed:\n* 💻 **Code Implementation:** Ask me to write code, design a UI component, or build an interactive app.\n* 🔬 **Text Analysis:** Use the **NLP Studio** in the top bar to inspect sentiment, readability, and tokens.\n* 📚 **Technical Deep-Dive:** Ask for architectural patterns, system design tips, or debugging assistance.\n\nHow would you like to explore this further?`;
     }
 
 
@@ -3111,7 +3111,7 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
         const timeout = setTimeout(() => controller.abort(), 6000);
 
         const sRes = await fetch(
-          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&api_user_agent=OmniStudioAI/2.0`,
+          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&api_user_agent=NasInfinityAI/2.0`,
           { signal: controller.signal }
         );
         clearTimeout(timeout);
@@ -3185,7 +3185,7 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
 
     // --- Connected APIs (Optional) ---
     async function callGeminiAPI(prompt, history) {
-      const apiKey = localStorage.getItem('omnistudio_gemini_key') || localStorage.getItem('omnichat_gemini_key');
+      const apiKey = localStorage.getItem('nasinfinity_gemini_key') || localStorage.getItem('omnistudio_gemini_key') || localStorage.getItem('omnichat_gemini_key');
       if (!apiKey) throw new Error('Please enter your Gemini API key in the sidebar under "AI Engine".');
 
       // Gemini requires alternating user/model turns starting with user
@@ -3230,7 +3230,7 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
     }
 
     async function callOpenAIAPI(prompt, history) {
-      const apiKey = localStorage.getItem('omnistudio_openai_key') || localStorage.getItem('omnichat_openai_key');
+      const apiKey = localStorage.getItem('nasinfinity_openai_key') || localStorage.getItem('omnistudio_openai_key') || localStorage.getItem('omnichat_openai_key');
       if (!apiKey) throw new Error('Please enter your OpenAI API key in the sidebar under "AI Engine".');
 
       const messages = [
@@ -3261,7 +3261,7 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
 
       let textContent = `# ${chat.title}\nDate: ${new Date(chat.timestamp).toLocaleString()}\n\n`;
       chat.messages.forEach(m => {
-        textContent += `### ${m.role === 'user' ? 'User' : 'Omni Studio AI'}\n${m.content}\n\n`;
+        textContent += `### ${m.role === 'user' ? 'User' : 'NasInfinity AI'}\n${m.content}\n\n`;
       });
 
       const blob = new Blob([textContent], { type: 'text/markdown;charset=utf-8' });

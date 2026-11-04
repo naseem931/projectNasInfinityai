@@ -1,4 +1,4 @@
-// Production-ready, zero-dependency HTTP server for Omni Studio AI
+// Production-ready, zero-dependency HTTP server for NasInfinity AI
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -87,7 +87,7 @@ server.on('error', (err) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`====================================================`);
-  console.log(`🚀 Omni Studio AI Server is Running!`);
+  console.log(`🚀 NasInfinity AI Server is Running!`);
   console.log(`🌐 Local URL:  http://localhost:${PORT}`);
   console.log(`🔒 Production Security Headers: Active`);
   console.log(`Press Ctrl+C to stop the server.`);
