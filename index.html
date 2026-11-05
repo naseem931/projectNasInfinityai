@@ -888,7 +888,11 @@
 
     let webLlmEngine = null;
     let isWebLlmLoading = false;
-    let webLlmCurrentModel = localStorage.getItem('nasinfinity_webllm_model') || 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC';
+    let webLlmCurrentModel = 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC';
+    try {
+      const _saved = localStorage.getItem('nasinfinity_webllm_model');
+      if (_saved) webLlmCurrentModel = _saved;
+    } catch (e) {}
     const apiKeyLabel = document.getElementById('apiKeyLabel');
     const apiKeyInput = document.getElementById('apiKeyInput');
     const apiKeyHelp = document.getElementById('apiKeyHelp');
@@ -9696,7 +9700,17 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
       if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = 'Loading Weights...';
 
       try {
-        const webllm = await import("https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.73/+esm");
+        let webllm;
+        if (window.location.protocol.startsWith('http')) {
+          try {
+            webllm = await import(`${window.location.origin}/models/web-llm.esm.js`);
+          } catch (importErr) {
+            console.warn('Could not import local web-llm bundle, falling back to CDN:', importErr);
+            webllm = await import("https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.73/+esm");
+          }
+        } else {
+          webllm = await import("https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.73/+esm");
+        }
         
         const initProgressCallback = (report) => {
           if (webGpuProgressText) webGpuProgressText.textContent = report.text;
@@ -9705,15 +9719,36 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
           if (webGpuPercentText) webGpuPercentText.textContent = pct + '%';
         };
 
+        let appConfig = webllm.prebuiltAppConfig;
+        if (window.location.protocol.startsWith('http')) {
+          const origin = window.location.origin;
+          const localModelList = (webllm.prebuiltAppConfig?.model_list || []).map(entry => {
+            const wasmFilename = entry.model_lib ? entry.model_lib.split('/').pop() : '';
+            return {
+              ...entry,
+              model: `${origin}/models/${entry.model_id}`,
+              model_lib: entry.model_lib
+                ? `${origin}/models/wasm/${wasmFilename}?src=${encodeURIComponent(entry.model_lib)}`
+                : entry.model_lib
+            };
+          });
+
+          appConfig = {
+            ...webllm.prebuiltAppConfig,
+            model_list: localModelList
+          };
+        }
+
         webLlmEngine = await webllm.CreateMLCEngine(modelToLoad, {
+          appConfig,
           initProgressCallback,
           logLevel: 'WARN'
         });
 
         webLlmCurrentModel = modelToLoad;
-        localStorage.setItem('nasinfinity_webllm_model', modelToLoad);
+        try { localStorage.setItem('nasinfinity_webllm_model', modelToLoad); } catch (e) {}
 
-        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '🟢 Model Ready (Cached)';
+        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '🟢 Model Ready (Disk Cached)';
         if (webGpuLoadBtn) {
           webGpuLoadBtn.className = 'w-full py-1.5 px-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 font-medium text-xs flex items-center justify-center gap-1.5 cursor-default';
         }
@@ -9721,7 +9756,7 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
           activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> Local WebGPU';
         }
         if (webGpuSupportBadge) {
-          webGpuSupportBadge.textContent = 'Ready (100% Offline)';
+          webGpuSupportBadge.textContent = 'Ready (Host Disk Cached)';
           webGpuSupportBadge.className = 'text-[10px] text-emerald-400 font-semibold';
         }
       } catch (err) {
