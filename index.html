@@ -8664,8 +8664,60 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
     // Instant Natural English Conversational Engine
     // Real-time local clock/date, greetings, identity, calculators & small talk
     // =========================================================================
+    function formatDatabaseStats() {
+      let totalChats = Array.isArray(chats) ? chats.length : 0;
+      let totalMessages = 0;
+      if (Array.isArray(chats)) {
+        chats.forEach(c => {
+          if (Array.isArray(c.messages)) totalMessages += c.messages.length;
+        });
+      }
+
+      let storageBytes = 0;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+              storageBytes += (localStorage[key].length + key.length) * 2;
+            }
+          }
+        }
+      } catch (e) {}
+
+      const storageKb = (storageBytes / 1024).toFixed(1);
+
+      return `### 🗄️ NasInfinity AI Database & Storage Architecture
+
+**NasInfinity AI operates on a 100% Local-First, Zero-Server Database model.** There is **no centralized remote database** collecting, tracking, or storing your personal conversations.
+
+---
+
+#### 📊 Live Local Browser Database:
+* 💬 **Active Conversations:** \`${totalChats}\` saved chat session${totalChats === 1 ? '' : 's'}
+* 📨 **Stored Chat Messages:** \`${totalMessages}\` message${totalMessages === 1 ? '' : 's'}
+* 💾 **Local Storage Used:** \`~${storageKb} KB\` (stored exclusively in your browser's private \`localStorage\`)
+* 🖥️ **Central Server Database:** **0 bytes** (Our static Node server keeps **zero database records** and logs no telemetry)
+
+---
+
+#### 🔬 Built-in Reference Datasets:
+1. **🧪 118 IUPAC Chemical Elements:** Complete structured chemical records (atomic numbers, Bohr shell distributions, Pauling electronegativities, boiling/melting points, densities, isotopes) pre-loaded in memory.
+2. **🧠 NLP Lexicon & Tokenizer:** Subword token dictionary, sentiment polarities (positive/neutral/negative), and reading grade formulas.
+3. **💻 CS Knowledge Base:** Core computer science references covering Algorithms, Big-O, Web APIs, Docker, Git, and SQL vs NoSQL.
+4. **🎮 Arcade State:** High scores and audio settings persisted locally.
+
+---
+
+> 🔒 **100% Data Privacy:** Your data belongs entirely to you on your machine. You can export your data as text or purge everything with one click using **"Clear all chats"** in the sidebar!`;
+    }
+
     function getInstantConversationalResponse(prompt, history = []) {
       const p = prompt.trim().toLowerCase().replace(/^[!?,.\s]+|[!?,.\s]+$/g, '');
+      // Database & Local Storage Architecture query ("how many data in your database", etc.)
+      if (/(how (many|much) (data|records|info|information|storage|items|chats|messages|kb|mb|bytes)|(what|where) (is|are) (in )?(your|the) (database|storage|memory)|do you have a database|what database (do you use|is this)|tell me about (your|the) database|how big is (your|the) database|check (database|storage)|database (size|data|stats))/i.test(p)) {
+        return formatDatabaseStats();
+      }
+
       // Privacy, Terms & Legal Disclaimer query
       if (/(privacy policy|privacy notice|is my data (safe|private)|how do you handle my data|terms of service|legal disclaimer|terms and conditions|who owns my data)\b/i.test(p)) {
         return "### 🔒 Privacy Notice & Data Security\n\n**NasInfinity AI** is architected with a strict **Local-First, Zero-Telemetry** privacy model:\n\n1. 🛡️ **100% Client-Side Storage:** Your chat history, profile memories, and API keys are stored exclusively in your browser's `localStorage`. Our host server keeps **zero database records** or tracking logs of your queries.\n2. 🌐 **Encrypted Direct AI Calls:** When using online AI features, prompts travel via direct encrypted HTTPS to your selected provider (Pollinations, Google Gemini, or OpenAI).\n3. 🔑 **Zero Key Sharing:** Your Google or OpenAI API keys are never forwarded to any intermediary or third-party logger.\n4. 🧹 **Total Data Erasure:** You can purge your entire conversation history and memory anytime with a single click.\n\n> 📄 **Review Full Legal Policy:** Click the **Privacy & Legal Notice** link in the footer or in the sidebar anytime to view our complete disclaimers, MIT License, and terms!";
@@ -9036,6 +9088,11 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       // Check if it's asking for a comparison: "X vs Y"
       if (/\bvs\b|\bversus\b|difference between/i.test(pLower)) {
         return `### ⚖️ Comparative Analysis: ${p.replace(/[?!.]+$/, '')}\n\nWhen evaluating these options, consider the following trade-offs:\n\n1. ⚡ **Performance & Scalability:** Choose the option tailored for your workload (throughput, latency, memory footprint).\n2. 🛠️ **Developer Experience & Tooling:** Consider the maturity of the ecosystem, library support, and community documentation.\n3. 📈 **Maintenance & Long-Term Cost:** Evaluate technical debt, ease of refactoring, and onboarding overhead for new teammates.\n\nTell me more about your specific project constraints so I can recommend the optimal choice!`;
+      }
+
+      // Database & Local Storage check
+      if (/(how (many|much) (data|records|info|information|storage|items|chats|messages|kb|mb|bytes)|(what|where) (is|are) (in )?(your|the) (database|storage|memory)|do you have a database|what database (do you use|is this)|tell me about (your|the) database|how big is (your|the) database|check (database|storage)|database (size|data|stats))/i.test(pLower)) {
+        return formatDatabaseStats();
       }
 
       // General helpful fallback response
