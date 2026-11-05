@@ -1,6 +1,6 @@
 # NasInfinity AI
 
-A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Cyber Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
+A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, **Local In-Browser LLMs (WebGPU 0.5B/1.5B)**, **Local Ollama Integration**, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Cyber Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Commercial%20Ready-emerald.svg)]()
@@ -53,6 +53,16 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **Google Gemini API:** Direct browser integration with Gemini 2.5 Flash using your personal API key.
    * **OpenAI API:** Direct browser integration with GPT-4o mini using your personal API key.
    * **Curated Encyclopedic Knowledge:** Instant Wikipedia search summaries with full CC BY-SA 4.0 live source links.
+
+8. **💻 Local Open-Source LLMs (0.5B / 1.5B WebGPU & Localhost Ollama):**
+   * **In-Browser WebGPU Execution:** Run lightweight quantized models directly inside your browser without installing Python, PyTorch, or C++ compilers.
+   * **Supported In-Browser Models:**
+     * **Qwen 2.5 0.5B Instruct** (~390 MB • Ultra Fast, Apache 2.0)
+     * **Meta Llama 3.2 1B Instruct** (~880 MB • Highly Capable)
+     * **SmolLM2 360M Instruct** (~230 MB • Featherweight)
+     * **Qwen 2.5 Coder 0.5B Instruct** (~390 MB • Code Specialist)
+   * **Browser Caching & 100% Offline Generation:** Model weights download once via WebLLM, cache in your browser's private storage, and run completely offline using your computer's GPU / WebGPU.
+   * **Local Ollama Integration:** Connect directly to your local desktop Ollama instance (`http://localhost:11434`) for full multi-threaded CPU/GPU token streaming for any model (`qwen2.5:0.5b`, `llama3.2:1b`, `deepseek-r1:1.5b`).
 
 ---
 
