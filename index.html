@@ -9412,15 +9412,14 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
 
       const responseBubble = appendMessageElement('assistant', 'Thinking...');
       let fullResponse = '';
+      const mode = (engineSelector && engineSelector.value) || 'online_first';
+      const isOnline = navigator.onLine;
 
       try {
         const instantResponse = getInstantConversationalResponse(text, chat.messages);
         if (instantResponse) {
           fullResponse = instantResponse;
         } else {
-          const mode = engineSelector.value;
-          const isOnline = navigator.onLine;
-
           if (mode === 'online_first') {
             if (!isOnline) {
               const offlineFallback = isCodeGenerationPrompt(text)
