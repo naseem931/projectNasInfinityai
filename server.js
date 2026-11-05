@@ -322,6 +322,34 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Route: /api/launch-webgpu-browser -> 1-Click Launch Edge with WebGPU override
+  if (pathname === '/api/launch-webgpu-browser') {
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*'
+    });
+    try {
+      const { exec } = require('child_process');
+      const edgePaths = [
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+      ];
+      let chosen = 'msedge.exe';
+      for (const p of edgePaths) {
+        if (fs.existsSync(p)) { chosen = p; break; }
+      }
+      const cmd = `start "" "${chosen}" --enable-unsafe-webgpu http://localhost:${PORT}`;
+      exec(cmd, (err) => {
+        if (err) console.error('Failed to launch browser with WebGPU:', err);
+      });
+      res.end(JSON.stringify({ success: true, message: 'Browser launched with WebGPU override' }));
+    } catch (e) {
+      res.end(JSON.stringify({ success: false, error: e.message }));
+    }
+    return;
+  }
+
   // Route: /models/web-llm.esm.js -> Cache standalone ESM runtime
   if (pathname === '/models/web-llm.esm.js') {
     const localDest = path.join(MODEL_CACHE_DIR, 'web-llm.esm.js');
