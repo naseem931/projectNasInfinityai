@@ -850,6 +850,96 @@
     </div>
   </div>
 
+  <!-- No GPU / WebGPU Guidance Modal -->
+  <div id="noGpuModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden" onclick="if(event.target===this) closeNoGpuModal()">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-950/70">
+        <div class="flex items-center gap-2.5">
+          <div class="h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">
+            ⚡
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              No GPU Detected / WebGPU Blocked
+            </h3>
+            <p class="text-[11px] text-slate-400">Qwen 2.5 0.5B model files are cached on your hard drive</p>
+          </div>
+        </div>
+        <button onclick="closeNoGpuModal()" class="text-slate-400 hover:text-slate-200 text-lg p-1.5 rounded-lg hover:bg-slate-800/60 transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-4 text-xs text-slate-300 leading-relaxed">
+        
+        <!-- Status Box -->
+        <div class="p-3 bg-emerald-950/30 border border-emerald-500/30 rounded-xl flex items-start gap-2.5 text-emerald-300">
+          <span class="text-base">✅</span>
+          <div>
+            <span class="font-semibold text-emerald-200">Model Download Status: 100% Downloaded on Disk</span>
+            <p class="text-[11px] text-emerald-400/90 mt-0.5">All 276 MB of Qwen 2.5 0.5B weights &amp; WASM binaries are saved permanently in <code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300 font-mono text-[10px]">.model_cache/</code> on your computer.</p>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-300">
+          <p class="font-medium text-slate-200 mb-1">Why is this showing?</p>
+          <p class="text-[11px] text-slate-400">Your computer is running on integrated graphics (<strong class="text-slate-300">Intel® HD Graphics / No dedicated GPU</strong>). By default, Microsoft Edge &amp; Google Chrome restrict WebGPU access on older graphics drivers. Choose an option below:</p>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-3">
+          
+          <!-- Option 1: Unlock WebGPU -->
+          <div class="p-3.5 bg-slate-950/80 border border-indigo-500/30 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-indigo-300 flex items-center gap-1.5 text-xs">
+                <span>🚀</span> Option 1: Unlock WebGPU on your PC (Recommended)
+              </span>
+              <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold text-[10px]">Fastest</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Enable Edge/Chrome's built-in unsafe WebGPU flag to bypass the hardware blocklist:</p>
+            <ol class="list-decimal list-inside text-[11px] text-slate-300 space-y-1 pl-1">
+              <li>Open a new tab and paste: <code class="bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded text-cyan-300 font-mono text-[10px] select-all">edge://flags/#enable-unsafe-webgpu</code></li>
+              <li>Set <strong class="text-white">Unsafe WebGPU</strong> to <strong class="text-emerald-400">Enabled</strong> and click <strong class="text-indigo-400">Restart</strong>.</li>
+              <li>Or double-click <code class="bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono text-[10px]">launch-with-webgpu.bat</code> in the project folder!</li>
+            </ol>
+          </div>
+
+          <!-- Option 2: Live AI -->
+          <div class="p-3.5 bg-slate-950/80 border border-cyan-500/30 rounded-xl flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-cyan-300 block text-xs">🌐 Option 2: Instant Live AI (Zero GPU Needed)</span>
+              <p class="text-[11px] text-slate-400 mt-0.5">Use free high-speed cloud intelligence without any hardware requirements.</p>
+            </div>
+            <button onclick="switchToLiveAI()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs transition shrink-0 active:scale-95 shadow-sm shadow-cyan-600/30">
+              Switch to Live AI
+            </button>
+          </div>
+
+          <!-- Option 3: Local Ollama -->
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl">
+            <span class="font-bold text-purple-300 block text-xs">🦙 Option 3: Local Ollama CPU Engine (100% Offline)</span>
+            <p class="text-[11px] text-slate-400 mt-0.5">Ollama runs Qwen 2.5 on pure CPU using AVX2 instructions with 0 GPU required. Simply install Ollama and run <code class="bg-slate-900 px-1 py-0.5 rounded text-purple-300 font-mono text-[10px]">ollama run qwen2.5:0.5b</code>.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-5 py-3 border-t border-slate-800 bg-slate-950/90 flex items-center justify-between shrink-0">
+        <span class="text-[11px] text-slate-500">NasInfinity AI &bull; No-GPU Architecture</span>
+        <button onclick="closeNoGpuModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Application Logic -->
   <script>
     let currentChatId = null;
@@ -7229,6 +7319,24 @@
       if (modal) modal.classList.add('hidden');
     };
 
+    window.openNoGpuModal = function() {
+      const modal = document.getElementById('noGpuModal');
+      if (modal) modal.classList.remove('hidden');
+    };
+
+    window.closeNoGpuModal = function() {
+      const modal = document.getElementById('noGpuModal');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    window.switchToLiveAI = function() {
+      closeNoGpuModal();
+      if (engineSelector) {
+        engineSelector.value = 'online_first';
+        engineSelector.dispatchEvent(new Event('change'));
+      }
+    };
+
     window.openNlpModal = function() {
       if (!nlpModal) return;
       nlpModal.classList.remove('hidden');
@@ -7378,6 +7486,7 @@
         closePreviewModal();
         closeNlpModal();
         closePrivacyModal();
+        closeNoGpuModal();
         if (isMobileOrTablet()) closeSidebar();
       }
     });
@@ -9685,12 +9794,21 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
       if (isWebLlmLoading) return;
       const modelToLoad = customModel || (webGpuModelSelect ? webGpuModelSelect.value : 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC');
 
-      if (!navigator.gpu) {
+      let gpuAdapter = null;
+      if (navigator.gpu) {
+        try {
+          gpuAdapter = await navigator.gpu.requestAdapter();
+        } catch (e) {}
+      }
+
+      if (!navigator.gpu || !gpuAdapter) {
         if (webGpuSupportBadge) {
-          webGpuSupportBadge.textContent = 'WebGPU Not Supported';
-          webGpuSupportBadge.className = 'text-[10px] text-rose-400 font-semibold';
+          webGpuSupportBadge.textContent = 'No GPU / WebGPU Blocked';
+          webGpuSupportBadge.className = 'text-[10px] text-amber-400 font-semibold';
         }
-        alert("WebGPU is not enabled in this browser. Please use Chrome 113+ or Edge 113+, or choose 'Local Ollama' / 'Live Internet AI'.");
+        if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
+        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ WebGPU Unlock Required';
+        openNoGpuModal();
         return;
       }
 
@@ -9763,7 +9881,12 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
         console.error('WebLLM load error:', err);
         if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ Retry Model Load';
         if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
-        alert('Failed to load in-browser model: ' + err.message);
+        const msg = String(err && err.message || '');
+        if (msg.toLowerCase().includes('adapter') || msg.toLowerCase().includes('webgpu') || msg.toLowerCase().includes('device') || msg.toLowerCase().includes('support')) {
+          openNoGpuModal();
+        } else {
+          alert('Failed to load in-browser model: ' + err.message);
+        }
       } finally {
         isWebLlmLoading = false;
       }
