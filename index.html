@@ -884,6 +884,12 @@
           </div>
         </div>
 
+        <!-- Diagnostic Notice -->
+        <div id="noGpuErrorDetail" class="hidden p-3 bg-rose-950/40 border border-rose-500/30 rounded-xl space-y-1 text-rose-300">
+          <span class="font-semibold text-rose-200 block text-[11px] flex items-center gap-1.5"><span>⚠️</span> Hardware Diagnostic Notice:</span>
+          <p id="noGpuErrorMessage" class="text-[11px] font-mono break-all text-rose-300/90"></p>
+        </div>
+
         <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-slate-300">
           <p class="font-medium text-slate-200 mb-1">Why is this showing?</p>
           <p class="text-[11px] text-slate-400">Your computer is running on integrated graphics (<strong class="text-slate-300">Intel® HD Graphics / No dedicated GPU</strong>). By default, Microsoft Edge &amp; Google Chrome restrict WebGPU access on older graphics drivers. Choose an option below:</p>
@@ -943,6 +949,36 @@
 
   <!-- Application Logic -->
   <script>
+    window.showToast = function(message, type = 'info') {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      const bgColors = {
+        info: 'bg-slate-900/95 border-indigo-500/40 text-indigo-200',
+        success: 'bg-emerald-950/95 border-emerald-500/40 text-emerald-200',
+        warning: 'bg-amber-950/95 border-amber-500/40 text-amber-200',
+        error: 'bg-rose-950/95 border-rose-500/40 text-rose-200'
+      };
+      const icons = {
+        info: 'ℹ️',
+        success: '✅',
+        warning: '⚠️',
+        error: '❌'
+      };
+      toast.className = `p-3 rounded-xl border shadow-2xl text-xs flex items-center gap-2.5 backdrop-blur-md animate-in slide-in-from-bottom-5 duration-200 pointer-events-auto ${bgColors[type] || bgColors.info}`;
+      toast.innerHTML = `<span class="text-sm shrink-0">${icons[type] || 'ℹ️'}</span><span class="flex-1 font-medium leading-relaxed">${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    };
+
     let currentChatId = null;
     let chats = [];
     try {
@@ -1241,7 +1277,7 @@
       voiceInputBtn.addEventListener('click', () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-          return alert('Voice recognition (Speech-to-Text) is not supported in this browser. Please use Chrome or Edge.');
+          return showToast('Voice recognition (Speech-to-Text) is not supported in this browser. Please use Chrome or Edge.', 'warning');
         }
         if (isListening) {
           stopVoiceRecognition();
@@ -5880,15 +5916,15 @@
       const specs = `Element: ${el.name} (${el.sym})\nAtomic Number: ${el.num}\nAtomic Mass: ${el.mass} u\nCategory: ${PT_CATEGORY_NAMES[el.cat] || el.cat}\nPhase at STP: ${el.phase}\nElectron Configuration: ${el.config}\nElectronegativity: ${el.en || 'N/A'}\nMelting Point: ${el.mp !== null ? el.mp + ' °C' : 'N/A'}\nBoiling Point: ${el.bp !== null ? el.bp + ' °C' : 'N/A'}\nDensity: ${el.density || 'N/A'} g/cm³\nDiscovery: ${el.discovered} by ${el.by}\nKey Uses: ${Array.isArray(el.uses) ? el.uses.join(', ') : 'N/A'}\nSummary: ${el.summary}`;
 
       navigator.clipboard.writeText(specs).then(() => {
-        alert(`Copied details for ${el.name} (${el.sym}) to clipboard!`);
+        showToast(`Copied details for ${el.name} (${el.sym}) to clipboard!`, 'success');
       }).catch(() => {
-        alert('Could not copy to clipboard.');
+        showToast('Could not copy to clipboard.', 'error');
       });
     };
 
     window.speakElementDetails = function(num) {
       if (!('speechSynthesis' in window)) {
-        return alert('Text-to-speech is not supported in this browser.');
+        return showToast('Text-to-speech is not supported in this browser.', 'warning');
       }
       const el = ELEMENTS_DATA.find(e => e.num === num);
       if (!el) return;
@@ -7326,8 +7362,18 @@
       if (modal) modal.classList.add('hidden');
     };
 
-    window.openNoGpuModal = function() {
+    window.openNoGpuModal = function(errorDetail = null) {
       const modal = document.getElementById('noGpuModal');
+      const errBox = document.getElementById('noGpuErrorDetail');
+      const errText = document.getElementById('noGpuErrorMessage');
+      if (errBox && errText) {
+        if (errorDetail) {
+          errText.textContent = errorDetail;
+          errBox.classList.remove('hidden');
+        } else {
+          errBox.classList.add('hidden');
+        }
+      }
       if (modal) modal.classList.remove('hidden');
     };
 
@@ -7342,6 +7388,7 @@
         engineSelector.value = 'online_first';
         engineSelector.dispatchEvent(new Event('change'));
       }
+      showToast('Switched to Live Internet AI (Zero GPU Needed)', 'success');
     };
 
     window.launchWebGpuBrowser = async function() {
@@ -7350,13 +7397,13 @@
         const data = await res.json();
         if (data.success) {
           closeNoGpuModal();
-          alert('🚀 Opening Microsoft Edge with WebGPU hardware override enabled!\nA new browser window will appear in a moment.');
+          showToast('🚀 Opening Microsoft Edge with WebGPU override enabled... Window will appear in a moment!', 'success');
         } else {
-          alert('Could not launch automatically. Please run launch-with-webgpu.bat in the project folder.');
+          showToast('Could not launch automatically. Please run launch-with-webgpu.bat in the project folder.', 'warning');
         }
       } catch (err) {
         console.error('Launch error:', err);
-        alert('Could not connect to server launcher. Please run launch-with-webgpu.bat directly.');
+        showToast('Could not connect to server launcher. Please run launch-with-webgpu.bat directly.', 'error');
       }
     };
 
@@ -7409,7 +7456,7 @@
 
     window.speakMessage = function(btn) {
       if (!('speechSynthesis' in window)) {
-        return alert('Text-to-speech is not supported in this browser.');
+        return showToast('Text-to-speech is not supported in this browser.', 'warning');
       }
 
       if (window.speechSynthesis.speaking && currentSpeechBtn === btn) {
@@ -9935,11 +9982,8 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
         if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ Retry Model Load';
         if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
         const msg = String(err && err.message || '');
-        if (msg.toLowerCase().includes('adapter') || msg.toLowerCase().includes('webgpu') || msg.toLowerCase().includes('device') || msg.toLowerCase().includes('support')) {
-          openNoGpuModal();
-        } else {
-          alert('Failed to load in-browser model: ' + err.message);
-        }
+        openNoGpuModal(msg);
+        showToast('Local WebGPU notice: ' + (err.message || 'Hardware acceleration blocked'), 'warning');
       } finally {
         isWebLlmLoading = false;
       }
@@ -10102,7 +10146,7 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
 
     function exportCurrentChat() {
       const chat = chats.find(c => c.id === currentChatId);
-      if (!chat || chat.messages.length === 0) return alert('No messages to export.');
+      if (!chat || chat.messages.length === 0) return showToast('No messages to export.', 'info');
 
       let textContent = `# ${chat.title}\nDate: ${new Date(chat.timestamp).toLocaleString()}\n\n`;
       chat.messages.forEach(m => {
