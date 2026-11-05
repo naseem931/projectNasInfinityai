@@ -8664,6 +8664,21 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
     // Instant Natural English Conversational Engine
     // Real-time local clock/date, greetings, identity, calculators & small talk
     // =========================================================================
+    function isDatabaseQuery(str) {
+      if (!str) return false;
+      const s = str.toLowerCase().replace(/['"“”`?!.,;:()]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (/\b(how (many|much) data|what('?s| is) in (your |the )?database|how big is (your |the )?database|do you have a database|what database (do you use|is this|do you have)|where is (your |the )?database|tell me about (your |the )?database|database (size|stats|info|data)|show (database|storage))\b/.test(s)) {
+        return true;
+      }
+      if (/\bdatabase\b/.test(s) && /\b(how many|how much|how big|size|what data|how many data|storage|records|stored|data)\b/.test(s)) {
+        return true;
+      }
+      if (/^how (many|much) data\b/.test(s)) {
+        return true;
+      }
+      return false;
+    }
+
     function formatDatabaseStats() {
       let totalChats = Array.isArray(chats) ? chats.length : 0;
       let totalMessages = 0;
@@ -8675,10 +8690,12 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
 
       let storageBytes = 0;
       try {
-        if (typeof localStorage !== 'undefined') {
-          for (let key in localStorage) {
-            if (localStorage.hasOwnProperty(key)) {
-              storageBytes += (localStorage[key].length + key.length) * 2;
+        if (typeof localStorage !== 'undefined' && localStorage) {
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key) {
+              const val = localStorage.getItem(key) || '';
+              storageBytes += (key.length + val.length) * 2;
             }
           }
         }
@@ -8714,7 +8731,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
     function getInstantConversationalResponse(prompt, history = []) {
       const p = prompt.trim().toLowerCase().replace(/^[!?,.\s]+|[!?,.\s]+$/g, '');
       // Database & Local Storage Architecture query ("how many data in your database", etc.)
-      if (/(how (many|much) (data|records|info|information|storage|items|chats|messages|kb|mb|bytes)|(what|where) (is|are) (in )?(your|the) (database|storage|memory)|do you have a database|what database (do you use|is this)|tell me about (your|the) database|how big is (your|the) database|check (database|storage)|database (size|data|stats))/i.test(p)) {
+      if (isDatabaseQuery(prompt)) {
         return formatDatabaseStats();
       }
 
@@ -8724,7 +8741,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       }
 
       // Offline Arcade Game
-      if (/(play (a )?game|offline game|cyber runner|arcade|play runner|mini game|something to play|play something|boredom buster)/i.test(p)) {
+      if (/(play (a )?game|offline game|cyber runner|arcade|play runner|mini game|something to play|play something|boredom buster)\b/i.test(p)) {
         return "### 🎮 NasInfinity Offline Arcade: Cyber Runner Zero Gravity\n\nWhenever you are disconnected from the internet (or just need a fun brain break!), you can play our built-in offline arcade game: **Cyber Runner: Zero Gravity**!\n\n#### 🕹️ How to Play:\n* **<kbd>Spacebar</kbd> / <kbd>&uarr; Arrow</kbd> / Tap Screen:** Jump\n* **Double Tap <kbd>&uarr;</kbd> in Mid-Air:** Double-Jump over high obstacles!\n* **<kbd>&darr; Arrow</kbd> / Slide Down:** Duck under airborne glitch drones\n* **Collect 💎 Energy Orbs:** +50 Bonus Points\n* **Grab 🛡️ Shield Modules:** Absorb 1 crash impact\n\n> 🚀 **Launch Game Now:**\n> Click the **🎮 Arcade** button in the top navigation bar, or open it anytime!";
       }
 
@@ -9089,9 +9106,8 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       if (/\bvs\b|\bversus\b|difference between/i.test(pLower)) {
         return `### ⚖️ Comparative Analysis: ${p.replace(/[?!.]+$/, '')}\n\nWhen evaluating these options, consider the following trade-offs:\n\n1. ⚡ **Performance & Scalability:** Choose the option tailored for your workload (throughput, latency, memory footprint).\n2. 🛠️ **Developer Experience & Tooling:** Consider the maturity of the ecosystem, library support, and community documentation.\n3. 📈 **Maintenance & Long-Term Cost:** Evaluate technical debt, ease of refactoring, and onboarding overhead for new teammates.\n\nTell me more about your specific project constraints so I can recommend the optimal choice!`;
       }
-
       // Database & Local Storage check
-      if (/(how (many|much) (data|records|info|information|storage|items|chats|messages|kb|mb|bytes)|(what|where) (is|are) (in )?(your|the) (database|storage|memory)|do you have a database|what database (do you use|is this)|tell me about (your|the) database|how big is (your|the) database|check (database|storage)|database (size|data|stats))/i.test(pLower)) {
+      if (isDatabaseQuery(prompt)) {
         return formatDatabaseStats();
       }
 
