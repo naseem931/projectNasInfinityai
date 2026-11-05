@@ -7368,7 +7368,41 @@
       const errText = document.getElementById('noGpuErrorMessage');
       if (errBox && errText) {
         if (errorDetail) {
-          errText.textContent = errorDetail;
+          const isShaderError = /ShaderModule|batch_prefill|compute stage|shader-f16/i.test(errorDetail);
+          if (isShaderError) {
+            errText.innerHTML = `
+              <div class="space-y-2 text-xs">
+                <div class="font-bold text-rose-200 flex items-center gap-1.5">
+                  <span>🚫</span>
+                  <span>Hardware Compute Shader Incompatibility Detected</span>
+                </div>
+                <p class="text-rose-200/90 leading-relaxed text-[11px]">
+                  WebGPU was unlocked in Microsoft Edge, but your computer's <strong>Intel® HD Graphics</strong> GPU cannot compile WebGPU attention compute shaders (<code class="bg-black/40 px-1 py-0.5 rounded text-[10px]">batch_prefill_paged_kv_kernel</code>) because this GPU generation lacks DirectX 12 and FP16 hardware support.
+                </p>
+                <div class="p-2.5 bg-emerald-950/60 border border-emerald-500/40 rounded-xl space-y-1.5">
+                  <div class="font-bold text-emerald-200 text-xs flex items-center justify-between">
+                    <span>✨ Recommended Solution (Zero GPU Needed):</span>
+                    <span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded text-[10px]">Instant &amp; Free</span>
+                  </div>
+                  <p class="text-[11px] text-emerald-300/90 leading-relaxed">
+                    Switch to <strong>Live Internet AI</strong> to chat immediately. It runs blazingly fast in your browser with <strong>zero GPU requirements</strong>!
+                  </p>
+                  <button onclick="switchToLiveAI()" class="w-full mt-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition active:scale-95 flex items-center justify-center gap-2">
+                    <span>🌐</span> <span>Switch to Live Internet AI (Start Chatting Now)</span>
+                  </button>
+                </div>
+                <p class="text-[10px] text-slate-400">
+                  Prefer 100% offline? Use <strong>Option 3 (Ollama)</strong> below to run models directly on your CPU cores without WebGPU shaders.
+                </p>
+                <details class="text-[10px] text-rose-400/80 pt-0.5">
+                  <summary class="cursor-pointer hover:underline">Show technical shader error</summary>
+                  <p class="font-mono mt-1 p-1.5 bg-black/50 rounded break-all text-rose-300">${errorDetail}</p>
+                </details>
+              </div>
+            `;
+          } else {
+            errText.textContent = errorDetail;
+          }
           errBox.classList.remove('hidden');
         } else {
           errBox.classList.add('hidden');
@@ -9557,7 +9591,23 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
         saveChats();
 
       } catch (err) {
-        responseBubble.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Error: ${err.message}</span>`;
+        const isShaderErr = /ShaderModule|batch_prefill|compute stage|shader-f16/i.test(err.message || '');
+        if (isShaderErr) {
+          responseBubble.innerHTML = `
+            <div class="p-3 bg-rose-950/40 border border-rose-500/30 rounded-xl space-y-2 text-xs text-rose-200">
+              <span class="font-bold text-rose-300 flex items-center gap-1.5"><span>⚠️</span> WebGPU Hardware Unsupported</span>
+              <p class="text-[11px] text-rose-200/90 leading-relaxed">
+                Your computer's integrated <strong>Intel® HD Graphics</strong> GPU lacks DirectX 12 / FP16 support and cannot execute in-browser neural network shaders (<code>batch_prefill_paged_kv_kernel</code>).
+              </p>
+              <button onclick="switchToLiveAI()" class="py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition active:scale-95 flex items-center gap-1.5 shadow">
+                <span>🌐</span> <span>Switch to Live Internet AI (Zero GPU Needed)</span>
+              </button>
+            </div>
+          `;
+          openNoGpuModal(err.message);
+        } else {
+          responseBubble.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Error: ${err.message}</span>`;
+        }
       } finally {
         isGenerating = false;
         sendBtn.disabled = false;
@@ -9979,11 +10029,22 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
         }
       } catch (err) {
         console.error('WebLLM load error:', err);
-        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ Retry Model Load';
-        if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
         const msg = String(err && err.message || '');
+        const isShaderErr = /ShaderModule|batch_prefill|compute stage|shader-f16/i.test(msg);
+        if (isShaderErr) {
+          if (webGpuSupportBadge) {
+            webGpuSupportBadge.textContent = 'Hardware Incompatible (No DX12)';
+            webGpuSupportBadge.className = 'text-[10px] text-rose-400 font-semibold';
+          }
+          if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '❌ GPU Incompatible (No DX12)';
+          if (webGpuLoadBtn) webGpuLoadBtn.disabled = true;
+          showToast('Hardware notice: Intel HD Graphics cannot compile WebGPU shaders. Switch to Live AI (Zero GPU).', 'warning');
+        } else {
+          if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ Retry Model Load';
+          if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
+          showToast('Local WebGPU notice: ' + (err.message || 'Hardware acceleration blocked'), 'warning');
+        }
         openNoGpuModal(msg);
-        showToast('Local WebGPU notice: ' + (err.message || 'Hardware acceleration blocked'), 'warning');
       } finally {
         isWebLlmLoading = false;
       }
