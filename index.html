@@ -195,7 +195,7 @@
         </label>
         <select id="engineSelector" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 cursor-pointer">
           <option value="online_first" selected>🌐 Live Internet AI (Default • Free)</option>
-          <option value="webgpu">💻 Download in Browser (Local Qwen LLM • 0.5B)</option>
+          <option value="webgpu">💻 Local Qwen LLM (All Browsers &amp; Mobile • 0.5B)</option>
           <option value="gemini">✨ Gemini 2.5 Flash API</option>
           <option value="openai">🔮 OpenAI GPT-4o mini API</option>
         </select>
@@ -211,22 +211,22 @@
         <span class="text-[10px] text-slate-400 leading-tight">Key stays stored only in your local browser storage.</span>
       </div>
 
-      <!-- Local In-Browser WebGPU Model Drawer -->
+      <!-- Local In-Browser Universal Qwen LLM Drawer -->
       <div id="webGpuSection" class="hidden bg-slate-900 border border-cyan-800/40 rounded-xl p-2.5 flex flex-col gap-2 text-xs">
         <label class="text-slate-300 text-[11px] font-medium flex items-center justify-between">
-          <span class="flex items-center gap-1"><span class="text-cyan-400">💻</span> Local Qwen LLM (Download in Browser)</span>
-          <span id="webGpuSupportBadge" class="text-[10px] text-cyan-400 font-semibold">In-Browser</span>
+          <span class="flex items-center gap-1"><span class="text-cyan-400">💻</span> Local Qwen LLM (All Browsers &amp; Mobile)</span>
+          <span id="webGpuSupportBadge" class="text-[10px] text-cyan-400 font-semibold">WebGPU + WASM</span>
         </label>
         
         <select id="webGpuModelSelect" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2 py-1.5 outline-none focus:border-cyan-500 cursor-pointer">
           <option value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC" selected>Qwen 2.5 0.5B (~390 MB • Ultra Fast)</option>
           <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 1B (~880 MB • Meta)</option>
-          <option value="SmolLM2-360M-Instruct-q4f16_1-MLC">SmolLM2 360M (~230 MB • Tiny)</option>
+          <option value="SmolLM2-360M-Instruct-q4f16_1-MLC">SmolLM2 360M (~230 MB • Mobile Ultra-Light)</option>
           <option value="Qwen2.5-Coder-0.5B-Instruct-q4f16_1-MLC">Qwen 2.5 Coder 0.5B (~390 MB • Code)</option>
         </select>
 
         <button id="webGpuLoadBtn" onclick="initWebGpuModel()" class="w-full py-1.5 px-2.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-95 text-cyan-300 border border-cyan-500/30 font-medium text-xs transition flex items-center justify-center gap-1.5">
-          <span>⬇️</span> <span id="webGpuLoadBtnText">Download & Initialize in Browser</span>
+          <span>⬇️</span> <span id="webGpuLoadBtnText">Download &amp; Initialize (All Browsers &amp; Mobile)</span>
         </button>
 
         <div id="webGpuProgressContainer" class="hidden flex flex-col gap-1">
@@ -240,7 +240,7 @@
         </div>
 
         <span class="text-[10px] text-slate-400 leading-tight">
-          Downloads and runs 100% locally inside your web browser. Model weights cache in browser storage for instant offline use.
+          Downloads and runs 100% locally inside your web browser across all desktop &amp; mobile browsers (Chrome, Edge, Safari, Firefox, iPhone/iPad, Android). Model weights cache in browser storage for instant offline use.
         </span>
       </div>
 
@@ -275,7 +275,7 @@
       </div>
 
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <button id="openGameBtn" onclick="openOfflineGameModal()" title="Play Offline Cyber Runner Arcade" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
+        <button id="openGameBtn" onclick="openOfflineGameModal()" title="Play Offline Runner Arcade" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
           <span>🎮</span> <span class="hidden sm:inline">Arcade</span>
         </button>
         <button id="openPeriodicBtn" onclick="openPeriodicModal()" title="Open Interactive Periodic Table of Elements" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
@@ -299,7 +299,7 @@
         </div>
       </div>
       <button onclick="openOfflineGameModal()" class="ml-2 px-3 py-1 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] shadow-sm shadow-purple-600/30 transition active:scale-95 flex items-center gap-1.5 shrink-0">
-        <span>🎮</span> <span>Play Cyber Runner</span>
+        <span>🎮</span> <span>Play Runner</span>
       </button>
     </div>
 
@@ -322,7 +322,7 @@
             <span class="font-semibold text-slate-200 group-hover:text-purple-400 flex items-center gap-1.5">
               <span>🎮</span> Play Offline Arcade Game
             </span>
-            <span class="text-slate-400 text-[11px]">Cyber Runner: Zero Gravity &bull; 100% offline</span>
+            <span class="text-slate-400 text-[11px]">Runner &bull; 100% offline</span>
           </button>
 
           <button onclick="openPeriodicModal()" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800/80 active:scale-[0.99] border border-slate-800 transition group flex flex-col gap-1 text-xs">
@@ -436,7 +436,7 @@
     </div>
   </div>
 
-  <!-- Offline Arcade Game Modal: Cyber Runner Zero Gravity -->
+  <!-- Offline Arcade Game Modal: Runner -->
   <div id="gameModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 hidden" onclick="if(event.target===this) closeOfflineGameModal()">
     <div class="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[96vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
       
@@ -448,7 +448,7 @@
           </div>
           <div>
             <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-2">
-              <span>Cyber Runner: Zero Gravity</span>
+              <span>Runner</span>
               <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/30 font-mono">Offline Arcade</span>
             </h3>
             <p class="text-[10px] text-slate-400">Jump, double-jump, duck, and collect data cores!</p>
@@ -883,15 +883,37 @@
         <!-- Options -->
         <div class="space-y-3">
           
-          <!-- Option 1: Unlock WebGPU -->
+          <!-- Option 1: Universal WASM CPU Engine (All Browsers & Mobile) -->
+          <div class="p-3.5 bg-slate-950/80 border border-cyan-500/40 rounded-xl flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-cyan-300 block text-xs">💻 Option 1: Run in Universal WASM CPU Mode (Recommended)</span>
+              <p class="text-[11px] text-slate-300 mt-0.5">Runs 100% locally on CPU across all desktop &amp; mobile browsers (Chrome, Edge, Safari, Firefox, iPhone/iPad, Android) with zero GPU required.</p>
+            </div>
+            <button onclick="switchToWasmCPU()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs transition shrink-0 active:scale-95 shadow-sm shadow-cyan-600/30">
+              Run Universal WASM
+            </button>
+          </div>
+
+          <!-- Option 2: Live AI -->
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-slate-300 block text-xs">🌐 Option 2: Instant Live AI (Zero GPU Needed)</span>
+              <p class="text-[11px] text-slate-400 mt-0.5">Use free high-speed cloud intelligence without any hardware requirements.</p>
+            </div>
+            <button onclick="switchToLiveAI()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition shrink-0 active:scale-95">
+              Switch to Live AI
+            </button>
+          </div>
+
+          <!-- Option 3: Unlock WebGPU Hardware Acceleration -->
           <div class="p-3.5 bg-slate-950/80 border border-indigo-500/30 rounded-xl space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="font-bold text-indigo-300 flex items-center gap-1.5 text-xs">
-                <span>🚀</span> Option 1: 1-Click Relaunch with WebGPU Unlocked (Recommended)
+                <span>🚀</span> Option 3: Relaunch with WebGPU Unlocked (Hardware Acceleration)
               </span>
-              <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold text-[10px]">Fastest</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold text-[10px]">Fastest on GPU</span>
             </div>
-            <p class="text-[11px] text-slate-300">Relaunches Microsoft Edge with the hardware flag enabled so NasInfinity AI connects directly to your downloaded Qwen 2.5 0.5B model:</p>
+            <p class="text-[11px] text-slate-300">Relaunches Microsoft Edge with the hardware flag enabled for maximum generation speed:</p>
             <button onclick="launchWebGpuBrowser()" class="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold text-xs shadow-md shadow-indigo-600/30 transition active:scale-95 flex items-center justify-center gap-2">
               <span>⚡</span> <span>Relaunch Edge with WebGPU Unlocked</span>
             </button>
@@ -900,21 +922,10 @@
             </div>
           </div>
 
-          <!-- Option 2: Live AI -->
-          <div class="p-3.5 bg-slate-950/80 border border-cyan-500/30 rounded-xl flex items-center justify-between gap-3">
-            <div>
-              <span class="font-bold text-cyan-300 block text-xs">🌐 Option 2: Instant Live AI (Zero GPU Needed)</span>
-              <p class="text-[11px] text-slate-400 mt-0.5">Use free high-speed cloud intelligence without any hardware requirements.</p>
-            </div>
-            <button onclick="switchToLiveAI()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs transition shrink-0 active:scale-95 shadow-sm shadow-cyan-600/30">
-              Switch to Live AI
-            </button>
-          </div>
-
-          <!-- Option 3: Download Supported Browsers -->
+          <!-- Option 4: Download Supported Browsers -->
           <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2.5">
-            <span class="font-bold text-cyan-300 block text-xs">🌐 Option 3: Download Supported Web Browsers</span>
-            <p class="text-[11px] text-slate-400">To run in-browser AI models at full speed with hardware acceleration, download the latest version of a modern browser:</p>
+            <span class="font-bold text-slate-300 block text-xs">🌐 Option 4: Download Supported Web Browsers</span>
+            <p class="text-[11px] text-slate-400">To run in-browser AI models with hardware acceleration on modern devices, download the latest version of a modern browser:</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
               <a href="https://www.google.com/chrome/" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700/60 transition active:scale-95">
                 <span>🌐</span> <span>Download Google Chrome</span>
@@ -1101,7 +1112,7 @@
       } else if (mode === 'webgpu') {
         activeEngineBadge.textContent = 'Qwen In-Browser 💻';
         activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-medium shrink-0';
-        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> Download in Browser';
+        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> All Browsers &amp; Mobile';
         if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-cyan-400';
         if (offlineBanner) offlineBanner.classList.add('hidden');
       }
@@ -1122,18 +1133,15 @@
         apiKeySection.classList.add('hidden');
         if (webGpuSection) {
           webGpuSection.classList.remove('hidden');
-          if (webLlmEngine) {
+          if (webLlmEngine || transformersEngine) {
             webGpuSupportBadge.textContent = 'Active (Ready)';
             webGpuSupportBadge.className = 'text-[10px] text-emerald-400 font-semibold';
           } else if (hasHostDiskCachedModel) {
-            webGpuSupportBadge.textContent = 'Disk Connected (276 MB)';
+            webGpuSupportBadge.textContent = 'Disk Connected (276 MB • Universal)';
             webGpuSupportBadge.className = 'text-[10px] text-emerald-400 font-semibold';
-          } else if (navigator.gpu && webGpuSupportBadge) {
-            webGpuSupportBadge.textContent = 'WebGPU Ready';
+          } else {
+            webGpuSupportBadge.textContent = 'All Browsers & Mobile';
             webGpuSupportBadge.className = 'text-[10px] text-cyan-400 font-semibold';
-          } else if (webGpuSupportBadge) {
-            webGpuSupportBadge.textContent = 'WebGPU Unlock Needed';
-            webGpuSupportBadge.className = 'text-[10px] text-amber-400 font-semibold';
           }
         }
       } else if (mode === 'gemini') {
@@ -6196,7 +6204,7 @@
 
 
     // =========================================================================
-    // 🎮 Cyber Runner: Zero Gravity (Ultra-High Frame Rate Arcade Engine)
+    // 🎮 Runner (Ultra-High Frame Rate Arcade Engine)
     // =========================================================================
     const gameModal = document.getElementById('gameModal');
     const gameCanvas = document.getElementById('gameCanvas');
@@ -7392,6 +7400,16 @@
       if (modal) modal.classList.add('hidden');
     };
 
+    window.switchToWasmCPU = function() {
+      closeNoGpuModal();
+      if (engineSelector) {
+        engineSelector.value = 'webgpu';
+        engineSelector.dispatchEvent(new Event('change'));
+      }
+      initWebGpuModel();
+      showToast('Switched to Universal WASM CPU Mode (All Browsers & Mobile Supported)', 'success');
+    };
+
     window.switchToLiveAI = function() {
       closeNoGpuModal();
       if (engineSelector) {
@@ -7600,18 +7618,18 @@
           hasHostDiskCachedModel = true;
           const opt = document.querySelector('#engineSelector option[value="webgpu"]');
           if (opt) {
-            opt.textContent = '💻 Local Qwen 2.5 0.5B (Host Disk Connected • 276 MB)';
+            opt.textContent = '💻 Local Qwen 2.5 0.5B (Host Disk Connected • All Browsers)';
           }
           const modelOpt = document.querySelector('#webGpuModelSelect option[value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC"]');
           if (modelOpt) {
             modelOpt.textContent = 'Qwen 2.5 0.5B (Host Disk Cached & Ready • 276 MB)';
           }
-          if (webGpuSupportBadge && (!webLlmEngine || !isWebLlmLoading)) {
-            webGpuSupportBadge.textContent = 'Disk Connected (276 MB)';
+          if (webGpuSupportBadge && (!webLlmEngine && !transformersEngine && !isWebLlmLoading)) {
+            webGpuSupportBadge.textContent = 'Disk Connected (276 MB • All Browsers & Mobile)';
             webGpuSupportBadge.className = 'text-[10px] text-emerald-400 font-semibold';
           }
-          if (webGpuLoadBtnText && (!webLlmEngine || !isWebLlmLoading)) {
-            webGpuLoadBtnText.textContent = '⚡ Load Qwen 2.5 0.5B (Host Disk)';
+          if (webGpuLoadBtnText && (!webLlmEngine && !transformersEngine && !isWebLlmLoading)) {
+            webGpuLoadBtnText.textContent = '⚡ Load Qwen 2.5 0.5B (Host Disk / Universal)';
           }
         }
       } catch (err) {
@@ -9066,8 +9084,8 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       }
 
       // Offline Arcade Game
-      if (/(play (a )?game|offline game|cyber runner|arcade|play runner|mini game|something to play|play something|boredom buster)\b/i.test(p)) {
-        return "### 🎮 NasInfinity Offline Arcade: Cyber Runner Zero Gravity\n\nWhenever you are disconnected from the internet (or just need a fun brain break!), you can play our built-in offline arcade game: **Cyber Runner: Zero Gravity**!\n\n#### 🕹️ How to Play:\n* **<kbd>Spacebar</kbd> / <kbd>&uarr; Arrow</kbd> / Tap Screen:** Jump\n* **Double Tap <kbd>&uarr;</kbd> in Mid-Air:** Double-Jump over high obstacles!\n* **<kbd>&darr; Arrow</kbd> / Slide Down:** Duck under airborne glitch drones\n* **Collect 💎 Energy Orbs:** +50 Bonus Points\n* **Grab 🛡️ Shield Modules:** Absorb 1 crash impact\n\n> 🚀 **Launch Game Now:**\n> Click the **🎮 Arcade** button in the top navigation bar, or open it anytime!";
+      if (/(play (a )?game|offline game|runner|arcade|mini game|something to play|play something|boredom buster)\b/i.test(p)) {
+        return "### 🎮 NasInfinity Offline Arcade: Runner\n\nWhenever you are disconnected from the internet (or just need a fun brain break!), you can play our built-in offline arcade game: **Runner**!\n\n#### 🕹️ How to Play:\n* **<kbd>Spacebar</kbd> / <kbd>&uarr; Arrow</kbd> / Tap Screen:** Jump\n* **Double Tap <kbd>&uarr;</kbd> in Mid-Air:** Double-Jump over high obstacles!\n* **<kbd>&darr; Arrow</kbd> / Slide Down:** Duck under airborne glitch drones\n* **Collect 💎 Energy Orbs:** +50 Bonus Points\n* **Grab 🛡️ Shield Modules:** Absorb 1 crash impact\n\n> 🚀 **Launch Game Now:**\n> Click the **🎮 Arcade** button in the top navigation bar, or open it anytime!";
       }
 
       // 0. Periodic Table & Chemical Elements Instant Intelligence
@@ -9908,123 +9926,173 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
     }
 
 
-    // --- In-Browser Qwen WebGPU Engine ---
+    // --- In-Browser Universal AI Engine (WebGPU + WASM CPU for All Browsers & Mobile) ---
+    let activeInBrowserEngineType = null; // 'webgpu' | 'wasm'
+    let transformersEngine = null;
+
     async function initWebGpuModel(customModel = null) {
       if (isWebLlmLoading) return;
       const modelToLoad = customModel || (webGpuModelSelect ? webGpuModelSelect.value : 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC');
 
-      let gpuAdapter = null;
-      if (navigator.gpu) {
-        try {
-          gpuAdapter = await navigator.gpu.requestAdapter();
-        } catch (e) {}
-      }
-
-      if (!navigator.gpu || !gpuAdapter) {
-        if (webGpuSupportBadge) {
-          webGpuSupportBadge.textContent = 'No GPU / WebGPU Blocked';
-          webGpuSupportBadge.className = 'text-[10px] text-amber-400 font-semibold';
-        }
-        if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
-        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ WebGPU Unlock Required';
-        openNoGpuModal();
-        return;
-      }
-
       isWebLlmLoading = true;
       if (webGpuProgressContainer) webGpuProgressContainer.classList.remove('hidden');
       if (webGpuLoadBtn) webGpuLoadBtn.disabled = true;
-      if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = 'Loading Weights...';
+      if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = 'Initializing Universal Engine...';
 
-      try {
-        let webllm;
-        if (window.location.protocol.startsWith('http')) {
-          try {
-            webllm = await import(`${window.location.origin}/models/web-llm.esm.js`);
-          } catch (importErr) {
-            console.warn('Could not import local web-llm bundle, falling back to CDN:', importErr);
+      // Check if WebGPU hardware acceleration is available
+      let gpuAdapter = null;
+      if (typeof navigator !== 'undefined' && navigator.gpu) {
+        try {
+          gpuAdapter = await navigator.gpu.requestAdapter();
+        } catch (e) {
+          gpuAdapter = null;
+        }
+      }
+
+      // Tier 1: Try WebGPU Hardware Acceleration via WebLLM
+      if (gpuAdapter) {
+        try {
+          if (webGpuProgressText) webGpuProgressText.textContent = 'Connecting WebGPU hardware engine...';
+          let webllm;
+          if (window.location.protocol.startsWith('http')) {
+            try {
+              webllm = await import(`${window.location.origin}/models/web-llm.esm.js`);
+            } catch (importErr) {
+              webllm = await import("https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.73/+esm");
+            }
+          } else {
             webllm = await import("https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.73/+esm");
           }
-        } else {
-          webllm = await import("https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.73/+esm");
-        }
-        
-        const initProgressCallback = (report) => {
-          if (webGpuProgressText) webGpuProgressText.textContent = report.text;
-          const pct = Math.round((report.progress || 0) * 100);
-          if (webGpuProgressBar) webGpuProgressBar.style.width = pct + '%';
-          if (webGpuPercentText) webGpuPercentText.textContent = pct + '%';
-        };
 
-        let appConfig = webllm.prebuiltAppConfig;
-        if (window.location.protocol.startsWith('http')) {
-          const origin = window.location.origin;
-          const localModelList = (webllm.prebuiltAppConfig?.model_list || []).map(entry => {
-            const wasmFilename = entry.model_lib ? entry.model_lib.split('/').pop() : '';
-            return {
-              ...entry,
-              model: `${origin}/models/${entry.model_id}`,
-              model_lib: entry.model_lib
-                ? `${origin}/models/wasm/${wasmFilename}?src=${encodeURIComponent(entry.model_lib)}`
-                : entry.model_lib
-            };
+          const initProgressCallback = (report) => {
+            if (webGpuProgressText) webGpuProgressText.textContent = report.text;
+            const pct = Math.round((report.progress || 0) * 100);
+            if (webGpuProgressBar) webGpuProgressBar.style.width = pct + '%';
+            if (webGpuPercentText) webGpuPercentText.textContent = pct + '%';
+          };
+
+          let appConfig = webllm.prebuiltAppConfig;
+          if (window.location.protocol.startsWith('http')) {
+            const origin = window.location.origin;
+            const localModelList = (webllm.prebuiltAppConfig?.model_list || []).map(entry => {
+              const wasmFilename = entry.model_lib ? entry.model_lib.split('/').pop() : '';
+              return {
+                ...entry,
+                model: `${origin}/models/${entry.model_id}`,
+                model_lib: entry.model_lib
+                  ? `${origin}/models/wasm/${wasmFilename}?src=${encodeURIComponent(entry.model_lib)}`
+                  : entry.model_lib
+              };
+            });
+            appConfig = { ...webllm.prebuiltAppConfig, model_list: localModelList };
+          }
+
+          webLlmEngine = await webllm.CreateMLCEngine(modelToLoad, {
+            appConfig,
+            initProgressCallback,
+            logLevel: 'WARN'
           });
 
-          appConfig = {
-            ...webllm.prebuiltAppConfig,
-            model_list: localModelList
-          };
-        }
+          activeInBrowserEngineType = 'webgpu';
+          webLlmCurrentModel = modelToLoad;
+          try { localStorage.setItem('nasinfinity_webllm_model', modelToLoad); } catch (e) {}
 
-        webLlmEngine = await webllm.CreateMLCEngine(modelToLoad, {
-          appConfig,
-          initProgressCallback,
-          logLevel: 'WARN'
+          if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '🟢 Model Ready (WebGPU Acceleration)';
+          if (webGpuLoadBtn) {
+            webGpuLoadBtn.className = 'w-full py-1.5 px-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 font-medium text-xs flex items-center justify-center gap-1.5 cursor-default';
+          }
+          if (activeStatusBadge) {
+            activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> Local WebGPU';
+          }
+          if (webGpuSupportBadge) {
+            webGpuSupportBadge.textContent = 'Ready (WebGPU Hardware Accelerated)';
+            webGpuSupportBadge.className = 'text-[10px] text-emerald-400 font-semibold';
+          }
+          showToast('Qwen model loaded with WebGPU hardware acceleration!', 'success');
+          isWebLlmLoading = false;
+          return;
+        } catch (webGpuErr) {
+          console.warn('WebGPU acceleration unavailable or shader incompatible. Switching to Universal WASM CPU engine:', webGpuErr);
+          if (webGpuProgressText) webGpuProgressText.textContent = 'WebGPU unavailable. Switching to Universal WASM CPU Engine (All Browsers & Mobile)...';
+        }
+      }
+
+      // Tier 2: Universal WebAssembly (WASM CPU) Engine — 100% Compatible with ALL Browsers (iOS Safari, Android Chrome, Firefox, older GPUs)
+      try {
+        if (webGpuSupportBadge) {
+          webGpuSupportBadge.textContent = 'Universal WASM (All Browsers & Mobile)';
+          webGpuSupportBadge.className = 'text-[10px] text-cyan-400 font-semibold';
+        }
+        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = 'Downloading Universal WASM Model...';
+        if (webGpuProgressText) webGpuProgressText.textContent = 'Loading Universal WASM runtime (all browsers & mobile)...';
+
+        const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3');
+        env.useBrowserCache = true;
+
+        const onnxModelMap = {
+          'Qwen2.5-0.5B-Instruct-q4f16_1-MLC': 'onnx-community/Qwen2.5-0.5B-Instruct',
+          'Qwen2.5-Coder-0.5B-Instruct-q4f16_1-MLC': 'onnx-community/Qwen2.5-Coder-0.5B-Instruct',
+          'SmolLM2-360M-Instruct-q4f16_1-MLC': 'onnx-community/SmolLM2-360M-Instruct',
+          'Llama-3.2-1B-Instruct-q4f16_1-MLC': 'onnx-community/Llama-3.2-1B-Instruct'
+        };
+        const targetOnnxModel = onnxModelMap[modelToLoad] || 'onnx-community/Qwen2.5-0.5B-Instruct';
+
+        const progress_callback = (report) => {
+          if (report.status === 'progress') {
+            const pct = Math.round(report.progress || 0);
+            if (webGpuProgressBar) webGpuProgressBar.style.width = pct + '%';
+            if (webGpuPercentText) webGpuPercentText.textContent = pct + '%';
+            const fileName = report.file ? report.file.split('/').pop() : 'weights';
+            if (webGpuProgressText) webGpuProgressText.textContent = `Downloading ${fileName} (${pct}%)...`;
+          } else if (report.status === 'initiate' || report.status === 'download') {
+            const fileName = report.file ? report.file.split('/').pop() : 'model files';
+            if (webGpuProgressText) webGpuProgressText.textContent = `Fetching ${fileName}...`;
+          } else if (report.status === 'ready' || report.status === 'done') {
+            if (webGpuProgressText) webGpuProgressText.textContent = 'Compiling neural WASM graph...';
+          }
+        };
+
+        transformersEngine = await pipeline('text-generation', targetOnnxModel, {
+          dtype: 'q4',
+          device: 'wasm',
+          progress_callback
         });
 
+        activeInBrowserEngineType = 'wasm';
         webLlmCurrentModel = modelToLoad;
         try { localStorage.setItem('nasinfinity_webllm_model', modelToLoad); } catch (e) {}
 
-        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '🟢 Model Ready (Disk Cached)';
+        if (webGpuProgressBar) webGpuProgressBar.style.width = '100%';
+        if (webGpuPercentText) webGpuPercentText.textContent = '100%';
+        if (webGpuProgressText) webGpuProgressText.textContent = 'Qwen model ready in browser storage!';
+        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '🟢 Qwen Ready (WASM • All Browsers & Mobile)';
         if (webGpuLoadBtn) {
           webGpuLoadBtn.className = 'w-full py-1.5 px-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 font-medium text-xs flex items-center justify-center gap-1.5 cursor-default';
         }
         if (activeStatusBadge) {
-          activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> Local WebGPU';
+          activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> Universal WASM';
         }
         if (webGpuSupportBadge) {
-          webGpuSupportBadge.textContent = 'Ready (Host Disk Cached)';
+          webGpuSupportBadge.textContent = 'Ready (Universal WASM • Mobile Ready)';
           webGpuSupportBadge.className = 'text-[10px] text-emerald-400 font-semibold';
         }
-      } catch (err) {
-        console.error('WebLLM load error:', err);
-        const msg = String(err && err.message || '');
-        const isShaderErr = /ShaderModule|batch_prefill|compute stage|shader-f16/i.test(msg);
-        if (isShaderErr) {
-          if (webGpuSupportBadge) {
-            webGpuSupportBadge.textContent = 'Hardware Incompatible (No DX12)';
-            webGpuSupportBadge.className = 'text-[10px] text-rose-400 font-semibold';
-          }
-          if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '❌ GPU Incompatible (No DX12)';
-          if (webGpuLoadBtn) webGpuLoadBtn.disabled = true;
-          showToast('Hardware notice: Intel HD Graphics cannot compile WebGPU shaders. Switch to Live AI (Zero GPU).', 'warning');
-        } else {
-          if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ Retry Model Load';
-          if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
-          showToast('Local WebGPU notice: ' + (err.message || 'Hardware acceleration blocked'), 'warning');
-        }
-        openNoGpuModal(msg);
+        showToast('Qwen model loaded in Universal WASM mode! Compatible with all desktop and mobile browsers.', 'success');
+      } catch (wasmErr) {
+        console.error('Universal WASM engine error:', wasmErr);
+        if (webGpuLoadBtnText) webGpuLoadBtnText.textContent = '⚡ Retry Model Load';
+        if (webGpuLoadBtn) webGpuLoadBtn.disabled = false;
+        showToast('In-browser model notice: ' + (wasmErr.message || 'Download interrupted. Please check connection.'), 'warning');
       } finally {
         isWebLlmLoading = false;
       }
     }
 
     async function callWebGpuAPI(prompt, history, onChunk) {
-      if (!webLlmEngine) {
+      if (!webLlmEngine && !transformersEngine) {
         await initWebGpuModel();
       }
-      if (!webLlmEngine) {
-        throw new Error('Local WebGPU model failed to initialize. Please check WebGPU support or try again.');
+      if (!webLlmEngine && !transformersEngine) {
+        throw new Error('Local in-browser model failed to initialize. Please check connection or try again.');
       }
 
       const messages = [
@@ -10032,20 +10100,59 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
         ...buildConversationMessages(prompt, history)
       ];
 
-      const chunks = await webLlmEngine.chat.completions.create({
-        messages,
-        stream: true,
-        temperature: 0.7,
-        max_tokens: 1024
-      });
+      // WebGPU Execution (Hardware Accelerated)
+      if (activeInBrowserEngineType === 'webgpu' && webLlmEngine) {
+        const chunks = await webLlmEngine.chat.completions.create({
+          messages,
+          stream: true,
+          temperature: 0.7,
+          max_tokens: 1024
+        });
 
-      let fullText = '';
-      for await (const chunk of chunks) {
-        const delta = chunk.choices[0]?.delta?.content || '';
-        fullText += delta;
-        if (onChunk) onChunk(fullText);
+        let fullText = '';
+        for await (const chunk of chunks) {
+          const delta = chunk.choices[0]?.delta?.content || '';
+          fullText += delta;
+          if (onChunk) onChunk(fullText);
+        }
+        return fullText;
       }
-      return fullText;
+
+      // Universal WebAssembly (WASM CPU) Execution (All Browsers, Mobile, iOS, Android)
+      if (transformersEngine) {
+        const { TextStreamer } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3');
+        let fullText = '';
+        const streamer = new TextStreamer(transformersEngine.tokenizer, {
+          skip_prompt: true,
+          skip_special_tokens: true,
+          callback_function: (chunk) => {
+            fullText += chunk;
+            if (onChunk) onChunk(fullText);
+          }
+        });
+
+        let promptText = '';
+        if (typeof transformersEngine.tokenizer.apply_chat_template === 'function') {
+          try {
+            promptText = transformersEngine.tokenizer.apply_chat_template(messages, {
+              tokenize: false,
+              add_generation_prompt: true
+            });
+          } catch (e) {}
+        }
+        if (!promptText) {
+          promptText = messages.map(m => `<|im_start|>${m.role}\n${m.content}<|im_end|>`).join('\n') + '\n<|im_start|>assistant\n';
+        }
+
+        await transformersEngine(promptText, {
+          max_new_tokens: 512,
+          temperature: 0.7,
+          do_sample: true,
+          streamer
+        });
+
+        return fullText;
+      }
     }
 
     // --- Connected APIs (Optional) ---
