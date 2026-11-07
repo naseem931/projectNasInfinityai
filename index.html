@@ -195,8 +195,7 @@
         </label>
         <select id="engineSelector" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 cursor-pointer">
           <option value="online_first" selected>🌐 Live Internet AI (Default • Free)</option>
-          <option value="webgpu">💻 Local In-Browser Model (WebGPU • 0.5B / 1.5B)</option>
-          <option value="ollama">🦙 Local Ollama (localhost:11434)</option>
+          <option value="webgpu">💻 Download in Browser (Local Qwen LLM • 0.5B)</option>
           <option value="gemini">✨ Gemini 2.5 Flash API</option>
           <option value="openai">🔮 OpenAI GPT-4o mini API</option>
         </select>
@@ -215,8 +214,8 @@
       <!-- Local In-Browser WebGPU Model Drawer -->
       <div id="webGpuSection" class="hidden bg-slate-900 border border-cyan-800/40 rounded-xl p-2.5 flex flex-col gap-2 text-xs">
         <label class="text-slate-300 text-[11px] font-medium flex items-center justify-between">
-          <span class="flex items-center gap-1"><span class="text-cyan-400">💻</span> Local In-Browser LLM</span>
-          <span id="webGpuSupportBadge" class="text-[10px] text-cyan-400 font-semibold">WebGPU</span>
+          <span class="flex items-center gap-1"><span class="text-cyan-400">💻</span> Local Qwen LLM (Download in Browser)</span>
+          <span id="webGpuSupportBadge" class="text-[10px] text-cyan-400 font-semibold">In-Browser</span>
         </label>
         
         <select id="webGpuModelSelect" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2 py-1.5 outline-none focus:border-cyan-500 cursor-pointer">
@@ -227,12 +226,12 @@
         </select>
 
         <button id="webGpuLoadBtn" onclick="initWebGpuModel()" class="w-full py-1.5 px-2.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-95 text-cyan-300 border border-cyan-500/30 font-medium text-xs transition flex items-center justify-center gap-1.5">
-          <span>⚡</span> <span id="webGpuLoadBtnText">Initialize / Cache Model</span>
+          <span>⬇️</span> <span id="webGpuLoadBtnText">Download & Initialize in Browser</span>
         </button>
 
         <div id="webGpuProgressContainer" class="hidden flex flex-col gap-1">
           <div class="flex justify-between text-[10px] text-slate-400">
-            <span id="webGpuProgressText">Downloading weights...</span>
+            <span id="webGpuProgressText">Downloading Qwen model in browser...</span>
             <span id="webGpuPercentText">0%</span>
           </div>
           <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
@@ -241,22 +240,8 @@
         </div>
 
         <span class="text-[10px] text-slate-400 leading-tight">
-          Runs 100% locally on your computer via WebGPU. Model caches in browser storage for instant offline use.
+          Downloads and runs 100% locally inside your web browser. Model weights cache in browser storage for instant offline use.
         </span>
-      </div>
-
-      <!-- Local Ollama Drawer -->
-      <div id="ollamaSection" class="hidden bg-slate-900 border border-emerald-800/40 rounded-xl p-2.5 flex flex-col gap-2 text-xs">
-        <label class="text-slate-300 text-[11px] font-medium flex items-center justify-between">
-          <span class="flex items-center gap-1"><span class="text-emerald-400">🦙</span> Local Ollama</span>
-          <a href="https://ollama.com/library" target="_blank" rel="noopener" class="text-emerald-400 hover:underline text-[10px]">Model tags &rarr;</a>
-        </label>
-        <input type="text" id="ollamaModelInput" value="qwen2.5:0.5b" placeholder="e.g. qwen2.5:0.5b, llama3.2:1b" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 outline-none focus:border-emerald-500 font-mono">
-        <div class="flex items-center justify-between text-[10px]">
-          <span class="text-slate-400">Host:</span>
-          <span class="text-slate-300 font-mono">http://localhost:11434</span>
-        </div>
-        <span class="text-[10px] text-slate-400 leading-tight">Connects to your local Ollama desktop app with zero telemetry.</span>
       </div>
 
       <!-- Chat History List -->
@@ -926,10 +911,18 @@
             </button>
           </div>
 
-          <!-- Option 3: Local Ollama -->
-          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl">
-            <span class="font-bold text-purple-300 block text-xs">🦙 Option 3: Local Ollama CPU Engine (100% Offline)</span>
-            <p class="text-[11px] text-slate-400 mt-0.5">Ollama runs Qwen 2.5 on pure CPU using AVX2 instructions with 0 GPU required. Simply install Ollama and run <code class="bg-slate-900 px-1 py-0.5 rounded text-purple-300 font-mono text-[10px]">ollama run qwen2.5:0.5b</code>.</p>
+          <!-- Option 3: Download Supported Browsers -->
+          <div class="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2.5">
+            <span class="font-bold text-cyan-300 block text-xs">🌐 Option 3: Download Supported Web Browsers</span>
+            <p class="text-[11px] text-slate-400">To run in-browser AI models at full speed with hardware acceleration, download the latest version of a modern browser:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <a href="https://www.google.com/chrome/" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700/60 transition active:scale-95">
+                <span>🌐</span> <span>Download Google Chrome</span>
+              </a>
+              <a href="https://www.microsoft.com/edge" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700/60 transition active:scale-95">
+                <span>🌊</span> <span>Download Microsoft Edge</span>
+              </a>
+            </div>
           </div>
 
         </div>
@@ -1010,8 +1003,6 @@
     const webGpuProgressText = document.getElementById('webGpuProgressText');
     const webGpuPercentText = document.getElementById('webGpuPercentText');
     const webGpuSupportBadge = document.getElementById('webGpuSupportBadge');
-    const ollamaSection = document.getElementById('ollamaSection');
-    const ollamaModelInput = document.getElementById('ollamaModelInput');
 
     let webLlmEngine = null;
     let isWebLlmLoading = false;
@@ -1108,16 +1099,10 @@
           activeEngineBadge.style.cursor = 'pointer';
         }
       } else if (mode === 'webgpu') {
-        activeEngineBadge.textContent = 'Local WebGPU 💻';
+        activeEngineBadge.textContent = 'Qwen In-Browser 💻';
         activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-medium shrink-0';
-        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> 100% Offline';
+        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span> Download in Browser';
         if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-cyan-400';
-        if (offlineBanner) offlineBanner.classList.add('hidden');
-      } else if (mode === 'ollama') {
-        activeEngineBadge.textContent = 'Local Ollama 🦙';
-        activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium shrink-0';
-        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Localhost';
-        if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-emerald-400';
         if (offlineBanner) offlineBanner.classList.add('hidden');
       }
     }
@@ -1132,11 +1117,9 @@
         updateNetworkStatus();
         apiKeySection.classList.add('hidden');
         if (webGpuSection) webGpuSection.classList.add('hidden');
-        if (ollamaSection) ollamaSection.classList.add('hidden');
       } else if (mode === 'webgpu') {
         updateNetworkStatus();
         apiKeySection.classList.add('hidden');
-        if (ollamaSection) ollamaSection.classList.add('hidden');
         if (webGpuSection) {
           webGpuSection.classList.remove('hidden');
           if (webLlmEngine) {
@@ -1153,14 +1136,8 @@
             webGpuSupportBadge.className = 'text-[10px] text-amber-400 font-semibold';
           }
         }
-      } else if (mode === 'ollama') {
-        updateNetworkStatus();
-        apiKeySection.classList.add('hidden');
-        if (webGpuSection) webGpuSection.classList.add('hidden');
-        if (ollamaSection) ollamaSection.classList.remove('hidden');
       } else if (mode === 'gemini') {
         if (webGpuSection) webGpuSection.classList.add('hidden');
-        if (ollamaSection) ollamaSection.classList.add('hidden');
         activeEngineBadge.textContent = 'Gemini API';
         activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium shrink-0';
         activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span> Online API';
@@ -1171,7 +1148,6 @@
         apiKeySection.classList.remove('hidden');
       } else if (mode === 'openai') {
         if (webGpuSection) webGpuSection.classList.add('hidden');
-        if (ollamaSection) ollamaSection.classList.add('hidden');
         activeEngineBadge.textContent = 'OpenAI API';
         activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 font-medium shrink-0';
         activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-purple-400"></span> Online API';
@@ -7392,7 +7368,7 @@
                   </button>
                 </div>
                 <p class="text-[10px] text-slate-400">
-                  Prefer 100% offline? Use <strong>Option 3 (Ollama)</strong> below to run models directly on your CPU cores without WebGPU shaders.
+                  You can chat immediately with <strong>Live Internet AI</strong> above, or download a supported modern browser below.
                 </p>
                 <details class="text-[10px] text-rose-400/80 pt-0.5">
                   <summary class="cursor-pointer hover:underline">Show technical shader error</summary>
@@ -9549,19 +9525,12 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
               }
             }
           } else if (mode === 'webgpu') {
-            responseBubble.innerHTML = '<span class="text-cyan-400 flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span> Running In-Browser WebGPU Model...</span>';
+            responseBubble.innerHTML = '<span class="text-cyan-400 flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span> Running In-Browser Qwen LLM...</span>';
             const onStream = (chunk) => {
               responseBubble.innerHTML = formatMarkdown(chunk);
               messageContainer.scrollTop = messageContainer.scrollHeight;
             };
             fullResponse = await callWebGpuAPI(text, chat.messages, onStream);
-          } else if (mode === 'ollama') {
-            responseBubble.innerHTML = '<span class="text-emerald-400 flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span> Querying Local Ollama...</span>';
-            const onStream = (chunk) => {
-              responseBubble.innerHTML = formatMarkdown(chunk);
-              messageContainer.scrollTop = messageContainer.scrollHeight;
-            };
-            fullResponse = await callOllamaAPI(text, chat.messages, onStream);
           } else if (mode === 'gemini') {
             fullResponse = await callGeminiAPI(text, chat.messages);
           } else if (mode === 'openai') {
@@ -9569,7 +9538,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
           }
         }
 
-        if (mode !== 'webgpu' && mode !== 'ollama') {
+        if (mode !== 'webgpu') {
           responseBubble.innerHTML = '';
           let charsShown = 0;
           const total = fullResponse.length;
@@ -9939,7 +9908,7 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
     }
 
 
-    // --- In-Browser WebGPU & Local Ollama Engines ---
+    // --- In-Browser Qwen WebGPU Engine ---
     async function initWebGpuModel(customModel = null) {
       if (isWebLlmLoading) return;
       const modelToLoad = customModel || (webGpuModelSelect ? webGpuModelSelect.value : 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC');
@@ -10075,60 +10044,6 @@ The user's current local date is ${dateStr}, local time is ${timeStr}, and timez
         const delta = chunk.choices[0]?.delta?.content || '';
         fullText += delta;
         if (onChunk) onChunk(fullText);
-      }
-      return fullText;
-    }
-
-    async function callOllamaAPI(prompt, history, onChunk) {
-      const model = (ollamaModelInput && ollamaModelInput.value.trim()) || 'qwen2.5:0.5b';
-      const messages = [
-        { role: 'system', content: buildAssistantSystemPrompt() },
-        ...buildConversationMessages(prompt, history)
-      ];
-
-      let res;
-      try {
-        res = await fetch('http://localhost:11434/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model,
-            messages,
-            stream: true
-          })
-        });
-      } catch (netErr) {
-        throw new Error('Unable to connect to local Ollama on http://localhost:11434. Make sure Ollama is running.');
-      }
-
-      if (!res.ok) {
-        if (res.status === 404) {
-          throw new Error(`Model "${model}" was not found in your local Ollama. To download it, run: ollama run ${model}`);
-        }
-        throw new Error(`Ollama API error (${res.status}): ${res.statusText}`);
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = '';
-      let done = false;
-
-      while (!done) {
-        const { value, done: readerDone } = await reader.read();
-        done = readerDone;
-        if (value) {
-          const chunkStr = decoder.decode(value, { stream: true });
-          const lines = chunkStr.split('\n').filter(Boolean);
-          for (const line of lines) {
-            try {
-              const json = JSON.parse(line);
-              if (json.message?.content) {
-                fullText += json.message.content;
-                if (onChunk) onChunk(fullText);
-              }
-            } catch (e) {}
-          }
-        }
       }
       return fullText;
     }
