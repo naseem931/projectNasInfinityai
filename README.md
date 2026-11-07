@@ -54,14 +54,16 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **OpenAI API:** Direct browser integration with GPT-4o mini using your personal API key.
    * **Curated Encyclopedic Knowledge:** Instant Wikipedia search summaries with full CC BY-SA 4.0 live source links.
 
-8. **💻 Local Open-Source LLMs (Download in Browser • 0.5B / 1.5B):**
-   * **In-Browser WebGPU Execution:** Run lightweight quantized models directly inside your browser without installing Python, PyTorch, or external compilers.
+8. **💻 Local Open-Source LLMs (Universal In-Browser • All Browsers & Mobile):**
+   * **Universal Dual-Tier Engine (WebGPU + WASM CPU):** Run lightweight quantized models directly inside your browser with zero installation on **all desktop and mobile browsers** (Google Chrome, Microsoft Edge, Apple Safari, Mozilla Firefox, iPhone/iPad iOS, Android).
+   * **Hardware WebGPU Acceleration:** Blazing fast token generation on devices with dedicated or modern integrated GPUs.
+   * **Universal WebAssembly (WASM CPU) Fallback:** 100% compatibility guarantee on mobile phones, tablets, and older computers without dedicated GPUs.
    * **Supported In-Browser Models:**
      * **Qwen 2.5 0.5B Instruct** (~390 MB • Ultra Fast, Apache 2.0)
      * **Meta Llama 3.2 1B Instruct** (~880 MB • Highly Capable)
-     * **SmolLM2 360M Instruct** (~230 MB • Featherweight)
+     * **SmolLM2 360M Instruct** (~230 MB • Mobile Ultra-Light)
      * **Qwen 2.5 Coder 0.5B Instruct** (~390 MB • Code Specialist)
-   * **Browser Caching & 100% Offline Generation:** Model weights download directly in your browser, cache in private storage, and run completely offline using your computer's GPU / WebGPU.
+   * **Browser Caching & 100% Offline Generation:** Model weights download directly in your browser, cache in private browser storage, and run completely offline.
 
 ---
 

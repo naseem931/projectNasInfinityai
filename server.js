@@ -418,7 +418,16 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const upstreamUrl = `https://huggingface.co/mlc-ai/${modelId}/resolve/main/${relFilePath}`;
+    let upstreamUrl = parsedUrl.searchParams.get('src');
+    if (!upstreamUrl) {
+      if (modelId === 'onnx-community' && fileParts.length > 1) {
+        const repo = fileParts[0];
+        const remaining = fileParts.slice(1).join('/');
+        upstreamUrl = `https://huggingface.co/onnx-community/${repo}/resolve/main/${remaining}`;
+      } else {
+        upstreamUrl = `https://huggingface.co/mlc-ai/${modelId}/resolve/main/${relFilePath}`;
+      }
+    }
     handleModelProxy(req, res, upstreamUrl, localDest);
     return;
   }
