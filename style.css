@@ -1,0 +1,148 @@
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      -webkit-text-size-adjust: 100%;
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.4); }
+    .code-font { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    pre {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid #1e293b;
+      -webkit-overflow-scrolling: touch;
+    }
+    code { font-family: ui-monospace, monospace; font-size: 12px; }
+
+    /* Touch momentum & scroll optimizations */
+    #messageContainer, #chatHistoryList, .overflow-y-auto, .overflow-x-auto, #nlpTokenContainer {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* iOS input auto-zoom prevention: ensure inputs have font-size >= 16px on mobile screens */
+    @media (max-width: 640px) {
+      #userInput, #nlpInputText, #apiKeyInput, #engineSelector {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Safe-area handling for mobile devices with notches / home indicators */
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+    }
+    .safe-top {
+      padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+    }
+
+    /* Responsive Sidebar Transitions & Breakpoints:
+       - Mobile & Tablet (<1024px): Off-canvas slide-out drawer
+       - Desktop (>=1024px): Pinned sidebar with collapsible toggle
+    */
+    #sidebar {
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @media (max-width: 1023px) {
+      #sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 280px;
+        max-width: 85vw;
+        z-index: 50;
+        transform: translateX(-100%);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      }
+      #sidebar.sidebar-open {
+        transform: translateX(0) !important;
+      }
+    }
+    @media (min-width: 1024px) {
+      #sidebar {
+        position: static;
+        transform: none !important;
+      }
+      #sidebar.sidebar-collapsed {
+        margin-left: -16rem; /* -256px */
+      }
+    }
+
+    /* Message bubble wrapping & tables */
+    .message-bubble {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    .message-bubble table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    /* Periodic Table Studio Styles */
+    .pt-grid {
+      display: grid;
+      grid-template-columns: repeat(18, minmax(0, 1fr));
+      grid-template-rows: repeat(10, minmax(0, 1fr));
+      gap: 3px;
+    }
+    .grid-cols-18 {
+      display: grid;
+      grid-template-columns: repeat(18, minmax(0, 1fr));
+    }
+    .pt-cell {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3px 2px;
+      border-radius: 6px;
+      border: 1px solid;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(15, 23, 42, 0.75);
+      min-height: 48px;
+    }
+    .pt-cell:hover {
+      transform: translateY(-2px) scale(1.08);
+      z-index: 30;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+    }
+    .pt-cell.pt-selected {
+      box-shadow: 0 0 0 2px #2dd4bf, 0 0 20px rgba(45, 212, 191, 0.6);
+      border-color: #2dd4bf !important;
+      z-index: 25;
+      transform: scale(1.05);
+    }
+    .pt-cell.pt-dimmed {
+      opacity: 0.16;
+      filter: grayscale(85%);
+    }
+    .pt-cell.pt-highlight {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 0 12px rgba(45, 212, 191, 0.35);
+    }
+    /* Category Color Themes */
+    .cat-alkali { border-color: rgba(244, 63, 94, 0.45); background: rgba(136, 19, 55, 0.35); color: #fda4af; }
+    .cat-alkaline { border-color: rgba(245, 158, 11, 0.45); background: rgba(120, 53, 15, 0.35); color: #fcd34d; }
+    .cat-transition { border-color: rgba(14, 165, 233, 0.45); background: rgba(12, 74, 110, 0.35); color: #7dd3fc; }
+    .cat-post-transition { border-color: rgba(99, 102, 241, 0.45); background: rgba(49, 46, 129, 0.35); color: #a5b4fc; }
+    .cat-metalloid { border-color: rgba(20, 184, 166, 0.45); background: rgba(19, 78, 74, 0.35); color: #5eead4; }
+    .cat-nonmetal { border-color: rgba(16, 185, 129, 0.45); background: rgba(6, 78, 59, 0.35); color: #6ee7b7; }
+    .cat-halogen { border-color: rgba(168, 85, 247, 0.45); background: rgba(88, 28, 135, 0.35); color: #d8b4fe; }
+    .cat-noble { border-color: rgba(236, 72, 153, 0.45); background: rgba(131, 24, 67, 0.35); color: #f472b6; }
+    .cat-lanthanide { border-color: rgba(234, 179, 8, 0.45); background: rgba(113, 63, 18, 0.35); color: #fde047; }
+    .cat-actinide { border-color: rgba(239, 68, 68, 0.45); background: rgba(127, 29, 29, 0.35); color: #fca5a5; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  </style>

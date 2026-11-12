@@ -1,7 +1,8 @@
-# NasInfinity AI
+# NasInfinity AI (v1.0.0)
 
-A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, **Local In-Browser LLMs (Download in Browser / WebGPU 0.5B/1.5B)**, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Cyber Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
+A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
 
+[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-indigo.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Commercial%20Ready-emerald.svg)]()
 [![Privacy: Zero Telemetry](https://img.shields.io/badge/Privacy-100%25%20Local--First-indigo.svg)]()
@@ -24,7 +25,7 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **Conversational Chemical Intelligence (NasInfinity-CI):** Ask any element question directly in chat (e.g., *"Tell me about Gold"*, *"Element 79"*, *"What is Titanium?"*) for structured scientific dossiers with zero delay.
    * **Audio Pronunciation & AI Querying:** Listen to element names and details read aloud or click *"Ask AI"* to delve into deep chemical bonding, thermodynamics, and real-world industrial applications.
 
-3. **🎮 Offline Arcade: Cyber Runner Zero Gravity (100% Offline Game):**
+3. **🎮 Offline Arcade: Runner Zero Gravity (100% Offline Game):**
    * **Automatic Disconnect Detection:** When your network drops (`navigator.onLine === false`), an animated offline banner automatically slides into view with a one-click launcher to play.
    * **60 FPS Canvas Physics Engine:** High-performance procedural endless runner featuring a Cyber Bot avatar with mechanical leg physics, jet booster sparks, single/double jump, and crouch/ducking mechanics.
    * **Dynamic Obstacles & Powerups:** Avoid ground laser spikes and firewall pillars, duck under mid-air glitch drones, collect floating energy crystals (+50 pts), and grab holographic shields that absorb lethal impacts.
@@ -34,7 +35,7 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **On-Demand Access:** Launch anytime from the top navigation bar (`🎮 Arcade`), welcome suggestions, or conversational prompts (*"play game"*, *"offline game"*, *"bored"*).
 
 4. **🎙️ Voice Recognition & Text-to-Speech (Audio NLP):**
-   * **Speech-to-Text (STT):** Click the microphone button (`🎙️`) to speak prompts naturally into the chat input.
+   * **Speech-to-Text (STT - Fully Automatic Auto-Send):** Click the microphone button (`🎙️`) to dictate prompts hands-free. Transcribes speech in real-time and automatically sends your prompt when you finish speaking (or upon clicking the mic button) — completely eliminating the need to press Enter or click the send button.
    * **Text-to-Speech (TTS):** Click the speaker button (`🔊`) below any message to have the assistant read the text aloud.
 
 5. **💬 Conversational Understanding & Natural Context (NasInfinity-CI):**
@@ -53,17 +54,6 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
    * **Google Gemini API:** Direct browser integration with Gemini 2.5 Flash using your personal API key.
    * **OpenAI API:** Direct browser integration with GPT-4o mini using your personal API key.
    * **Curated Encyclopedic Knowledge:** Instant Wikipedia search summaries with full CC BY-SA 4.0 live source links.
-
-8. **💻 Local Open-Source LLMs (Universal In-Browser • All Browsers & Mobile):**
-   * **Universal Dual-Tier Engine (WebGPU + WASM CPU):** Run lightweight quantized models directly inside your browser with zero installation on **all desktop and mobile browsers** (Google Chrome, Microsoft Edge, Apple Safari, Mozilla Firefox, iPhone/iPad iOS, Android).
-   * **Hardware WebGPU Acceleration:** Blazing fast token generation on devices with dedicated or modern integrated GPUs.
-   * **Universal WebAssembly (WASM CPU) Fallback:** 100% compatibility guarantee on mobile phones, tablets, and older computers without dedicated GPUs.
-   * **Supported In-Browser Models:**
-     * **Qwen 2.5 0.5B Instruct** (~390 MB • Ultra Fast, Apache 2.0)
-     * **Meta Llama 3.2 1B Instruct** (~880 MB • Highly Capable)
-     * **SmolLM2 360M Instruct** (~230 MB • Mobile Ultra-Light)
-     * **Qwen 2.5 Coder 0.5B Instruct** (~390 MB • Code Specialist)
-   * **Browser Caching & 100% Offline Generation:** Model weights download directly in your browser, cache in private browser storage, and run completely offline.
 
 ---
 
@@ -122,7 +112,15 @@ Because NasInfinity AI is 100% self-contained in [index.html](index.html), you c
 
 ## 📁 Repository Structure
 
-* [index.html](index.html) — Single-file, self-contained web app with chat UI, NLP Studio, code preview sandbox, and conversational engine.
-* [server.js](server.js) — Production-ready, zero-dependency Node.js HTTP server equipped with security headers (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, etc.).
+* [index.html](index.html) — Clean core application containing the basic chat UI, fully automatic hands-free voice STT, and responsive controls.
+* [style.css](style.css) — Custom styles, periodic table theme classes, responsive drawer animations, and mobile scroll optimizations.
+* `js/` — Modular feature engines & studios:
+  * [js/periodic-table.js](js/periodic-table.js) — Interactive Periodic Table of Elements Studio (118 elements dataset, IUPAC grid, and chemical dossiers).
+  * [js/game.js](js/game.js) — Offline Arcade Runner Game physics engine (Canvas 60 FPS and Web Audio API synthesis).
+  * [js/nlp.js](js/nlp.js) — NLP Studio Tokenizer, sentiment analysis, TTS read-aloud, and live sandbox preview modal.
+  * [js/code-generators.js](js/code-generators.js) — Interactive code sandbox generators and offline fallback engines.
+  * [js/conversational-ai.js](js/conversational-ai.js) — Dialogue context memory, math solver, profile management, and live Wikipedia search.
+  * [js/app.js](js/app.js) — Core chat application logic and controller.
+* [server.js](server.js) — Production-ready, zero-dependency Node.js HTTP server.
 * [LICENSE](LICENSE) — Official MIT License.
 * [README.md](README.md) — Documentation, legal disclaimers, and deployment instructions.
