@@ -1957,6 +1957,475 @@ if __name__ == '__main__':
 `;
     }
 
+    // 4B. Interactive Precision Dual Clock Generator (Language-Aware: C++, Python, Web)
+    function generateClockCodeResponse(prompt) {
+      const lang = detectProgrammingLanguage(prompt);
+
+      // --- C++ Real-Time Console Clock ---
+      if (lang === 'cpp') {
+        return `### 🕒 Real-Time Digital Clock in Modern C++
+
+Here is a complete, real-time C++ digital clock with live seconds update, clean terminal formatting, and 24-hour time handling using modern standard C++ (\`<chrono>\` and \`<iomanip>\`).
+
+---
+
+#### 💻 Complete C++ Source Code:
+
+\`\`\`cpp
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <ctime>
+#include <iomanip>
+
+using namespace std;
+
+int main() {
+    cout << "================================================\\n";
+    cout << "          🕒 REAL-TIME C++ DIGITAL CLOCK        \\n";
+    cout << "================================================\\n";
+    cout << "Updating live every second. Press Ctrl+C to exit.\\n\\n";
+
+    while (true) {
+        auto now = chrono::system_clock::now();
+        time_t now_c = chrono::system_clock::to_time_t(now);
+        tm local_time;
+
+#if defined(_WIN32) || defined(_WIN64)
+        localtime_s(&local_time, &now_c);
+#else
+        localtime_r(&now_c, &local_time);
+#endif
+
+        // \\r carriage return rewrites the same line without scrolling
+        cout << "\\r⏰ Current Time: " 
+             << put_time(&local_time, "%Y-%m-%d  %I:%M:%S %p") 
+             << " (Local) " << flush;
+
+        this_thread::sleep_for(chrono::seconds(1));
+    }
+
+    return 0;
+}
+\`\`\`
+
+---
+
+#### 🚀 How to Compile and Run:
+\`\`\`bash
+g++ -std=c++17 -O2 clock.cpp -o clock
+./clock
+\`\`\`
+`;
+      }
+
+      // --- Python Tkinter Desktop Digital Clock ---
+      if (lang === 'python') {
+        return `### 🕒 Desktop Digital Clock GUI in Python (Tkinter)
+
+Here is a clean, beautiful desktop Digital Clock application in Python using **Tkinter** (built into the Python standard library—no pip install needed!).
+
+---
+
+#### 💻 Complete Python Source Code:
+
+\`\`\`python
+import tkinter as tk
+from time import strftime
+
+def create_clock():
+    root = tk.Tk()
+    root.title("🕒 Modern Digital Clock")
+    root.geometry("460x220")
+    root.resizable(False, False)
+    root.configure(bg="#0f172a")
+
+    # Time Display (HH:MM:SS AM/PM)
+    time_label = tk.Label(
+        root,
+        font=("Segoe UI", 44, "bold"),
+        background="#0f172a",
+        foreground="#38bdf8"
+    )
+    time_label.pack(pady=(35, 5))
+
+    # Date Display (Day, Month Date, Year)
+    date_label = tk.Label(
+        root,
+        font=("Segoe UI", 14),
+        background="#0f172a",
+        foreground="#94a3b8"
+    )
+    date_label.pack()
+
+    # Time update loop
+    def update_time():
+        time_string = strftime("%I:%M:%S %p")
+        date_string = strftime("%A, %B %d, %Y")
+        time_label.config(text=time_string)
+        date_label.config(text=date_string)
+        time_label.after(1000, update_time)
+
+    update_time()
+    root.mainloop()
+
+if __name__ == '__main__':
+    create_clock()
+\`\`\`
+
+---
+
+#### 🚀 How to Run:
+\`\`\`bash
+python clock.py
+\`\`\`
+`;
+      }
+
+      // --- Default: Interactive Web Dual Analog & Digital Clock (Runs Live in Sandbox) ---
+      return `### 🕒 Precision Dual Clock (Analog & Digital)
+
+Here is a complete, fully functioning, and responsive **Dual Clock Application** built with **HTML5, CSS3, and JavaScript**. It features an accurate ticking **Analog Clock dial**, a high-precision **Digital Clock readout**, a **12H/24H format toggle**, and a **Dark/Light theme switch**.
+
+> 💡 **Live Preview:** You can click the **▶ Run / Preview Live** button on the code card below to test and run this clock interactively right now inside NasInfinity!
+
+\`\`\`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precision Dual Clock</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.light-theme {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .clock-container {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 24px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    body.light-theme .clock-container {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+    }
+    .clock-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    body.light-theme .clock-title { color: #0284c7; }
+    
+    /* Analog Clock Dial */
+    .analog-clock {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1e293b 60%, #0f172a 100%);
+      border: 6px solid #38bdf8;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 25px rgba(56, 189, 248, 0.25);
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+    body.light-theme .analog-clock {
+      background: radial-gradient(circle, #ffffff 60%, #f1f5f9 100%);
+      border-color: #0284c7;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05), 0 0 20px rgba(2, 132, 199, 0.15);
+    }
+    .clock-num {
+      position: absolute;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    body.light-theme .clock-num { color: #64748b; }
+    .num-12 { top: 8px; left: 50%; transform: translateX(-50%); }
+    .num-3  { right: 10px; top: 50%; transform: translateY(-50%); }
+    .num-6  { bottom: 8px; left: 50%; transform: translateX(-50%); }
+    .num-9  { left: 10px; top: 50%; transform: translateY(-50%); }
+    
+    .center-pin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ef4444;
+      border: 2px solid #ffffff;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+    }
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      border-radius: 8px;
+    }
+    .hour-hand {
+      width: 6px;
+      height: 52px;
+      background: #f8fafc;
+      margin-left: -3px;
+      z-index: 5;
+    }
+    body.light-theme .hour-hand { background: #0f172a; }
+    .minute-hand {
+      width: 4px;
+      height: 75px;
+      background: #38bdf8;
+      margin-left: -2px;
+      z-index: 6;
+    }
+    body.light-theme .minute-hand { background: #0284c7; }
+    .second-hand {
+      width: 2px;
+      height: 88px;
+      background: #ef4444;
+      margin-left: -1px;
+      z-index: 7;
+    }
+
+    /* Digital Clock Display */
+    .digital-display {
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: #38bdf8;
+      letter-spacing: 1px;
+      text-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
+      margin-bottom: 6px;
+    }
+    body.light-theme .digital-display {
+      color: #0284c7;
+      text-shadow: none;
+    }
+    .ampm {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #818cf8;
+      margin-left: 6px;
+    }
+    body.light-theme .ampm { color: #4f46e5; }
+    .date-display {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+    body.light-theme .date-display { color: #64748b; }
+    .tz-display {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: #475569;
+      transform: translateY(-1px);
+    }
+    body.light-theme .btn {
+      background: #e2e8f0;
+      color: #1e293b;
+      border-color: #cbd5e1;
+    }
+    body.light-theme .btn:hover {
+      background: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock-container">
+    <div class="clock-title">🕒 Precision Clock</div>
+    
+    <!-- Analog Dial -->
+    <div class="analog-clock">
+      <div class="clock-num num-12">12</div>
+      <div class="clock-num num-3">3</div>
+      <div class="clock-num num-6">6</div>
+      <div class="clock-num num-9">9</div>
+      
+      <div class="hand hour-hand" id="hourHand"></div>
+      <div class="hand minute-hand" id="minuteHand"></div>
+      <div class="hand second-hand" id="secondHand"></div>
+      <div class="center-pin"></div>
+    </div>
+
+    <!-- Digital Display -->
+    <div class="digital-display" id="digitalTime">
+      00:00:00<span class="ampm" id="digitalAmPm"></span>
+    </div>
+    <div class="date-display" id="digitalDate">Loading Date...</div>
+    <div class="tz-display" id="timeZone">Timezone: UTC</div>
+
+    <!-- Control Buttons -->
+    <div class="controls">
+      <button class="btn" id="formatBtn" onclick="toggleFormat()">Format: 12H</button>
+      <button class="btn" id="secBtn" onclick="toggleSeconds()">Hide Seconds</button>
+      <button class="btn" id="themeBtn" onclick="toggleTheme()">Light Mode</button>
+    </div>
+  </div>
+
+  <script>
+    let is24Hour = false;
+    let showSeconds = true;
+    let isLight = false;
+
+    function updateClock() {
+      const now = new Date();
+      
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const ms = now.getMilliseconds();
+
+      // Analog rotation calculations
+      const secondAngle = (seconds + ms / 1000) * 6;
+      const minuteAngle = (minutes + seconds / 60) * 6;
+      const hourAngle = ((hours % 12) + minutes / 60 + seconds / 3600) * 30;
+
+      const hHand = document.getElementById('hourHand');
+      const mHand = document.getElementById('minuteHand');
+      const sHand = document.getElementById('secondHand');
+
+      if (hHand) hHand.style.transform = 'rotate(' + hourAngle + 'deg)';
+      if (mHand) mHand.style.transform = 'rotate(' + minuteAngle + 'deg)';
+      if (sHand) {
+        sHand.style.display = showSeconds ? 'block' : 'none';
+        sHand.style.transform = 'rotate(' + secondAngle + 'deg)';
+      }
+
+      // Digital display
+      let displayHours = hours;
+      let ampm = '';
+
+      if (!is24Hour) {
+        ampm = displayHours >= 12 ? ' PM' : ' AM';
+        displayHours = displayHours % 12;
+        displayHours = displayHours ? displayHours : 12;
+      }
+
+      const pad = (n) => String(n).padStart(2, '0');
+      const timeStr = pad(displayHours) + ':' + pad(minutes) + (showSeconds ? ':' + pad(seconds) : '');
+      
+      const timeEl = document.getElementById('digitalTime');
+      if (timeEl) {
+        timeEl.innerHTML = timeStr + (!is24Hour ? '<span class="ampm">' + ampm + '</span>' : '');
+      }
+
+      // Date string
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const dateEl = document.getElementById('digitalDate');
+      if (dateEl) dateEl.textContent = now.toLocaleDateString(undefined, options);
+
+      // Timezone string
+      const tzEl = document.getElementById('timeZone');
+      if (tzEl) {
+        const offset = -now.getTimezoneOffset() / 60;
+        const sign = offset >= 0 ? '+' : '';
+        tzEl.textContent = 'Local Time (UTC' + sign + offset + ')';
+      }
+    }
+
+    function toggleFormat() {
+      is24Hour = !is24Hour;
+      document.getElementById('formatBtn').textContent = is24Hour ? 'Format: 24H' : 'Format: 12H';
+      updateClock();
+    }
+
+    function toggleSeconds() {
+      showSeconds = !showSeconds;
+      document.getElementById('secBtn').textContent = showSeconds ? 'Hide Seconds' : 'Show Seconds';
+      updateClock();
+    }
+
+    function toggleTheme() {
+      isLight = !isLight;
+      document.body.classList.toggle('light-theme', isLight);
+      document.getElementById('themeBtn').textContent = isLight ? 'Dark Mode' : 'Light Mode';
+    }
+
+    setInterval(updateClock, 100);
+    updateClock();
+  </script>
+</body>
+</html>
+\`\`\`
+
+---
+
+### 🐍 Python Desktop Alternative (Tkinter)
+\`\`\`python
+# Simple Python Tkinter Digital Clock
+import tkinter as tk
+from time import strftime
+
+root = tk.Tk()
+root.title("🕒 Digital Clock")
+root.geometry("400x160")
+root.configure(bg="#0f172a")
+
+label = tk.Label(root, font=("Segoe UI", 36, "bold"), background="#0f172a", foreground="#38bdf8")
+label.pack(expand=True)
+
+def tick():
+    label.config(text=strftime("%I:%M:%S %p"))
+    label.after(1000, tick)
+
+tick()
+root.mainloop()
+\`\`\`
+`;
+    }
+
     // 5. Small Interactive Games Generator (Arcade, Snake, Tic-Tac-Toe, Cosmic Star Catcher, Pong, Flappy Bird, RPS, Python, C++, Java)
     function generateSmallGameCodeResponse(prompt) {
       const p = (prompt || '').toLowerCase();
@@ -3863,12 +4332,22 @@ Here is a complete, self-contained, and responsive **Cosmic Star Catcher Arcade 
 `;
     }
 
-    // 6. Generic Code Boilerplate Generator (Fallback for other code prompts)
+    // 6. Generic Code Architectural Blueprint & Starter (Fallback for other code prompts)
     function generateGenericCodeFallback(prompt) {
-      const safeTitle = (prompt || 'App Component').replace(/[#*`]/g, '').trim().slice(0, 40) || 'Web Component';
-      return `### ⚡ Offline Code Starter: ` + safeTitle + `
+      const safeTitle = (prompt || 'Web Application').replace(/[#*`]/g, '').trim().slice(0, 40) || 'Web Application';
+      return `### 🛠️ Architecture & Starter Prototype: ` + safeTitle + `
 
-> ⚠️ **Notice:** The public online AI endpoint is currently experiencing high load or network latency. NasInfinity has generated this clean, responsive starter boilerplate for you offline!
+> 💡 **Offline Architectural Blueprint:** You asked to build **"${safeTitle}"**. Rather than giving a trivial placeholder, here is a production-oriented architectural breakdown and a working interactive starter prototype.
+
+#### 📋 System Architecture & Key Components:
+1. **Frontend / UI Layer:** Responsive component layout, state-driven rendering, and accessible form controls.
+2. **State Management:** Reactive local state or centralized store (e.g., Redux / Pinia / React hooks) for managing data flows.
+3. **Data & Storage Layer:** LocalStorage persistence for offline capability, with REST/GraphQL API integration for cloud synchronization.
+4. **Error Handling & Validation:** Input validation, error boundary traps, and graceful offline fallback states.
+
+---
+
+#### 💻 Working Interactive Prototype:
 
 \`\`\`html
 <!DOCTYPE html>
@@ -3878,29 +4357,82 @@ Here is a complete, self-contained, and responsive **Cosmic Star Catcher Arcade 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>` + safeTitle + `</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body {
       background: #0f172a;
       color: #f8fafc;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       padding: 20px;
     }
-    .card {
+    .app-card {
       background: #1e293b;
       border: 1px solid #334155;
       border-radius: 16px;
-      padding: 24px;
-      max-width: 500px;
+      padding: 28px;
+      max-width: 540px;
       width: 100%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
     }
-    h1 { font-size: 1.4rem; color: #38bdf8; margin-bottom: 12px; }
-    p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
-    .btn {
+    .app-header {
+      border-bottom: 1px solid #334155;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .app-header h1 {
+      font-size: 1.4rem;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      background: #0ea5e920;
+      color: #38bdf8;
+      border: 1px solid #0ea5e950;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      margin-top: 6px;
+    }
+    .content-area {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    .log-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      color: #34d399;
+      height: 110px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .control-row {
+      display: flex;
+      gap: 10px;
+    }
+    input[type="text"] {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: white;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: #38bdf8;
+    }
+    button {
       background: #6366f1;
       color: white;
       border: none;
@@ -3910,21 +4442,54 @@ Here is a complete, self-contained, and responsive **Cosmic Star Catcher Arcade 
       cursor: pointer;
       transition: background 0.2s;
     }
-    .btn:hover { background: #4f46e5; }
+    button:hover { background: #4f46e5; }
+    .status-text {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 14px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>` + safeTitle + `</h1>
-    <p>This is a starter template generated by NasInfinity AI. You can test and modify this code using the live preview button below.</p>
-    <button class="btn" onclick="alert('Hello from NasInfinity!')">Click Me</button>
+  <div class="app-card">
+    <div class="app-header">
+      <h1>🚀 ` + safeTitle + `</h1>
+      <span class="badge">Interactive State Prototype</span>
+    </div>
+    <div class="content-area">
+      <div class="log-box" id="outputLog">[System Ready] Initialized prototype state engine for "` + safeTitle + `"...&#10;Type a test message or event payload below and click Dispatch.</div>
+    </div>
+    <div class="control-row">
+      <input type="text" id="userInput" placeholder="Enter input data or test payload..." onkeydown="if(event.key==='Enter') dispatchAction()">
+      <button onclick="dispatchAction()">Dispatch</button>
+    </div>
+    <p class="status-text">Client state dispatched in-memory • Ready for backend endpoint wiring</p>
   </div>
+
+  <script>
+    function dispatchAction() {
+      const input = document.getElementById('userInput');
+      const log = document.getElementById('outputLog');
+      const val = input.value.trim();
+      if (!val) return;
+      
+      const time = new Date().toLocaleTimeString();
+      log.textContent += '\\n[' + time + '] ACTION_DISPATCH: "' + val + '"';
+      log.scrollTop = log.scrollHeight;
+      input.value = '';
+    }
+  </script>
 </body>
 </html>
 \`\`\`
 
-💡 **To get full, custom code generation without public timeouts:**
-Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown and enter your free API key for instant, uninterrupted AI synthesis!`;
+---
+
+#### 🚀 Next Steps to Expand into Full Production:
+1. **Connect Cloud AI:** To generate deep, complex, multi-file codebases for any custom app concept, configure your free **Google Gemini** or **OpenAI** API key in the sidebar under **AI Engine**.
+2. **Backend API:** Pair this frontend prototype with a Node.js Express, Python FastAPI, or Go backend service.
+3. **Database:** Persist models using PostgreSQL, MongoDB, or SQLite.`;
     }
 
     // Matcher for game generation queries (e.g. "write a small game codes", "make a small game", "game in python", etc.)
@@ -3962,11 +4527,18 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       if (!text) return false;
       const t = text.trim().toLowerCase();
       
-      const codeVerbs = /(build|create|make|write|generate|give me|show me|code|program|develop|implement|design|draft)/i;
-      const codeNouns = /(code|codes|script|program|html|css|javascript|js|python|py|react|component|widget|app|function|algorithm|class|regex|api|backend|frontend|markup|template|game|games)/i;
-      const commonWidgets = /(calculator|calendar|calender|date picker|todo|to-do|timer|stopwatch|counter|navbar|modal|form|accordion|carousel|clock|periodic table|periodic grid|elements table|game|arcade|snake|pong|tictactoe|tic tac toe|flappy|mini game)/i;
+      // Informational / conceptual questions ("what is recursion", "explain OOP", "what is an API") are not code requests
+      if (/^(what\s+(is|are)|explain|define|meaning\s+of|tell\s+me\s+about|difference\s+between)\b/i.test(t)) {
+        if (!/\b(code|codes|script|snippet|syntax|boilerplate|code\s+in|program\s+in)\b/i.test(t)) {
+          return false;
+        }
+      }
+
+      const codeVerbs = /\b(build|create|make|write|generate|give\s*me|show\s*me|code|develop|implement|design|draft|can\s+you\s+(build|make|create|write|code))\b/i;
+      const codeNouns = /\b(code|codes|script|program|html|css|javascript|js|python|py|react|component|widget|app|application|function|algorithm|class|regex|api|backend|frontend|markup|template|game|games)\b/i;
+      const commonWidgets = /\b(calculator|calendar|calender|date\s*picker|todo|to-do|timer|stopwatch|counter|navbar|modal|form|accordion|carousel|clock|periodic\s*table|periodic\s*grid|elements\s*table|game|arcade|snake|pong|tictactoe|tic\s*tac\s*toe|flappy|mini\s*game)\b/i;
       
-      if (/(\bcode\b|\bcodes\b|\bscript\b|in (html|css|javascript|js|python|py|c\+\+|java|react))\b/i.test(t)) {
+      if (/(\bcode\b|\bcodes\b|\bscript\b|in\s+(html|css|javascript|js|python|py|c\+\+|java|react))\b/i.test(t)) {
         return true;
       }
       
@@ -3974,7 +4546,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
         return true;
       }
       
-      if (commonWidgets.test(t) && /(code|program|app|html|js|script)/i.test(t)) {
+      if (commonWidgets.test(t) && /\b(code|program|app|html|js|script)\b/i.test(t)) {
         return true;
       }
 
@@ -4006,6 +4578,9 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       if (/(timer|stopwatch|countdown|alarm)/i.test(p)) {
         return generateTimerCodeResponse(prompt);
       }
+      if (/(clock|digital clock|analog clock|world clock)/i.test(p)) {
+        return generateClockCodeResponse(prompt);
+      }
       return generateGenericCodeFallback(prompt);
     }
 
@@ -4020,6 +4595,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
       window.generateCalculatorCodeResponse = generateCalculatorCodeResponse;
       window.generateTodoListCodeResponse = generateTodoListCodeResponse;
       window.generateTimerCodeResponse = generateTimerCodeResponse;
+      window.generateClockCodeResponse = generateClockCodeResponse;
       window.generateGenericCodeFallback = generateGenericCodeFallback;
     }
 
@@ -4034,6 +4610,7 @@ Select **Google Gemini** or **OpenAI** in the sidebar's **AI Engine** dropdown a
         generateCalculatorCodeResponse,
         generateTodoListCodeResponse,
         generateTimerCodeResponse,
+        generateClockCodeResponse,
         generateGenericCodeFallback
       };
     }

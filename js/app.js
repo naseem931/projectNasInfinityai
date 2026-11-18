@@ -713,12 +713,8 @@
             if (!isOnline) {
               const offlineFallback = isCodeGenerationPrompt(text)
                 ? synthesizeCodeFallback(text)
-                : synthesizeConversationalResponse(text, chat.messages);
-              if (offlineFallback) {
-                fullResponse = offlineFallback;
-              } else {
-                throw new Error('You are currently offline. Connect to the internet or ask any coding, conversational, or general science question!');
-              }
+                : synthesizeConversationalResponse(text, chat.messages, false);
+              fullResponse = offlineFallback || synthesizeConversationalResponse(text, chat.messages, false);
             } else {
               responseBubble.innerHTML = '<span class="text-indigo-400 flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span> Querying Live Internet AI...</span>';
               try {
@@ -727,39 +723,51 @@
                 console.warn('Online AI failed, evaluating fallback strategy:', onlineErr);
                 if (isCodeGenerationPrompt(text)) {
                   const codeFallback = synthesizeCodeFallback(text);
-                  if (codeFallback) {
-                    fullResponse = codeFallback;
-                  } else {
-                    fullResponse = synthesizeConversationalResponse(text, chat.messages) || 'The online AI service timed out while processing your code request. Please try again or switch to Gemini/OpenAI in the sidebar.';
-                  }
+                  fullResponse = codeFallback || synthesizeConversationalResponse(text, chat.messages, true);
                 } else if (shouldUseWikipedia(text)) {
                   // Only use Wikipedia API when the query actually requires an encyclopedic / factual lookup!
                   const webAnswer = await fetchWebAnswer(text);
                   if (webAnswer) {
                     fullResponse = `### 🌐 ${webAnswer.title}\n*${webAnswer.description}*\n\n${webAnswer.extract}\n\n---\n🔗 **Live Web Source:** [Read more on Wikipedia](${webAnswer.url})`;
                   } else {
-                    const convFallback = synthesizeConversationalResponse(text, chat.messages);
-                    if (convFallback) {
-                      fullResponse = convFallback;
-                    } else {
-                      throw new Error('Unable to reach live AI services and no matching encyclopedic knowledge was found. Please check your internet connection or try again.');
-                    }
+                    fullResponse = synthesizeConversationalResponse(text, chat.messages, true);
                   }
                 } else {
                   // For conversational, assistant identity, advice, greetings, or dialogue queries:
-                  const convFallback = synthesizeConversationalResponse(text, chat.messages);
-                  if (convFallback) {
-                    fullResponse = convFallback;
-                  } else {
-                    throw new Error('Internet AI services timed out. Please try again or switch to Gemini/OpenAI in the sidebar.');
-                  }
+                  fullResponse = synthesizeConversationalResponse(text, chat.messages, true);
                 }
               }
             }
           } else if (mode === 'gemini') {
-            fullResponse = await callGeminiAPI(text, chat.messages, activeAbortController ? activeAbortController.signal : null);
+            if (!isOnline) {
+              if (typeof window.showToast === 'function') window.showToast('Offline Mode: Switched to Offline Knowledge Engine.', 'info');
+              fullResponse = isCodeGenerationPrompt(text)
+                ? synthesizeCodeFallback(text)
+                : synthesizeConversationalResponse(text, chat.messages, false);
+            } else {
+              try {
+                fullResponse = await callGeminiAPI(text, chat.messages, activeAbortController ? activeAbortController.signal : null);
+              } catch (geminiErr) {
+                console.warn('Gemini API call failed, falling back to conversational handler:', geminiErr);
+                if (typeof window.showToast === 'function') window.showToast(`Gemini: ${geminiErr.message}`, 'warning');
+                fullResponse = synthesizeConversationalResponse(text, chat.messages, true);
+              }
+            }
           } else if (mode === 'openai') {
-            fullResponse = await callOpenAIAPI(text, chat.messages, activeAbortController ? activeAbortController.signal : null);
+            if (!isOnline) {
+              if (typeof window.showToast === 'function') window.showToast('Offline Mode: Switched to Offline Knowledge Engine.', 'info');
+              fullResponse = isCodeGenerationPrompt(text)
+                ? synthesizeCodeFallback(text)
+                : synthesizeConversationalResponse(text, chat.messages, false);
+            } else {
+              try {
+                fullResponse = await callOpenAIAPI(text, chat.messages, activeAbortController ? activeAbortController.signal : null);
+              } catch (openaiErr) {
+                console.warn('OpenAI API call failed, falling back to conversational handler:', openaiErr);
+                if (typeof window.showToast === 'function') window.showToast(`OpenAI: ${openaiErr.message}`, 'warning');
+                fullResponse = synthesizeConversationalResponse(text, chat.messages, true);
+              }
+            }
           }
         }
           responseBubble.innerHTML = '';

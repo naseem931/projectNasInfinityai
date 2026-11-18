@@ -1,6 +1,6 @@
 {
   "name": "nasinfinity-ai",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Personal AI Assistant, Developer Workspace, and NLP Studio powered by live internet AI and zero-dependency local server.",
   "main": "server.js",
   "scripts": {

@@ -1,8 +1,8 @@
-# NasInfinity AI (v1.0.0)
+# NasInfinity AI (v1.1.0)
 
 A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
 
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-indigo.svg)]()
+[![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-indigo.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Commercial%20Ready-emerald.svg)]()
 [![Privacy: Zero Telemetry](https://img.shields.io/badge/Privacy-100%25%20Local--First-indigo.svg)]()

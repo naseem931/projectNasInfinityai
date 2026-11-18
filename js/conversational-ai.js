@@ -2,7 +2,7 @@
 // NasInfinity AI - Conversational Memory, NLU & Live Web Intelligence Engine
 // =========================================================================
 
-    var APP_VERSION = '1.0.0';
+    var APP_VERSION = '1.1.0';
 
     // =========================================================================
     // NasInfinity AI Conversational Intelligence Engine (Memory, Math, NLU & Knowledge)
@@ -341,6 +341,26 @@
         return `### 👋 Hello${nameGreeting}! How can I help you today?\n\nI'm **NasInfinity AI**, your assistant for intelligent conversation, full-stack programming, creative writing, and deep problem-solving.\n\nFeel free to ask any question, share a problem, or ask for code!`;
       }
 
+      // 6B. Conversational Well-Being & Check-In ("how are you", "how are you today", "how's your day")
+      if (/^(how are you|how('?s| is) (it going|your day|everything|life)|how are you doing|how do you feel)[\s,!.]*(today|there|nasinfinity)?\??$/i.test(p)) {
+        return `### 😊 I'm doing wonderfully${nameGreeting}, thank you for asking!\n\nI am running locally at peak performance, fully energized and ready to help you brainstorm ideas, explore scientific questions, write code, or just have an engaging chat.\n\nHow is your day treating you so far? What are you working on today?`;
+      }
+
+      // 6C. Inspirational Quotes & Daily Motivation
+      if (/^(give me (an? )?|tell me (an? )?)?(inspirational quote|quote of the day|daily quote|motivational quote|quote|motivate me|words of wisdom|inspire me|daily motivation)\??$/i.test(p)) {
+        const quotes = [
+          { q: "The only way to do great work is to love what you do.", a: "Steve Jobs" },
+          { q: "It always seems impossible until it's done.", a: "Nelson Mandela" },
+          { q: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", a: "Will Durant (on Aristotle)" },
+          { q: "The secret of getting ahead is getting started.", a: "Mark Twain" },
+          { q: "Do what you can, with what you have, where you are.", a: "Theodore Roosevelt" },
+          { q: "The mind is everything. What you think you become.", a: "Buddha" },
+          { q: "Simplicity is the soul of efficiency.", a: "Austin Freeman" }
+        ];
+        const chosen = quotes[Math.floor(Math.random() * quotes.length)];
+        return `### 🌟 Words of Wisdom\n\n> *"${chosen.q}"*\n> — **${chosen.a}**\n\nTake this thought with you today! What big goal or task are you currently focusing on?`;
+      }
+
       // 7. Pure Standalone Gratitude
       if (/^(thanks|thank you|thx|appreciate it|thank u|many thanks)[\s,!.]*(so much|a lot|nasinfinity)?\??$/i.test(p)) {
         return `### You're very welcome${nameGreeting}! 😊\n\nI am glad I could help! Let me know if you need any adjustments, more code, or have any other questions.`;
@@ -363,11 +383,12 @@
     // =========================================================================
     // Semantic Conversational Synthesizer (Universal Human Conversation Engine)
     // =========================================================================
-    function synthesizeConversationalResponse(prompt, history = []) {
+    function synthesizeConversationalResponse(prompt, history = [], isOnline = null) {
       const p = (prompt || '').trim();
       const pLower = p.toLowerCase();
       const profile = getUserProfile();
       const nameGreeting = profile.name ? `, **${profile.name}**` : '';
+      const onlineState = (typeof isOnline === 'boolean') ? isOnline : (typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean' ? navigator.onLine : false);
 
       // 0A. Intercept Code, Application & Script Requests so they never turn into generic philosophical essays
       if (typeof isWriteCodeQuery === 'function' && isWriteCodeQuery(prompt)) {
@@ -378,11 +399,20 @@
         if (guide) return guide;
       }
 
-      if (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(prompt)) {
-        const code = typeof synthesizeCodeFallback === 'function' ? synthesizeCodeFallback(prompt) : (typeof window !== 'undefined' && typeof window.synthesizeCodeFallback === 'function' ? window.synthesizeCodeFallback(prompt) : null);
-        if (code) return code;
-      } else if (typeof window !== 'undefined' && typeof window.isCodeGenerationPrompt === 'function' && window.isCodeGenerationPrompt(prompt)) {
-        const code = typeof window.synthesizeCodeFallback === 'function' ? window.synthesizeCodeFallback(prompt) : null;
+      let codeGenPromptFn = typeof isCodeGenerationPrompt === 'function' ? isCodeGenerationPrompt : (typeof window !== 'undefined' && typeof window.isCodeGenerationPrompt === 'function' ? window.isCodeGenerationPrompt : null);
+      let codeSynthFn = typeof synthesizeCodeFallback === 'function' ? synthesizeCodeFallback : (typeof window !== 'undefined' && typeof window.synthesizeCodeFallback === 'function' ? window.synthesizeCodeFallback : null);
+      if (!codeGenPromptFn && typeof require !== 'undefined') {
+        try {
+          const cg = require('./code-generators.js');
+          if (cg) {
+            codeGenPromptFn = cg.isCodeGenerationPrompt;
+            codeSynthFn = cg.synthesizeCodeFallback;
+          }
+        } catch (e) {}
+      }
+
+      if (codeGenPromptFn && codeGenPromptFn(prompt)) {
+        const code = codeSynthFn ? codeSynthFn(prompt) : null;
         if (code) return code;
       }
 
@@ -465,7 +495,7 @@
       if (/(sad|down|depressed|unhappy|crying|lonely|loneliness|heartbroken|grief|having a (bad|terrible) day)\b/i.test(pLower)) {
         return `### 🫂 I'm Right Here With You${nameGreeting}\n\nI am truly sorry you are feeling down today. Even though I am an AI, I want you to know that what you feel matters, and you do not have to carry the weight alone.\n\n* 🌱 **Be gentle with yourself:** You don't need to be productive or cheerful today. Taking it one moment at a time is enough.\n* 💧 **Hydrate and rest:** Grab a warm cup of tea or a glass of water, and give yourself permission to pause.\n* 💬 **Talk it out:** If you want to talk through what happened, or if you prefer a distraction like a peaceful story or a riddle, I am here for you.`;
       }
-      if (/(congratulations|congrats|passed|succeeded|won|did it|finished|promoted|new job|celebrat|happy news|bug is fixed)\b/i.test(pLower)) {
+      if (/(^|\b)(congratulations|congrats|i passed|i succeeded|i won|we won|i did it|we did it|i finished|got promoted|got a new job|celebrate|happy news|bug is fixed)($|\b)/i.test(pLower)) {
         return `### 🎉 Huge Congratulations${nameGreeting}!\n\nThat is fantastic news! Achieving a milestone or overcoming a tough hurdle takes true dedication and hard work. Make sure to take a moment today to acknowledge your progress and celebrate this win — you earned it!\n\nWhat was the most rewarding part of making it happen?`;
       }
       if (/(angry|furious|mad|annoyed|irritated|frustrated|pissed off)\b/i.test(pLower)) {
@@ -500,7 +530,7 @@
           "Why do Python programmers have low self-esteem? Because they're constantly comparing their `self`! 🐍",
           "What is an algorithm? A word used by programmers when they don't want to explain what they did! 🤖"
         ];
-        return `### 😄 Here's a chuckle for you!\n\n> *${jokes[Math.floor(Math.random() * jokes.length)]}*\n\nHope that brought a smile to your face! Would you like another one or want to explore something else?`;
+        return `### 😄 Here's a funny joke for you!\n\n> *${jokes[Math.floor(Math.random() * jokes.length)]}*\n\nHope that brought a smile to your face! Would you like another one or want to explore something else?`;
       }
 
       if (/(riddle|puzzle|brainteaser)\b/i.test(pLower)) {
@@ -554,8 +584,141 @@
         return `### 🌌 Einstein's Theory of Relativity\n\n1. ⚡ **Special Relativity (1905):**\n   * The speed of light in a vacuum ($c \\approx 300,000\\text{ km/s}$) is always constant for all observers, regardless of motion.\n   * **Time Dilation:** The faster you move through space, the slower you move through time relative to a stationary observer!\n   * **Mass-Energy Equivalence ($E = mc^2$):** Mass and energy are interchangeable manifestations of the same thing.\n\n2. 🪐 **General Relativity (1915):**\n   * Gravity is **not** an invisible pull; it is the **curvature of spacetime** caused by mass and energy. Massive bodies like stars warp the fabric of spacetime around them, causing planets to follow curved orbital paths!`;
       }
 
-      if (/(dna|genetics|genes|evolution|crispr)\b/i.test(pLower)) {
+      if (/\b(dna|genetics|genes|biological evolution|crispr)\b/i.test(pLower)) {
         return `### 🧬 Understanding DNA & Genetics\n\n**DNA (Deoxyribonucleic Acid)** is the molecular blueprint of all living organisms:\n\n* 🪜 **The Double Helix:** Two complementary strands bonded by 4 nitrogenous base pairs: **Adenine (A)** with **Thymine (T)**, and **Cytosine (C)** with **Guanine (G)**.\n* 📖 **The Genetic Code:** Triplet sequences of bases (**codons**) code for specific amino acids, which assemble into functional proteins.\n* ✂️ **CRISPR-Cas9:** A revolutionary gene-editing technology adapted from bacterial immune systems that allows molecular biologists to precisely edit DNA sequences.`;
+      }
+
+      // Physics: Rayleigh Scattering ("why is the sky blue")
+      if (/(why (is|does) (the )?sky (look )?blue|sky color|rayleigh scattering|why are sunsets (red|orange))\b/i.test(pLower)) {
+        return `### 🌌 Why the Sky is Blue (Rayleigh Scattering)\n\nThe sky appears blue due to a physical phenomenon called **Rayleigh Scattering**:\n\n1. ☀️ **Sunlight is Polychromatic:** Sunlight appears white, but it is composed of all colors of the visible spectrum, from long red wavelengths (~700 nm) to short blue/violet wavelengths (~400 nm).\n2. 💨 **Atmospheric Gas Molecules:** Earth's atmosphere is packed with nitrogen ($N_2$) and oxygen ($O_2$) molecules that are much smaller than the wavelength of visible light.\n3. 📐 **The Inverse 4th Power Law:** Lord Rayleigh discovered that scattering intensity is inversely proportional to the fourth power of wavelength: $I \\propto \\frac{1}{\\lambda^4}$. Because blue light has a wavelength nearly half as long as red light, it scatters roughly **10 times more intensely** in every direction!\n4. 🌅 **Why Sunsets are Red:** At sunset, sunlight must travel through a much thicker layer of atmosphere. Most blue light is scattered away before reaching your eyes, leaving the longer red and orange wavelengths to pass straight through.`;
+      }
+
+      // Physics: Aerodynamics ("how do airplanes fly")
+      if (/(how (do|does) (airplanes?|planes?) fly|aerodynamics|principles? of flight|four forces of flight|bernoulli.*flight)\b/i.test(pLower)) {
+        return `### ✈️ How Airplanes Fly (The Physics of Aerodynamics)\n\nFlight is made possible by balancing **four fundamental aerodynamic forces**:\n\n* ⬆️ **Lift:** The upward aerodynamic force generated by the wings countering gravity.\n* ⬇️ **Weight (Gravity):** The downward gravitational pull of the airplane's mass.\n* ➡️ **Thrust:** The forward force produced by jet engines or propellers.\n* ⬅️ **Drag:** The aerodynamic resistance opposing forward motion through air.\n\n#### 🪽 How Wings Generate Lift:\n1. 📐 **Airfoil Geometry:** An airplane wing is curved on top and flatter on bottom (an *airfoil* shape), angled slightly into the wind (*angle of attack*).\n2. 💨 **Bernoulli's Principle:** Air rushing over the curved upper surface speeds up relative to the bottom, causing a decrease in static air pressure above the wing.\n3. ⚡ **Newton's Third Law (Action & Reaction):** By deflecting air downwards (*downwash*), the wing experiences an equal and opposite upward lifting force!`;
+      }
+
+      // Biology: Photosynthesis
+      if (/(what is photosynthesis|how does photosynthesis work|photosynthesis equation|chloroplasts?|calvin cycle)\b/i.test(pLower)) {
+        return `### 🌿 How Photosynthesis Works\n\n**Photosynthesis** is the biochemical process by which green plants, algae, and cyanobacteria convert light energy into chemical energy stored in glucose:\n\n$$\\mathbf{6CO_2 + 6H_2O + \\text{Sunlight} \\longrightarrow C_6H_{12}O_6 + 6O_2}$$\n*(6 Carbon Dioxide + 6 Water + Light $\\to$ 1 Glucose + 6 Oxygen)*\n\n#### 🔬 The Two Crucial Stages:\n1. ☀️ **Light-Dependent Reactions (Thylakoid Membranes):**\n   * **Chlorophyll** pigments absorb blue and red light (reflecting green).\n   * Water molecules ($H_2O$) are split (photolysis), releasing **vital oxygen ($O_2$)** into the atmosphere and generating $ATP$ and $NADPH$.\n2. 🔄 **The Calvin Cycle / Light-Independent Reactions (Stroma):**\n   * Driven by the enzyme **RuBisCO**, the plant fixes carbon dioxide ($CO_2$) into high-energy **glucose ($C_6H_{12}O_6$)** used for fuel, cellulose, and plant growth.`;
+      }
+
+      // Physics / Tech: GPS (Global Positioning System)
+      if (/(how does gps work|how gps works|global positioning system|trilateration|satellites.*location)\b/i.test(pLower)) {
+        return `### 🛰️ How GPS (Global Positioning System) Works\n\nGPS determines your exact location anywhere on Earth through high-precision geometry and physics:\n\n1. 🛰️ **Satellite Constellation:** A fleet of 24–31 active satellites orbits Earth at ~20,200 km altitude, each circling the planet twice a day.\n2. ⏱️ **Atomic Clocks:** Each satellite continuously broadcasts radio signals containing its orbital position and timestamp from onboard cesium/rubidium atomic clocks.\n3. 📐 **Trilateration (Calculating Distance):**\n   * Your receiver measures signal delay: $\\text{Distance} = c \\times \\Delta t$.\n   * Signals from **3 satellites** pinpoint latitude, longitude, and elevation.\n   * A **4th satellite** corrects clock drift in your device's quartz clock.\n4. 🌌 **Einstein's Relativity:** Satellite clocks run **~38 microseconds faster per day** due to high orbital speed (Special Relativity: -7 µs) and weaker gravity (General Relativity: +45 µs). Without Einstein's relativistic corrections, GPS errors would accumulate by ~11 km every day!`;
+      }
+
+      // Astronomy: Black Holes
+      if (/(black holes?|event horizon|singularity|spaghettification|supermassive black hole)\b/i.test(pLower)) {
+        return `### 🕳️ Understanding Black Holes\n\nA **Black Hole** is a cosmic region where gravitational acceleration is so intense that nothing—not even electromagnetic radiation like light—can escape:\n\n1. 🪐 **Formation:** Created when massive stars (more than ~20 solar masses) exhaust their nuclear fuel and catastrophically collapse in a supernova.\n2. 🛑 **The Event Horizon:** The point of no return. Defined by the Schwarzschild radius: $r_s = \\frac{2GM}{c^2}$. Once matter crosses this threshold, all physical paths lead inward.\n3. 📍 **Gravitational Singularity:** The theoretical central point where mass is compressed to infinite density and known laws of physics break down.\n4. 🍝 **Spaghettification:** Extreme gravitational tidal gradients stretch falling matter vertically and squeeze it horizontally into thin filaments!`;
+      }
+
+      // Earth Science: Water Cycle
+      if (/(water cycle|hydrologic(al)? cycle|evaporation.*condensation.*precipitation)\b/i.test(pLower)) {
+        return `### 💧 The Water Cycle (Hydrologic Cycle)\n\nThe **Water Cycle** describes the continuous movement of Earth's water across atmosphere, land, and oceans driven by solar energy:\n\n1. ☀️ **Evaporation & Transpiration:** Solar heat transforms surface water into invisible water vapor. Plants also release vapor through microscopic leaf pores (*transpiration*).\n2. ☁️ **Condensation:** As warm vapor rises, it cools in the upper atmosphere, condensing onto microscopic aerosol particles to form clouds and fog.\n3. 🌧️ **Precipitation:** Condensed droplets collide and grow heavy, falling back to Earth as rain, snow, sleet, or hail.\n4. 🌊 **Collection & Infiltration:** Water soaks into aquifers (*groundwater*), runs into rivers (*surface runoff*), and returns to the oceans to repeat the cycle indefinitely.`;
+      }
+
+      // Physics: Thermodynamics
+      if (/(laws? of thermodynamics|entropy|conservation of energy|heat transfer|absolute zero)\b/i.test(pLower)) {
+        return `### 🔥 The Four Laws of Thermodynamics\n\nThermodynamics governs heat, work, energy, and entropy across the entire universe:\n\n* **0th Law (Thermal Equilibrium):** If System A is in thermal equilibrium with B, and B with C, then A is in equilibrium with C. (Basis of temperature measurement).\n* **1st Law (Conservation of Energy):** Energy cannot be created or destroyed; it can only change forms ($\\Delta U = Q - W$).\n* **2nd Law (Entropy):** The total entropy (disorder) of an isolated system always increases over time. Heat flows spontaneously from hot to cold, never the reverse.\n* **3rd Law (Absolute Zero):** As the temperature of a pure crystalline substance approaches Absolute Zero (0 Kelvin / -273.15°C), its entropy approaches zero.`;
+      }
+
+      // CS: Big-O Notation & Complexity
+      if (/(big[- ]?o( notation)?|time complexity|space complexity|algorithmic efficiency|o\(1\)|o\(n\))\b/i.test(pLower)) {
+        return `### 💻 Big-O Notation & Algorithmic Complexity\n\n**Big-O Notation** measures how the runtime or memory requirements of an algorithm scale as the input size ($n$) grows:\n\n| Complexity | Classification | Real-World Example | Performance |\n| :--- | :--- | :--- | :--- |\n| $\\mathcal{O}(1)$ | **Constant** | Hash map lookup, accessing \`arr[0]\` | ⚡ Instantaneous |\n| $\\mathcal{O}(\\log n)$ | **Logarithmic** | Binary Search in a sorted array | 🚀 Exceptionally fast |\n| $\\mathcal{O}(n)$ | **Linear** | Finding an item in an unsorted list | 🟢 Scales directly |\n| $\\mathcal{O}(n \\log n)$ | **Linearithmic** | Merge Sort, QuickSort (average), HeapSort | 🟡 Ideal for sorting |\n| $\\mathcal{O}(n^2)$ | **Quadratic** | Bubble Sort, Nested loops over $n$ items | 🟠 Sluggish on large $n$ |\n| $\\mathcal{O}(2^n)$ | **Exponential** | Recursive Fibonacci, Traveling Salesperson | 🔴 Impractical for large $n$ |\n\n> 💡 **Core Insight:** Always identify the innermost loop bottleneck. Optimizing an $\\mathcal{O}(n^2)$ loop down to $\\mathcal{O}(n \\log n)$ can turn hours of computation into fractions of a second!`;
+      }
+
+      // CS: SQL vs NoSQL
+      if (/(sql vs nosql|difference between sql and nosql|relational vs non[- ]relational|acid compliance|when to use (sql|nosql))\b/i.test(pLower)) {
+        return `### 🗄️ SQL vs. NoSQL Databases Compared\n\nChoosing between SQL (Relational) and NoSQL (Distributed) depends on your schema flexibility, transaction consistency, and scaling needs:\n\n| Dimension | 🏛️ SQL (Relational) | 🍃 NoSQL (Document / Key-Value) |\n| :--- | :--- | :--- |\n| **Data Structure** | Structured tables with rigid schemas and foreign keys | Flexible JSON documents, Key-Value pairs, or Graphs |\n| **Standard Engines** | PostgreSQL, MySQL, SQLite, MariaDB | MongoDB, Redis, Cassandra, DynamoDB |\n| **Transactions** | **ACID** (Atomicity, Consistency, Isolation, Durability) | **BASE** (Basically Available, Soft-state, Eventual consistency) |\n| **Scaling Model** | Vertical scaling (faster CPU, more RAM) | Horizontal scaling (sharding across server clusters) |\n| **Best Use Cases** | Financial ledgers, complex \`JOIN\` relational reporting | High-velocity streaming, real-time caching, flexible catalogs |\n\n> 🎯 **Recommendation:** Start with **PostgreSQL** by default for standard web applications. Add **Redis** for session tokens and high-speed in-memory caching!`;
+      }
+
+      // CS: What is an API & REST
+      if (/(what is an api|how do apis work|rest(ful)? api|http methods|get post put delete|status codes 200 404)\b/i.test(pLower)) {
+        return `### 🌐 What is an API & How Does It Work?\n\nAn **API (Application Programming Interface)** is a structured contract that allows two different software applications to communicate and exchange data:\n\n#### 🍽️ The Classic Restaurant Analogy:\n* **Client (Frontend):** You, sitting at the dining table.\n* **Server (Backend/Database):** The kitchen preparing the dishes.\n* **API:** The **waiter** who takes your order, carries it to the kitchen, and delivers the response (data) back to your table!\n\n#### 📡 Core RESTful HTTP Verbs:\n* \`GET /items\`: Retrieve resource data safely without modifying it.\n* \`POST /items\`: Submit payload data to create a new resource.\n* \`PUT /items/1\`: Replace or update an entire existing resource.\n* \`DELETE /items/1\`: Remove a resource from the server.\n\n#### 🚦 Standard HTTP Status Codes:\n* **200 OK / 201 Created:** Request completed successfully.\n* **400 Bad Request:** Client sent invalid JSON or syntax.\n* **401 Unauthorized / 403 Forbidden:** Authentication or permission denied.\n* **404 Not Found:** Requested URL or resource does not exist.\n* **500 Internal Server Error:** Unexpected crash or bug in backend code.`;
+      }
+
+      // CS: Git Version Control
+      if (/(how does git work|git version control|git basics|git branching|merge vs rebase|what is git)\b/i.test(pLower)) {
+        return `### 🐙 How Git Version Control Works\n\n**Git** is a distributed version control system designed to track file revisions and coordinate work among developers:\n\n#### 📦 The Three Core Areas:\n1. 📝 **Working Directory:** The local files and folders you are editing.\n2. 📋 **Staging Area (\`git add\`):** The preparation stage holding changes ready for snapshot.\n3. 🗄️ **Repository (\`git commit\`):** Cryptographically hashed (SHA) permanent commits stored in \`.git\`.\n\n#### 🚀 Daily Essential Commands:\n\`\`\`bash\ngit status               # Check modified, staged, and untracked files\ngit add .                # Stage all modified files for snapshot\ngit commit -m "feat: X"  # Record snapshot with a descriptive message\ngit branch feature-xyz   # Create a new isolated development branch\ngit checkout feature-xyz # Switch to that branch\ngit merge feature-xyz    # Merge branch into current branch\n\`\`\`\n\n> 💡 **Merge vs. Rebase:** \`git merge\` preserves historical branch merges with merge commits; \`git rebase\` replays commits linearly on top of main for a cleaner history!`;
+      }
+
+      // CS: Recursion in Programming
+      if (/(what is recursion|how does recursion work|recursion in programming|base case.*recursive step|call stack)\b/i.test(pLower)) {
+        return `### 🔄 Understanding Recursion in Programming\n\n**Recursion** is a programming technique where a function solves a problem by calling a smaller instance of itself until reaching a termination condition:\n\n#### 🎯 The Two Essential Rules:\n1. 🛑 **The Base Case:** The mandatory condition that halts recursion and returns a direct answer. Without this, the function recurses infinitely and causes a **Stack Overflow** crash!\n2. 🔁 **The Recursive Step:** Calling itself with an input that moves progressively closer to the base case.\n\n#### 💻 Classic Factorial Example ($5! = 5 \\times 4 \\times 3 \\times 2 \\times 1 = 120$):\n\`\`\`javascript\nfunction factorial(n) {\n  if (n <= 1) return 1;          // Base case\n  return n * factorial(n - 1);    // Recursive step\n}\nconsole.log(factorial(5));        // Output: 120\n\`\`\`\n\n#### 🥞 The Call Stack:\nEach recursive call pauses and pushes a new frame onto memory. When the base case is hit, stack frames resolve and unwind backwards!`;
+      }
+
+      // CS: Object-Oriented Programming (OOP)
+      if (/(object[- ]oriented programming|oop concepts?|four pillars of oop|encapsulation.*inheritance.*polymorphism|abstraction in oop)\b/i.test(pLower)) {
+        return `### 🏛️ The Four Pillars of Object-Oriented Programming (OOP)\n\n**Object-Oriented Programming (OOP)** structures software around objects containing data fields (*attributes*) and procedures (*methods*):\n\n1. 🛡️ **Encapsulation:** Packaging data and methods inside a single class, keeping internal state private to prevent accidental outside corruption (e.g., using private variables and public getters/setters).\n2. 🎭 **Abstraction:** Hiding complex internal logic and exposing only clean, intuitive interfaces (like driving a car by using pedals without needing to know fuel injection timing).\n3. 🧬 **Inheritance:** Enabling new classes to inherit properties and behaviors from existing parent classes (\`class Dog extends Animal\`), promoting code reuse.\n4. 🔀 **Polymorphism:** *"Many forms"* — allowing different classes to implement the exact same method signature in their own specialized ways (\`Square.area()\` vs \`Circle.area()\`).`;
+      }
+
+      // Productivity: Feynman Technique
+      if (/(feynman technique|how to learn anything faster|learn like feynman|richard feynman study)\b/i.test(pLower)) {
+        return `### 🧠 The Feynman Technique (Learn Anything Faster)\n\nDeveloped by Nobel Prize physicist Richard Feynman, this 4-step framework develops deep, intuitive mastery of any complex topic:\n\n1. 🎯 **Choose a Concept & Title a Blank Page:** Write the topic at the top of a sheet of paper.\n2. 🧒 **Explain It to a 10-Year-Old:** Teach the concept out loud or in writing using simple language, concrete analogies, and zero technical jargon. If you rely on complex buzzwords, you don't truly understand it.\n3. 🔍 **Identify Knowledge Gaps:** Whenever you hesitate, get stuck, or resort to vague explanations, stop! Return to textbooks or documentation to master that specific piece.\n4. ✂️ **Simplify, Refine & Create Analogies:** Rewrite the explanation until it flows as a crisp, intuitive story that anyone can immediately comprehend.`;
+      }
+
+      // Productivity: Pomodoro Technique
+      if (/(pomodoro technique|pomodoro timer|25 minutes focus)\b/i.test(pLower)) {
+        return `### 🍅 The Pomodoro Technique (Master Your Focus)\n\nCreated by Francesco Cirillo, the **Pomodoro Technique** uses structured work-rest intervals to overcome procrastination and maintain mental endurance:\n\n#### ⏱️ The 5-Step Routine:\n1. 📝 **Pick One Single Objective:** Commit to working on one task exclusively.\n2. ⏳ **Set Timer for 25 Minutes (1 Pomodoro):** Work with zero distractions until the alarm sounds.\n3. ☕ **Take a 5-Minute Break:** Step away from your desk, stretch, or drink water.\n4. 🔁 **Repeat for 4 Rounds:** Complete four 25-minute sprints.\n5. 🛋️ **Take a 20–30 Minute Long Break:** Allow your brain to recharge before beginning the next block!`;
+      }
+
+      // Career: Job Interview Preparation
+      if (/(job interview|interview prep|star method|common interview questions|how to prepare for (an|a job) interview)\b/i.test(pLower)) {
+        return `### 💼 Job Interview Preparation & The STAR Method\n\nWhen answering behavioral interview questions (*"Tell me about a time you handled a difficult challenge"*), structure your response using the proven **STAR Framework**:\n\n* **S — Situation (15%):** Set the stage with brief context. Where were you working? What was the timeline?\n* **T — Task (15%):** Describe the specific challenge or goal you were responsible for.\n* **A — Action (50%):** The heart of your answer! Detail the exact steps **YOU** took, why you chose that approach, and how you led.\n* **R — Result (20%):** Quantify your impact with measurable outcomes (*"Reduced page load time by 35%"*, *"Delivered \$20k in savings"*).\n\n#### 💡 3 Key Interview Tips:\n1. 🔍 **Research the Company:** Know their mission, core products, and recent accomplishments.\n2. ❓ **Prepare Questions for the Interviewer:** Ask: *"What does success look like in this role over the first 90 days?"*.\n3. 🎤 **Practice Out Loud:** Rehearse answers verbally to eliminate filler words (*"um", "like"*).`;
+      }
+
+      // Productivity: Overcoming Procrastination
+      if (/(procrastinat|stop procrastinating|overcome procrastination|how to focus|avoid distractions)\b/i.test(pLower)) {
+        return `### ⚡ 5 Proven Ways to Overcome Procrastination\n\nProcrastination is an **emotional regulation issue**, not laziness. Your brain delays tasks that feel overwhelming, ambiguous, or tedious:\n\n1. ⏱️ **The 2-Minute Rule:** If an action takes under two minutes, do it immediately. For big tasks, commit to working for just **2 minutes** — starting breaks the psychological barrier!\n2. 🍰 **Micro-Chunking:** Break large projects (*"Write report"*) into tiny physical steps (*"Open Word and write 1 paragraph"*).\n3. 🧱 **Increase Friction for Distractions:** Place your smartphone in another room and close non-essential browser tabs.\n4. 🎯 **Embrace the Messy First Draft:** Give yourself permission to write imperfect drafts. Perfectionism is procrastination in disguise.\n5. 🎁 **Temptation Bundling:** Pair a challenging task with a pleasant habit (e.g. listening to your favorite ambient music while organizing code).`;
+      }
+
+      // Cooking: Rice & Boiled Eggs
+      if (/(how to cook rice|cook perfect rice|rice water ratio|how to boil eggs|boiled eggs? time|soft vs hard boiled)\b/i.test(pLower)) {
+        if (/egg/i.test(pLower)) {
+          return `### 🥚 Perfect Boiled Eggs Timing Guide\n\nBring a pot of water to a rolling boil, gently lower in large eggs straight from the fridge, and start your timer immediately:\n\n* ⏱️ **6 Minutes (Soft Boiled):** Runny golden yolk with tender whites (perfect for ramen).\n* ⏱️ **7 Minutes (Jammy Yolk):** Custardy, fudgy center.\n* ⏱️ **8 Minutes (Firm Medium):** Mostly set yolk with a soft center.\n* ⏱️ **10 Minutes (Hard Boiled):** Fully firm yellow yolk throughout (ideal for salads).\n\n> ❄️ **The Ice Bath Trick:** Immediately transfer eggs into a bowl of ice water for 5 minutes. This halts cooking instantly and makes the shells slip right off!`;
+        }
+        return `### 🍚 How to Cook Fluffy White Rice (The 1:2 Golden Ratio)\n\n#### 📏 Standard Ratio: 1 Cup Long-Grain Rice to 2 Cups Water\n1. 🌊 **Rinse the Rice:** Rinse rice in a fine-mesh strainer under cold water for 60 seconds until the water runs clear. This removes excess surface starch and prevents clumping!\n2. 🍲 **Bring to a Boil:** Combine 1 cup rinsed rice, 2 cups water, and 1/2 tsp salt in a pot. Bring to an uncovered rolling boil over high heat.\n3. 🔥 **Cover and Simmer:** As soon as it boils, reduce heat to the **lowest possible simmer** and cover with a tight-fitting lid.\n4. ⏱️ **Cook for 15 Minutes:** **DO NOT lift the lid** or stir while cooking; trapped steam is what cooks the grains evenly.\n5. 💨 **Rest for 5 Minutes:** Remove from heat, let sit covered for 5 minutes, then fluff gently with a fork and serve!`;
+      }
+
+      // Philosophy: Stoicism
+      if (/(what is stoicism|stoic philosophy|marcus aurelius|epictetus|seneca|dichotomy of control)\b/i.test(pLower)) {
+        return `### 🏛️ Understanding Stoicism: The Art of Inner Strength\n\n**Stoicism** is a practical Hellenistic philosophy founded in Athens by Zeno of Citium (~300 BC) and practiced by Roman thinkers including **Marcus Aurelius**, **Seneca**, and **Epictetus**:\n\n#### 🛡️ The Dichotomy of Control\nEpictetus taught that all things in life divide into two clear realms:\n1. **Within Your Control:** Your thoughts, choices, actions, boundaries, and how you respond to events.\n2. **Outside Your Control:** The weather, traffic, other people's opinions, market trends, and the past.\n\n> *"You have power over your mind - not outside events. Realize this, and you will find strength."* — Marcus Aurelius\n\n#### 🌟 The Four Stoic Virtues:\n* 🦉 **Wisdom (Sophia):** Exercising calm reason in complex situations.\n* 🦁 **Courage (Andreia):** Standing up for what is right despite fear or difficulty.\n* ⚖️ **Justice (Dikaiosyne):** Acting with honesty, fairness, and compassion toward all human beings.\n* 🧘 **Temperance (Sophrosyne):** Practicing self-control, balance, and moderation.`;
+      }
+
+      // History: The Industrial Revolution
+      if (/(industrial revolution|steam engine|first industrial revolution|mechanization.*factories)\b/i.test(pLower)) {
+        return `### 🏭 The Industrial Revolution: A Global Turning Point\n\nThe **Industrial Revolution** (originating in Great Britain around 1760–1840) transformed humanity from agrarian handcraft economies into mechanized industrial societies:\n\n1. 🚂 **Watt's Steam Engine:** James Watt's condenser improvements made steam engines practical sources of continuous mechanical power, freeing factories from reliance on rivers and waterwheels.\n2. 🧵 **Mechanization of Textiles:** Inventions like the Spinning Jenny (James Hargreaves) and Power Loom multiplied cloth production a hundredfold.\n3. 🛤️ **Railroads & Metallurgy:** Mass production of pig iron and coke-smelted steel paved the way for transcontinental railways, drastically cutting transport times.\n4. 🏙️ **Urbanization & Social Change:** Millions migrated from rural villages into industrial cities, giving rise to modern labor laws, public health sanitation, and global trade networks.`;
+      }
+
+      // Geography: Africa
+      if (/(^|\b)(africa|african continent|about africa|facts about africa|what about africa)($|\b)/i.test(pLower)) {
+        return `### 🌍 Africa: The Second-Largest Continent\n\n**Africa** is Earth's second-largest continent in both land area and human population, world-renowned for its geographical extremes, rich history, and vibrant cultures:\n\n* 📏 **Land Area & Sovereign Nations:** Covers ~30.3 million km² (~20% of Earth's total land area) spanning **54 sovereign nations** and thousands of distinct ethnic and linguistic communities.\n* 👥 **Demographics:** Home to over **1.4 billion people**, with the world's youngest population (median age ~19) and rapid urban and technological growth.\n* 🏜️ **Geographical Extremes:**\n  * **The Sahara Desert:** Earth's largest hot desert (~9.2 million km²), stretching across North Africa.\n  * **The Nile River:** The world's longest river (~6,650 km), flowing northward through 11 countries into the Mediterranean.\n  * **Mount Kilimanjaro:** Africa's highest free-standing volcanic mountain (5,895 m / 19,341 ft) in Tanzania.\n  * **The Congo Basin:** Earth's second-largest tropical rainforest, essential to global climate regulation and oxygen production.\n  * **The Great Rift Valley:** A 6,000-km geological trench running from the Red Sea to Mozambique.\n* 🧬 **Cradle of Humankind:** Fossil evidence (including the famous *Australopithecus* hominid "Lucy" in Ethiopia) documents East Africa as the birthplace of human evolution and culture.\n* 🦁 **Iconic Wildlife & Ecosystems:** The Serengeti and Maasai Mara host the annual Great Migration of over 1.5 million wildebeest, alongside lions, leopards, elephants, rhinoceroses, cheetahs, and mountain gorillas.`;
+      }
+
+      // Geography: Asia
+      if (/(^|\b)(asia|asian continent|about asia|facts about asia)($|\b)/i.test(pLower)) {
+        return `### 🌏 Asia: The Largest & Most Populous Continent\n\n**Asia** is Earth's largest continent, covering ~30% of global land area (~44.6 million km²) and home to ~60% of humanity (~4.8 billion people):\n\n* 🏔️ **Highest & Lowest Land:** Features **Mount Everest** (8,848 m) in the Himalayas and the **Dead Sea** shoreline (-430 m below sea level).\n* 🏛️ **Cradle of Civilizations:** Birthplace of agriculture, mathematics, and major world religions (Hinduism, Buddhism, Islam, Christianity, Judaism).\n* 🌊 **Major River Systems:** The Yangtze, Yellow River, Ganges, Indus, and Mekong nourish billions of people and diverse ecosystems.`;
+      }
+
+      // Geography: Europe
+      if (/(^|\b)(europe|european continent|about europe|facts about europe)($|\b)/i.test(pLower)) {
+        return `### 🌍 Europe: Geography, Culture & Heritage\n\n**Europe** is bordered by the Arctic Ocean to the north, Atlantic Ocean to the west, and the Mediterranean Sea to the south:\n\n* 🏛️ **Historic Influence:** Birthplace of Western philosophy, the Renaissance, Scientific Revolution, and modern constitutional democracy.\n* 🤝 **The European Union (EU):** A cooperative political and economic partnership of 27 democratic member nations with shared standards and free movement.\n* 🏔️ **Natural Features:** The Alps, Pyrenees, Danube River, Rhine, and thousands of kilometers of indented coastline and peninsulas.`;
+      }
+
+      // Geography: The Americas
+      if (/(^|\b)(americas?|north america|south america|latin america|about the americas)($|\b)/i.test(pLower)) {
+        return `### 🌎 The Americas: North & South America\n\nStretching across the Western Hemisphere from the Arctic tundra to Cape Horn:\n\n* 🌲 **North America:** Features the Canadian Shield, Great Lakes (largest freshwater system on Earth), Mississippi River basin, and Rocky Mountains.\n* 🌿 **South America:** Home to the **Amazon Rainforest** (the planet's greatest reservoir of biodiversity), the **Amazon River** (highest discharge volume on Earth), and the **Andes Mountains** (longest continental mountain chain, 7,000+ km).`;
+      }
+
+      // Biology: Animals & Kingdom Animalia ("what is animals", "about animals")
+      if (/(^|\b)(animals?|animal kingdom|kingdom animalia|what is animals?|what are animals?|about animals)($|\b)/i.test(pLower)) {
+        return `### 🐾 Understanding Animals (Kingdom Animalia)\n\n**Animals** are multicellular, eukaryotic, and heterotrophic organisms that constitute the biological kingdom **Animalia**:\n\n#### 🔬 Core Biological Hallmarks:\n1. 🥗 **Heterotrophic Nutrition:** Unlike plants, animals cannot synthesize their own food via photosynthesis; they ingest organic matter for energy and carbon.\n2. 🏃 **Active Motility:** Almost all animals possess specialized muscle and nerve tissues allowing voluntary movement at some stage of life.\n3. 🧫 **Cellular Structure:** Animal cells lack rigid cellulose walls, enabling high flexibility and specialized organ systems (digestive, nervous, circulatory).\n4. 🥚 **Embryonic Development:** Develop from a blastula during embryogenesis, with specialized germ layers (ectoderm, mesoderm, endoderm).\n\n#### 🌍 Two Major Classifications:\n* 🦴 **Vertebrates (~5% of animal species):** Animals with internal backbones:\n  * **Mammals:** Warm-blooded (endothermic), fur/hair, produce milk for young (e.g., humans, whales, elephants).\n  * **Birds:** Endothermic, feathered, lightweight hollow bones, lay hard-shelled eggs.\n  * **Reptiles:** Ectothermic (cold-blooded), dry scales, leathery shelled eggs (snakes, turtles, crocodiles).\n  * **Amphibians:** Permeable skin, dual life cycle transitioning from aquatic larvae to land adults (frogs, salamanders).\n  * **Fish:** Aquatic, breathe through gills, swim with fins.\n* 🐛 **Invertebrates (Over 95% of all animal species!):** Lack backbones:\n  * **Arthropods:** Insects, spiders, crabs with jointed legs and chitinous exoskeletons.\n  * **Mollusks:** Octopuses, squids, snails, clams with soft unsegmented bodies.\n  * **Cnidarians:** Jellyfish and corals with stinging nematocyst cells.`;
+      }
+
+      // Earth Science: Oceans
+      if (/(^|\b)(oceans?|world oceans?|pacific ocean|atlantic ocean|deep sea|marine ecosystems?)($|\b)/i.test(pLower)) {
+        return `### 🌊 Earth's Oceans: The Blue Planet\n\nOceans cover **~71% of Earth's surface** and contain ~97% of the planet's water, producing over 50% of the world's oxygen via marine phytoplankton:\n\n1. 🌊 **The 5 World Oceans:**\n   * **Pacific Ocean:** The largest and deepest ocean, covering more area than all Earth's land combined, home to the Mariana Trench (~11,034 m deep).\n   * **Atlantic Ocean:** Second largest, separates the Americas from Europe and Africa, divided by the Mid-Atlantic Ridge.\n   * **Indian Ocean:** Warmest ocean, driving monsoon weather patterns across South Asia.\n   * **Southern (Antarctic) Ocean:** Encircles Antarctica with powerful circumpolar currents.\n   * **Arctic Ocean:** Smallest and shallowest, partially covered by sea ice year-round.\n2. 🌡️ **Global Thermohaline Circulation:** Acts as Earth's central heat conveyor belt, redistributing solar warmth from the equator toward polar regions.`;
       }
 
       if (/(how does the brain work|neurons|neuroscience|memory|neuroplasticity)\b/i.test(pLower)) {
@@ -582,15 +745,40 @@
         }
       }
 
-      // 10. Universal Semantic Concept Synthesizer for Any Subject!
+      // 10. Proper Error Handling for Unknown Questions & Topics
       const cleanSubject = p
-        .replace(/^(what (is|are)|who (is|was|were)|where (is|are)|when (did|was|is)|why (is|do|does|did)|how (does|do|can|to|is)( i| you)?|can you (explain|tell me about|help with)|explain|tell me about|describe|define)\s+(a |an |the )?/i, '')
+        .replace(/^(who (is|was|were)|what (is|was|are|were|about|of)|how (about|does|do|can|to|is|many|much)|where (is|are)|when (did|was|is)|why (is|do|does|did)|can you (explain|tell me about|help with)|explain|tell me about|describe|define|information (on|about)|overview of|facts about)\s+(a |an |the )?/i, '')
         .replace(/[?!.]+$/, '')
         .trim();
 
-      const displaySubject = cleanSubject ? (cleanSubject.charAt(0).toUpperCase() + cleanSubject.slice(1)) : 'Your Inquiry';
+      const displaySubject = cleanSubject ? (cleanSubject.charAt(0).toUpperCase() + cleanSubject.slice(1)) : 'Your Question';
 
-      return `### 💡 Exploring ${displaySubject}\n\n**${displaySubject}** is a rich, fascinating topic across multiple dimensions${nameGreeting}:\n\n#### 🌟 Overview & Essence\nAt its core, **${displaySubject}** represents a meaningful concept in how we understand our world, solve challenges, or express creativity. It connects foundational ideas with practical, everyday significance.\n\n#### ⚙️ Key Dynamics & Insights\n1. 🎯 **Purpose & Context:** Defines how ideas, systems, or people interact and create value.\n2. 🔄 **Interconnection:** Relies on balance, nuance, and perspective across different disciplines.\n3. 🛠️ **Practical Value:** Guides effective decision-making, learning, and real-world execution.\n\n#### 🚀 How Would You Like to Proceed?\n* Ask for specific real-world examples or analogies.\n* Ask for step-by-step guidance or practical tips.\n* Explore a comparative analysis or deep-dive discussion!\n\nFeel free to guide our conversation in whichever direction you prefer!`;
+      // 10A. Check for Gibberish, Meaningless Characters, or Syntax Noise
+      const isGibberish = (str) => {
+        if (!str || str.length <= 1) return true;
+        // Pure punctuation / numbers / symbols with no letters
+        if (!/[a-z]/i.test(str)) return true;
+        // Repeated single character 4+ times (e.g. "aaaaa", "zzzzz")
+        if (/(.)\1{3,}/i.test(str)) return true;
+        // Single word of 5+ characters with zero vowels (a, e, i, o, u, y)
+        const words = str.split(/\s+/);
+        if (words.some(w => w.length >= 5 && !/[aeiouy]/i.test(w))) return true;
+        // 6+ consecutive consonants in a row
+        if (/[bcdfghjklmnpqrstvwxz]{6,}/i.test(str)) return true;
+        return false;
+      };
+
+      if (isGibberish(cleanSubject)) {
+        return `### ❓ Unrecognized Question\n\nI couldn't understand or parse **"${displaySubject}"**${nameGreeting}.\n\nIt looks like this might be a typo, incomplete phrase, or random characters. Here is how I can help:\n\n* ✏️ **Check Spelling:** Rephrase your question in clear, plain language.\n* 🧪 **Try Asking Science:** *"Why is the sky blue"*, *"How do airplanes fly"*, *"What is photosynthesis"*\n* 💻 **Try Asking Coding:** *"Explain Big-O notation"*, *"SQL vs NoSQL"*, *"What is an API"*\n* 🌍 **Try Asking Geography:** *"Tell me about Africa"*, *"What about Asia"*\n* 🧮 **Try Asking Math:** *"15% of 85"*, *"100 C to F"*, *"25 * 14"*\n* ⚗️ **Periodic Table:** *"Tell me about Gold"*, *"Element 79"*`;
+      }
+
+      // 10B. Online State Error Handling: Live AI / Wikipedia search unresolvable
+      if (onlineState) {
+        return `### 🌐 Live Internet AI Unavailable / Topic Unresolved\n\nI was unable to retrieve a live online answer or matching encyclopedic record for **"${displaySubject}"**${nameGreeting}.\n\n#### 🔍 Why This Happened:\n* ⏳ **Service Latency / Timeout:** The free public Live AI endpoint is experiencing temporary network delay or high traffic.\n* 📚 **Encyclopedic Search:** No direct Wikipedia article or excerpt closely matched your search terms.\n\n---\n\n#### 🛠️ Recommended Actions:\n1. 🔄 **Retry or Rephrase:** Ask again with more specific keywords (e.g. *"History of [topic]"*, *"Define [term]"*).\n2. 🔑 **Switch to Dedicated Cloud AI:** In the sidebar under **AI Engine**, switch to **Google Gemini** or **OpenAI** using your personal API key for unthrottled, instant reasoning.\n3. 🔬 **Explore Curated Offline Topics:** Core topics (Science, CS, Periodic Table, Continents, Math) are always available instantly without network dependency.`;
+      }
+
+      // 10C. Offline State Error Handling: Disconnected from the internet
+      return `### 🔌 Offline Mode: Topic Not in Local Knowledge Base\n\nI don't have a verified offline answer for **"${displaySubject}"** in my local database${nameGreeting}.\n\nYou are currently operating in **Offline Mode** (disconnected from the internet). Real-time web search and large cloud AI models are unavailable without a network connection.\n\n---\n\n#### 💡 Topics Fully Available 100% Offline:\n* 🔬 **Science & Nature:** Photosynthesis, Aerodynamics, Rayleigh scattering, GPS, Black holes, Water cycle, Thermodynamics, Human cells, Animals & biology.\n* 💻 **Computer Science:** Big-O complexity, SQL vs NoSQL, REST APIs, Git version control, Docker, Recursion, OOP (Python, JS, HTML sandboxes).\n* 🌍 **Geography & History:** Continents (Africa, Asia, Europe, Americas), The Industrial Revolution, Stoic philosophy.\n* 🧮 **Calculators & Converters:** Arithmetic expressions, percentages, temperature (°C/°F), unit conversions (mi/km, kg/lbs).\n* 🧪 **118 IUPAC Elements:** Detailed dossiers for every chemical element in the periodic table.\n* 🎮 **Offline Arcade:** Say *"play game"* or launch **Runner** from the top navigation bar!\n\n---\n\n#### 🌐 How to Get Answers for Any Subject:\n1. 🔌 **Connect to the Internet:** Once connected, questions automatically query live AI and live Wikipedia search.\n2. 🔑 **Switch Engine in Sidebar:** Switch to **Google Gemini** or **OpenAI** using your personal API key.\n3. 🔍 **Rephrase:** Try asking with different keywords or exploring one of the built-in offline topics above!`;
     }
 
     // =========================================================================
@@ -741,7 +929,8 @@ function buildConversationMessages(prompt, history) {
       if (q.length < 3) return false;
 
       // 1. Never use Wikipedia for code generation prompts
-      if (isCodeGenerationPrompt(query)) return false;
+      if (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(query)) return false;
+      if (typeof window !== 'undefined' && typeof window.isCodeGenerationPrompt === 'function' && window.isCodeGenerationPrompt(query)) return false;
 
       // 2. Explicit Wikipedia / web search requests ALWAYS qualify
       if (/^(search (wikipedia|wiki|the web)|look ?up (on wikipedia|in wikipedia)|wiki:?|wikipedia:?)\b/i.test(q)) {
@@ -854,7 +1043,7 @@ function buildConversationMessages(prompt, history) {
       } else {
         searchQuery = searchQuery
           .replace(/^(search (wikipedia|wiki|the web) for|look ?up (on wikipedia|in wikipedia)|wiki:?|wikipedia:?)\s+/i, '')
-          .replace(/^(who is|who was|who were|what is|what was|what are|what were|where is|tell me about|information (about|on)|overview of|facts about|how does|how many|how much|why is|explain|define|definition of|history of|list of)\s+/i, '')
+          .replace(/^(who (is|was|were)|what (is|was|are|were|about|of)|how (about|does|do|can|to|is|many|much)|where (is|are)|tell me about|information (about|on)|overview of|facts about|why (is|do|does)|explain|define|definition of|history of|list of)\s+(a |an |the )?/i, '')
           .replace(/(released|in total|till now|to date|so far)$/i, '')
           .replace(/[?!.]+$/, '')
           .trim();
@@ -876,9 +1065,6 @@ function buildConversationMessages(prompt, history) {
         if (!sRes.ok) return null;
         const sData = await sRes.json();
         if (!sData.query || !sData.query.search || sData.query.search.length === 0) return null;
-
-        const topResult = sData.query.search[0];
-        const topTitle = topResult.title;
 
         // Keyword Relevance Guard to prevent unrelated Wikipedia fallback matches
         const stopWords = new Set([
@@ -905,13 +1091,27 @@ function buildConversationMessages(prompt, history) {
           return null;
         }
 
-        const titleLower = topTitle.toLowerCase();
-        // The top Wikipedia result title must have substantial overlap with query keywords
-        const titleMatches = queryKeywords.some(kw => titleLower.includes(kw));
-        if (!titleMatches) {
-          console.warn(`Wikipedia result "${topTitle}" discarded due to poor title relevance with query "${q}"`);
-          return null;
+        // Search through top 5 candidates for the best keyword match
+        let bestCandidate = null;
+        const candidates = sData.query.search.slice(0, 5);
+        for (const candidate of candidates) {
+          const candidateTitleLower = candidate.title.toLowerCase();
+          const matches = queryKeywords.some(kw => candidateTitleLower.includes(kw) || kw.includes(candidateTitleLower));
+          if (matches) {
+            bestCandidate = candidate;
+            break;
+          }
         }
+        if (!bestCandidate) {
+          bestCandidate = candidates[0];
+          const titleLower = bestCandidate.title.toLowerCase();
+          const titleMatches = queryKeywords.some(kw => titleLower.includes(kw));
+          if (!titleMatches) {
+            console.warn(`Wikipedia result "${bestCandidate.title}" discarded due to poor title relevance with query "${q}"`);
+            return null;
+          }
+        }
+        const topTitle = bestCandidate.title;
 
         const pageRes = await fetch(
           `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topTitle)}`,
