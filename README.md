@@ -1,15 +1,45 @@
-# NasInfinity AI (v1.1.0)
+# NasInfinity AI (v1.2.0)
 
-A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
+A modern, high-performance, browser-native AI assistant and developer workspace with live internet intelligence, **Multimodal Vision & Document Attachment Engine**, **In-Browser Python WebAssembly Runner (Pyodide)**, **Real-Time Token Streaming**, **Workspace Search & Full Backup/Restore**, an integrated **Natural Language Processing (NLP) Studio**, **Interactive Periodic Table of Elements Studio (118 Elements)**, **Offline Arcade Game (Runner: Zero Gravity)**, speech synthesis/recognition, Markdown tables, live interactive code sandboxes, and a **Local-First, Zero-Telemetry Privacy Architecture**.
 
-[![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-indigo.svg)]()
+[![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-indigo.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Commercial%20Ready-emerald.svg)]()
 [![Privacy: Zero Telemetry](https://img.shields.io/badge/Privacy-100%25%20Local--First-indigo.svg)]()
 
 ---
 
-## 🌟 Key Features
+## 🌟 What's New in v1.2.0
+
+1. **📷 Multimodal Vision & Document Attachment Engine:**
+   * Click the attachment icon (`📎`) or drag-and-drop images, screenshots, code files, and documents directly into the chat.
+   * Visual preview tray with file size formatters and removal controls.
+   * Native vision inference through Gemini 2.5 Flash and OpenAI GPT-4o mini APIs.
+   * Client-side extraction for `.txt`, `.py`, `.js`, `.json`, `.csv`, `.md`, `.html`, `.cpp`, `.java`, and `.ts`.
+
+2. **⚡ Real-Time Streaming (ReadableStream / SSE):**
+   * Real-time Server-Sent Events (SSE) streaming for Gemini and OpenAI models.
+   * Words and code stream in token-by-token with instant Time-to-First-Token (TTFT) and zero initial delay.
+
+3. **🐍 In-Browser Python WebAssembly Runner (Pyodide):**
+   * Click **"▶ Run Python (Wasm)"** on any generated Python code block to execute code directly inside your browser.
+   * Powered by WebAssembly (Wasm) with live standard output (`stdout`), standard error (`stderr`), and return value capture.
+
+4. **🔍 Workspace Search, Pinning & Full JSON Backup/Restore:**
+   * **Instant Conversation Search:** Filter past discussions in real-time by title or message contents.
+   * **Chat Pinning:** Pin your essential conversations (`📌`) to keep them at the top of your sidebar.
+   * **Complete Workspace Backup & Restore:** Export all chats, memory profiles, settings, and arcade scores into a single portable `.json` file, and restore it with one click on any machine.
+
+5. **📱 Progressive Web App (PWA) & Offline Service Worker:**
+   * Fully installable on Desktop (Chrome/Edge) and Mobile home screens.
+   * Cache-first service worker (`sw.js`) guarantees 100% offline access to the Periodic Table Studio, Coding Tutor, Code Writer, and Arcade Game.
+
+6. **🧪 Automated Test Harness (`npm test`):**
+   * Integrated zero-dependency test suite in `tests/test-suite.js` testing endpoints, security headers, path traversal guards, and dataset integrity.
+
+---
+
+## 🔬 Core Studios & Features
 
 1. **🔬 Integrated NLP Studio & Tokenizer:**
    * **Visual Token Segmentation:** Color-coded token pills illustrating how modern LLMs (BPE/WordPiece) segment words, punctuation, and subwords.
@@ -20,107 +50,74 @@ A modern, high-performance, browser-native AI assistant and developer workspace 
 2. **🧪 Interactive Periodic Table of Elements Studio (118 Elements):**
    * **Full IUPAC 18-Column Grid:** Standard periods 1 to 7 with Lanthanides (57-71) and Actinides (89-103) f-block rows.
    * **Comprehensive Element Dossiers:** Atomic mass, electron configuration, Bohr shell distributions (K through Q), electronegativity (Pauling), melting/boiling points, density, oxidation states, and discovery dates for all 118 elements.
-   * **Real-Time Chemical Filtering:** Instant filtering by chemical category (Alkali, Alkaline Earth, Transition, Post-Transition, Metalloids, Nonmetals, Halogens, Noble Gases, Lanthanides, Actinides) and standard state (Solid, Liquid, Gas, Synthetic).
-   * **Dual View Mode:** Standard 18-column Table Grid or responsive Card/List View with multi-property sorting.
-   * **Conversational Chemical Intelligence (NasInfinity-CI):** Ask any element question directly in chat (e.g., *"Tell me about Gold"*, *"Element 79"*, *"What is Titanium?"*) for structured scientific dossiers with zero delay.
-   * **Audio Pronunciation & AI Querying:** Listen to element names and details read aloud or click *"Ask AI"* to delve into deep chemical bonding, thermodynamics, and real-world industrial applications.
+   * **Real-Time Chemical Filtering:** Instant filtering by chemical category and standard state (Solid, Liquid, Gas, Synthetic).
+   * **Audio Pronunciation & AI Querying:** Listen to element names and details read aloud or click *"Ask AI"* for chemical bonding and industrial applications.
 
 3. **🎮 Offline Arcade: Runner Zero Gravity (100% Offline Game):**
-   * **Automatic Disconnect Detection:** When your network drops (`navigator.onLine === false`), an animated offline banner automatically slides into view with a one-click launcher to play.
-   * **60 FPS Canvas Physics Engine:** High-performance procedural endless runner featuring a Cyber Bot avatar with mechanical leg physics, jet booster sparks, single/double jump, and crouch/ducking mechanics.
-   * **Dynamic Obstacles & Powerups:** Avoid ground laser spikes and firewall pillars, duck under mid-air glitch drones, collect floating energy crystals (+50 pts), and grab holographic shields that absorb lethal impacts.
-   * **Synthesized Retro Audio (Web Audio API):** Procedural 8-bit sound effects (jump, double-jump, coin chime, shield warble, crash) generated live with zero audio files or CDN downloads.
-   * **Multi-Input Controls:** Full keyboard (<kbd>Space</kbd>/<kbd>&uarr;</kbd> to jump, <kbd>&darr;</kbd> to crouch, <kbd>Esc</kbd> to exit) and responsive touch buttons for mobile devices.
-   * **High Score Persistence:** Best runs are saved locally to `localStorage ('nasinfinity_runner_high')`.
-   * **On-Demand Access:** Launch anytime from the top navigation bar (`🎮 Arcade`), welcome suggestions, or conversational prompts (*"play game"*, *"offline game"*, *"bored"*).
+   * **Automatic Disconnect Detection:** When your network drops, an animated offline banner slides into view with a one-click launcher to play.
+   * **60 FPS Canvas Physics Engine:** Endless cyber runner featuring double jump, crouch mechanics, glitch drones, and laser spikes.
+   * **Synthesized Retro Audio (Web Audio API):** Procedural 8-bit sound effects generated live without external sound files.
 
 4. **🎙️ Voice Recognition & Text-to-Speech (Audio NLP):**
-   * **Speech-to-Text (STT - Fully Automatic Auto-Send):** Click the microphone button (`🎙️`) to dictate prompts hands-free. Transcribes speech in real-time and automatically sends your prompt when you finish speaking (or upon clicking the mic button) — completely eliminating the need to press Enter or click the send button.
-   * **Text-to-Speech (TTS):** Click the speaker button (`🔊`) below any message to have the assistant read the text aloud.
+   * **Speech-to-Text (STT - Fully Automatic Auto-Send):** Transcribes speech in real-time and automatically sends your prompt when you stop speaking.
+   * **Text-to-Speech (TTS):** High-fidelity voice playback of assistant answers.
 
 5. **💬 Conversational Understanding & Natural Context (NasInfinity-CI):**
-   * **Dialogue Memory & Anaphora:** Resolves follow-up queries referencing previous context (e.g., *"What is recursion?"* &rarr; *"Give me an example"* delivers code).
-   * **Personal Profile Memory:** Remembers your name, vocation, and favorite programming language across sessions using client-side `localStorage`.
-   * **Conversational Math & Conversions:** Instant calculation of percentages, arithmetic expressions, and metric/imperial unit conversions (°C/°F, mi/km, kg/lbs).
-   * **Emotional Empathy:** Detects stress, celebrations, boredom, and offers calming, practical frameworks (such as the 4-7-8 breathing method or study techniques).
-   * **Technical & Scientific Knowledge:** Deep explanations for Core CS (Recursion, OOP, Big-O, Docker, APIs, SQL vs NoSQL, Git) and science (Rayleigh scattering, aerodynamics, photosynthesis, GPS).
+   * **Dialogue Memory & Anaphora:** Resolves follow-up queries referencing previous context.
+   * **Personal Profile Memory:** Remembers your name, vocation, and preferences in `localStorage`.
+   * **Conversational Math & Conversions:** Instant calculations, percentages, and metric/imperial conversions.
 
-6. **🧮 Interactive Code Sandbox:**
-   * Full Markdown table support (`<table>`) and code highlighting.
-   * One-click **"Copy Code"** and **"▶ Run / Preview Live"** interactive sandbox modal to execute HTML/CSS/JavaScript components instantly without leaving the browser.
-
-7. **🌐 Multi-Engine Online AI:**
-   * **Online First (Zero-Login):** Free, instant public text generation powered by Pollinations.ai.
-   * **Google Gemini API:** Direct browser integration with Gemini 2.5 Flash using your personal API key.
-   * **OpenAI API:** Direct browser integration with GPT-4o mini using your personal API key.
-   * **Curated Encyclopedic Knowledge:** Instant Wikipedia search summaries with full CC BY-SA 4.0 live source links.
+6. **🧮 Interactive Code Sandboxes:**
+   * **HTML/JS Live Preview:** Execute interactive web apps, calendars, calculators, and games inside the browser sandbox.
+   * **Python Wasm Execution:** Execute Python scripts directly inside the client terminal.
 
 ---
 
-## 🔒 Privacy Notice & Data Security (Commercial & Public Hosting)
+## 🔒 Privacy Notice & Data Security
 
 NasInfinity AI is engineered with a strict **Local-First, Client-Side Privacy Model**:
-
-1. **Zero Server-Side Logging:**
-   * The included HTTP server ([server.js](server.js)) is a lightweight, zero-dependency static file server.
-   * It stores **no tracking cookies**, collects **no analytics telemetry**, and maintains **zero database logs** of your prompts or conversations.
-2. **Client-Side Storage:**
-   * All chat histories, user profile memories, and API keys are stored exclusively in your browser's private `localStorage` (`nasinfinity_chats`, `nasinfinity_user_profile`, etc.).
-3. **Encrypted Third-Party AI Transmission:**
-   * When using online AI features or encyclopedic search, query text is sent directly via encrypted HTTPS to your selected provider:
-     * **Online First:** [Pollinations.ai](https://pollinations.ai)
-     * **Google Gemini:** [Google Generative AI](https://ai.google.dev/terms)
-     * **OpenAI:** [OpenAI API](https://openai.com/policies/terms-of-use)
-     * **Wikipedia:** [Wikimedia Foundation REST API](https://wikimediafoundation.org) (CC BY-SA 4.0)
-4. **API Key Security:**
-   * Personal API keys for Google Gemini or OpenAI are stored solely in your local browser sandbox and are **never** proxied, logged, or shared with unauthorized third parties.
-5. **Instant Data Erasure:**
-   * You maintain full ownership of your data. Click **"Clear all chats"** in the sidebar, or say *"Forget my name"* / *"Reset memory"* to purge your data instantly.
-
----
-
-## ⚖️ Legal & Open Source Licensing
-
-* **Brand & Trademark Safety:**
-  * **NasInfinity AI** is an independent, original brand. It has zero prior trademark filings in Class 9 or 42 and has no corporate conflicts with third-party software firms.
-* **Open Source Licensing:**
-  * The software source code is released under the **[MIT License](LICENSE)**. You are free to use, modify, distribute, sublicense, and deploy it commercially.
-* **Attributions:**
-  * **Tailwind CSS:** Licensed under the [MIT License](https://github.com/tailwindlabs/tailwindcss/blob/master/LICENSE).
-  * **Wikipedia Knowledge:** All factual excerpts are retrieved under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/) license, with direct source citations included in each response.
+1. **Zero Server-Side Logging:** The included server ([server.js](server.js)) stores no cookies, collects no analytics, and maintains zero chat logs.
+2. **Client-Side Storage:** Chat histories and user memory profiles reside exclusively in your browser's private `localStorage`.
+3. **API Key Security:** Personal keys for Gemini or OpenAI remain strictly inside your browser sandbox.
 
 ---
 
 ## 🚀 Deployment & Running
 
 ### 1. Instant Local Launch
-Simply double-click [index.html](index.html) to open the app directly in any modern web browser (Chrome, Edge, Firefox, Safari).
+Double-click [index.html](index.html) to open the app directly in any modern browser.
 
-### 2. Local Node.js Server (with Production Security Headers)
+### 2. Local Node.js Server
 ```powershell
 node server.js
 ```
 Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
-### 3. Public Cloud Hosting (Vercel, Netlify, Cloudflare Pages, GitHub Pages)
-Because NasInfinity AI is 100% self-contained in [index.html](index.html), you can drag-and-drop or push the folder to any static hosting provider with zero build steps:
-* **Vercel / Netlify:** Connect your repository or run `netlify deploy` / `vercel`.
-* **GitHub Pages:** Enable GitHub Pages in your repo settings pointing to `/ (root)`.
-* **Render / Railway / Docker:** Run `node server.js` with `PORT` set by your cloud environment.
+### 3. Automated Test Suite
+```powershell
+npm test
+```
 
 ---
 
 ## 📁 Repository Structure
 
-* [index.html](index.html) — Clean core application containing the basic chat UI, fully automatic hands-free voice STT, and responsive controls.
-* [style.css](style.css) — Custom styles, periodic table theme classes, responsive drawer animations, and mobile scroll optimizations.
+* [index.html](index.html) — Streamlined single-page application core with multimodal attachments and PWA manifest.
+* [style.css](style.css) — Custom styles, periodic table theme classes, and responsive drawer animations.
+* [manifest.json](manifest.json) — Progressive Web App manifest for desktop and mobile installation.
+* [sw.js](sw.js) — Cache-first service worker for instant offline loading.
 * `js/` — Modular feature engines & studios:
-  * [js/periodic-table.js](js/periodic-table.js) — Interactive Periodic Table of Elements Studio (118 elements dataset, IUPAC grid, and chemical dossiers).
-  * [js/game.js](js/game.js) — Offline Arcade Runner Game physics engine (Canvas 60 FPS and Web Audio API synthesis).
-  * [js/nlp.js](js/nlp.js) — NLP Studio Tokenizer, sentiment analysis, TTS read-aloud, and live sandbox preview modal.
+  * [js/app.js](js/app.js) — Core chat application logic, workspace search, backup/restore, and streaming dispatcher.
+  * [js/document-processor.js](js/document-processor.js) — Drag-and-drop file attachment and image vision processor.
+  * [js/python-runner.js](js/python-runner.js) — In-browser Python WebAssembly runner powered by Pyodide.
+  * [js/periodic-table.js](js/periodic-table.js) — Interactive Periodic Table of Elements Studio (118 elements).
+  * [js/game.js](js/game.js) — Offline Arcade Runner Game physics engine (Canvas 60 FPS & Web Audio API).
+  * [js/nlp.js](js/nlp.js) — NLP Studio Tokenizer, sentiment analysis, TTS read-aloud, and sandbox modal.
   * [js/code-generators.js](js/code-generators.js) — Interactive code sandbox generators and offline fallback engines.
-  * [js/conversational-ai.js](js/conversational-ai.js) — Dialogue context memory, math solver, profile management, and live Wikipedia search.
-  * [js/app.js](js/app.js) — Core chat application logic and controller.
+  * [js/coding-tutor.js](js/coding-tutor.js) — Universal Programming Academy tutorials.
+  * [js/code-writer.js](js/code-writer.js) — Step-by-Step Code Writing guides.
+  * [js/conversational-ai.js](js/conversational-ai.js) — Dialogue memory, multimodal API handlers, and Wikipedia search.
 * [server.js](server.js) — Production-ready, zero-dependency Node.js HTTP server.
+* `tests/test-suite.js` — Automated regression and endpoint test suite.
 * [LICENSE](LICENSE) — Official MIT License.
-* [README.md](README.md) — Documentation, legal disclaimers, and deployment instructions.
+* [README.md](README.md) — Documentation and release notes.

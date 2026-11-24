@@ -1,11 +1,11 @@
 {
   "name": "nasinfinity-ai",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Personal AI Assistant, Developer Workspace, and NLP Studio powered by live internet AI and zero-dependency local server.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node scratch/test-conversations.js"
+    "test": "node tests/test-suite.js"
   },
   "keywords": [
     "ai",
@@ -13,7 +13,9 @@
     "chat",
     "nlp",
     "developer-tools",
-    "code-studio"
+    "code-studio",
+    "python-wasm",
+    "multimodal"
   ],
   "author": "NasInfinity",
   "license": "MIT"

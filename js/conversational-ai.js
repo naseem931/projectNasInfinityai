@@ -2,7 +2,7 @@
 // NasInfinity AI - Conversational Memory, NLU & Live Web Intelligence Engine
 // =========================================================================
 
-    var APP_VERSION = '1.1.0';
+    var APP_VERSION = '1.2.0';
 
     // =========================================================================
     // NasInfinity AI Conversational Intelligence Engine (Memory, Math, NLU & Knowledge)
@@ -1141,8 +1141,8 @@ function buildConversationMessages(prompt, history) {
     }
 
 
-    // --- Connected APIs (Optional) ---
-    async function callGeminiAPI(prompt, history, userSignal = null) {
+    // --- Connected APIs (Optional, Multimodal Vision & Streaming Enabled) ---
+    async function callGeminiAPI(prompt, history, userSignal = null, streamCallback = null, attachments = []) {
       const apiKey = localStorage.getItem('nasinfinity_gemini_key');
       if (!apiKey) throw new Error('Please enter your Gemini API key in the sidebar under "AI Engine".');
 
@@ -1167,6 +1167,76 @@ function buildConversationMessages(prompt, history) {
         contents.shift();
       }
 
+      // Multimodal image injection
+      if (Array.isArray(attachments) && attachments.length > 0) {
+        const lastUser = contents.slice().reverse().find(c => c.role === 'user');
+        if (lastUser) {
+          attachments.forEach(att => {
+            if (att.isImage && att.base64) {
+              lastUser.parts.push({
+                inlineData: {
+                  mimeType: att.mimeType || 'image/jpeg',
+                  data: att.base64
+                }
+              });
+            }
+          });
+        }
+      }
+
+      // True Real-Time SSE Streaming
+      if (typeof streamCallback === 'function' && typeof ReadableStream !== 'undefined') {
+        try {
+          const streamRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?key=${apiKey}&alt=sse`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: buildAssistantSystemPrompt() }] },
+              contents
+            }),
+            signal: userSignal || undefined
+          });
+
+          if (!streamRes.ok) {
+            const errData = await streamRes.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `Gemini Stream Error (${streamRes.status})`);
+          }
+
+          const reader = streamRes.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let fullText = '';
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data: ')) {
+                const jsonStr = trimmed.slice(6);
+                try {
+                  const chunk = JSON.parse(jsonStr);
+                  const textPart = chunk.candidates?.[0]?.content?.parts?.[0]?.text;
+                  if (textPart) {
+                    fullText += textPart;
+                    streamCallback(fullText, textPart);
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+          if (fullText) return fullText;
+        } catch (streamErr) {
+          if (userSignal && userSignal.aborted) throw streamErr;
+          console.warn('Gemini streaming interrupted, falling back to standard generateContent:', streamErr);
+        }
+      }
+
+      // Standard Non-streaming Fallback
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1188,7 +1258,7 @@ function buildConversationMessages(prompt, history) {
       return data.candidates[0].content.parts[0].text;
     }
 
-    async function callOpenAIAPI(prompt, history, userSignal = null) {
+    async function callOpenAIAPI(prompt, history, userSignal = null, streamCallback = null, attachments = []) {
       const apiKey = localStorage.getItem('nasinfinity_openai_key');
       if (!apiKey) throw new Error('Please enter your OpenAI API key in the sidebar under "AI Engine".');
 
@@ -1197,6 +1267,75 @@ function buildConversationMessages(prompt, history) {
         ...buildConversationMessages(prompt, history)
       ];
 
+      // Multimodal vision injection
+      if (Array.isArray(attachments) && attachments.length > 0) {
+        const lastUserMsg = messages.slice().reverse().find(m => m.role === 'user');
+        if (lastUserMsg) {
+          const contentParts = [{ type: 'text', text: lastUserMsg.content }];
+          attachments.forEach(att => {
+            if (att.isImage && att.base64) {
+              contentParts.push({
+                type: 'image_url',
+                image_url: { url: `data:${att.mimeType || 'image/jpeg'};base64,${att.base64}` }
+              });
+            }
+          });
+          lastUserMsg.content = contentParts;
+        }
+      }
+
+      // True Real-Time SSE Streaming
+      if (typeof streamCallback === 'function' && typeof ReadableStream !== 'undefined') {
+        try {
+          const streamRes = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({ model: 'gpt-4o-mini', messages, stream: true }),
+            signal: userSignal || undefined
+          });
+
+          if (!streamRes.ok) {
+            const errData = await streamRes.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `OpenAI Stream Error (${streamRes.status})`);
+          }
+
+          const reader = streamRes.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let fullText = '';
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data: ') && trimmed !== 'data: [DONE]') {
+                try {
+                  const chunk = JSON.parse(trimmed.slice(6));
+                  const textPart = chunk.choices?.[0]?.delta?.content;
+                  if (textPart) {
+                    fullText += textPart;
+                    streamCallback(fullText, textPart);
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+          if (fullText) return fullText;
+        } catch (streamErr) {
+          if (userSignal && userSignal.aborted) throw streamErr;
+          console.warn('OpenAI streaming interrupted, falling back to standard completion:', streamErr);
+        }
+      }
+
+      // Standard Non-streaming Fallback
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
