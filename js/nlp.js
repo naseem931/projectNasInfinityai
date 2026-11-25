@@ -157,24 +157,30 @@
       });
     }
 
+    const SPEAK_BTN_HTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg><span>Speak</span>`;
+    const STOP_SPEAK_BTN_HTML = `<svg class="w-3.5 h-3.5 text-indigo-400 animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"/></svg><span class="text-indigo-400">Stop</span>`;
+
     // --- Message NLP Actions Toolbar ---
     function attachNlpToolbar(bubble, rawContent) {
       if (bubble.querySelector('.nlp-toolbar')) return;
 
       const toolbar = document.createElement('div');
-      toolbar.className = 'nlp-toolbar flex items-center flex-wrap gap-1.5 sm:gap-2 mt-2.5 pt-2 border-t border-slate-800/60 text-[11px] text-slate-400 select-none';
+      toolbar.className = 'nlp-toolbar flex items-center flex-wrap gap-1.5 mt-3 pt-2.5 border-t border-white/10 text-[11px] text-slate-400 select-none';
       toolbar.innerHTML = `
-        <button onclick="speakMessage(this)" class="px-2 py-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 hover:text-indigo-400 active:scale-95 transition flex items-center gap-1 font-medium" title="Text-to-Speech (Read aloud)">
-          <span>🔊</span> <span>Speak</span>
+        <button onclick="speakMessage(this)" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 hover:text-indigo-400 border border-white/5 active:scale-95 transition flex items-center gap-1.5 font-medium" title="Text-to-Speech (Read aloud)">
+          ${SPEAK_BTN_HTML}
         </button>
-        <button onclick="inspectNlpText(this)" class="px-2 py-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 hover:text-purple-400 active:scale-95 transition flex items-center gap-1 font-medium" title="Inspect Tokens & Sentiment in NLP Studio">
-          <span>🔬</span> <span>NLP Stats</span>
+        <button onclick="inspectNlpText(this)" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 hover:text-purple-400 border border-white/5 active:scale-95 transition flex items-center gap-1.5 font-medium" title="Inspect Tokens & Sentiment in NLP Studio">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/></svg>
+          <span>NLP Stats</span>
         </button>
-        <button onclick="summarizeResponse(this)" class="px-2 py-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 hover:text-emerald-400 active:scale-95 transition flex items-center gap-1 font-medium" title="Summarize into 2 bullets">
-          <span>📝</span> <span>Summarize</span>
+        <button onclick="summarizeResponse(this)" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 hover:text-emerald-400 border border-white/5 active:scale-95 transition flex items-center gap-1.5 font-medium" title="Summarize into 2 bullets">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
+          <span>Summarize</span>
         </button>
-        <button onclick="copyMessageText(this)" class="px-2 py-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 hover:text-slate-200 active:scale-95 transition flex items-center gap-1 font-medium" title="Copy text">
-          <span>📋</span> <span>Copy</span>
+        <button onclick="copyMessageText(this)" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 hover:text-slate-200 border border-white/5 active:scale-95 transition flex items-center gap-1.5 font-medium" title="Copy text">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/></svg>
+          <span>Copy</span>
         </button>
       `;
       bubble.dataset.rawContent = rawContent;
@@ -192,14 +198,14 @@
 
       if (window.speechSynthesis.speaking && currentSpeechBtn === btn) {
         window.speechSynthesis.cancel();
-        btn.innerHTML = '<span>🔊</span> <span>Speak</span>';
+        btn.innerHTML = SPEAK_BTN_HTML;
         currentSpeechBtn = null;
         return;
       }
 
       window.speechSynthesis.cancel();
       if (currentSpeechBtn) {
-        currentSpeechBtn.innerHTML = '<span>🔊</span> <span>Speak</span>';
+        currentSpeechBtn.innerHTML = SPEAK_BTN_HTML;
       }
 
       const bubble = btn.closest('.nlp-toolbar').parentElement;
@@ -216,16 +222,16 @@
       utter.rate = 1.0;
       utter.pitch = 1.0;
 
-      btn.innerHTML = '<span class="text-indigo-400 animate-pulse">⏹️</span> <span class="text-indigo-400">Stop</span>';
+      btn.innerHTML = STOP_SPEAK_BTN_HTML;
       currentSpeechBtn = btn;
 
       utter.onend = () => {
-        btn.innerHTML = '<span>🔊</span> <span>Speak</span>';
+        btn.innerHTML = SPEAK_BTN_HTML;
         currentSpeechBtn = null;
       };
 
       utter.onerror = () => {
-        btn.innerHTML = '<span>🔊</span> <span>Speak</span>';
+        btn.innerHTML = SPEAK_BTN_HTML;
         currentSpeechBtn = null;
       };
 

@@ -704,11 +704,11 @@ ${guide.walkthrough.fullCode}
 
     modal = document.createElement('div');
     modal.id = 'codeWriterModal';
-    modal.className = 'fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 hidden';
+    modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4 hidden';
     modal.setAttribute('onclick', 'if(event.target===this) closeCodeWriterModal()');
 
     const langBtns = Object.entries(WRITE_GUIDES).map(([key, data]) => `
-      <button onclick="selectCodeWriterLang('${key}')" class="p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 cursor-pointer transition flex items-center gap-2 group text-left active:scale-[0.98]">
+      <button onclick="selectCodeWriterLang('${key}')" class="glass-card p-3 rounded-2xl cursor-pointer flex items-center gap-2.5 group text-left active:scale-[0.98]">
         <span class="text-xl">${data.icon}</span>
         <div>
           <h4 class="font-bold text-xs text-slate-100 group-hover:text-emerald-300 transition">${data.name}</h4>
@@ -718,22 +718,22 @@ ${guide.walkthrough.fullCode}
     `).join('');
 
     modal.innerHTML = `
-      <div class="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="modal-shell rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-slate-800/80 bg-slate-900/60 shrink-0">
+        <div class="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-white/10 shrink-0">
           <div class="flex items-center gap-2.5">
             <span class="text-xl sm:text-2xl">✍️</span>
             <div>
               <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-2">
                 Code Writer Studio
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Hands-On Writing</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-mono">Hands-On Writing</span>
               </h3>
               <p class="text-[11px] text-slate-400">Step-by-step guides on how to construct and write code from a blank file</p>
             </div>
           </div>
-          <button onclick="closeCodeWriterModal()" class="h-8 w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
-            ✕
+          <button onclick="closeCodeWriterModal()" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
+            &times;
           </button>
         </div>
 
@@ -741,24 +741,24 @@ ${guide.walkthrough.fullCode}
         <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 text-slate-200 text-xs sm:text-sm">
           
           <!-- 4-Step Writing Blueprint Card -->
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+          <div class="p-4 rounded-2xl glass-panel">
             <h4 class="font-bold text-xs sm:text-sm text-emerald-300 flex items-center gap-2 mb-3">
               <span>📐</span> The Universal 4-Step Formula to Write Any Code
             </h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
-              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10">
                 <span class="font-bold text-amber-400 text-xs">1. Pseudocode</span>
                 <p class="text-[11px] text-slate-400 mt-1">Write your goal in plain words. Plan before typing syntax.</p>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10">
                 <span class="font-bold text-indigo-400 text-xs">2. Setup File</span>
                 <p class="text-[11px] text-slate-400 mt-1">Create file, import needed modules, define initial variables.</p>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10">
                 <span class="font-bold text-emerald-400 text-xs">3. Build Logic</span>
                 <p class="text-[11px] text-slate-400 mt-1">Write functions & conditionals. Test every 3-5 lines.</p>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10">
                 <span class="font-bold text-purple-400 text-xs">4. Run & Refine</span>
                 <p class="text-[11px] text-slate-400 mt-1">Execute in terminal, inspect output, fix any errors.</p>
               </div>
@@ -778,9 +778,9 @@ ${guide.walkthrough.fullCode}
         </div>
 
         <!-- Footer -->
-        <div class="px-4 sm:px-6 py-3 border-t border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
-          <span>💡 Click any language to launch a step-by-step writing walkthrough in chat</span>
-          <button onclick="closeCodeWriterModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+        <div class="px-4 sm:px-6 py-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+          <span>Click any language to launch a step-by-step writing walkthrough in chat</span>
+          <button onclick="closeCodeWriterModal()" class="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition">
             Close
           </button>
         </div>

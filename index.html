@@ -3,197 +3,388 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <meta name="version" content="1.2.0">
-  <title>NasInfinity AI (v1.2.0) - Personal AI Assistant & Code Studio</title>
+  <meta name="version" content="2.0.0">
+  <meta name="theme-color" content="#06070b">
+  <meta name="description" content="NasInfinity AI v2.0.0 — Browser-native Spatial AI Assistant, Multimodal Vision, Python Wasm Runner, Periodic Table Studio, and NLP Inspector.">
+  <meta property="og:title" content="NasInfinity AI (v2.0.0) — Spatial AI Assistant & Developer Studio">
+  <meta property="og:description" content="Local-first AI assistant with live token streaming, in-browser Python WebAssembly execution, 118-element Periodic Table, and NLP Studio.">
+  <meta property="og:type" content="website">
+  <title>NasInfinity AI (v2.0.0) — Spatial AI Assistant & Developer Studio</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('nasinfinity_theme') || 'dark';
+        if (savedTheme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch (e) {}
+    })();
+  </script>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2.0.0">
 </head>
-<body class="h-full flex overflow-hidden antialiased selection:bg-indigo-500 selection:text-white">
+<body class="h-full flex overflow-hidden antialiased selection:bg-indigo-500 selection:text-white relative">
+
+  <!-- Ambient Spatial Aurora Layer -->
+  <div class="ambient-aurora" aria-hidden="true"></div>
 
   <!-- Mobile & Tablet Sidebar Backdrop Overlay -->
-  <div id="sidebarBackdrop" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden transition-opacity duration-300"></div>
+  <div id="sidebarBackdrop" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
 
-  <!-- Sidebar: Off-canvas Drawer on Mobile/Tablet (<1024px), Static Collapsible on Desktop (>=1024px) -->
-  <aside id="sidebar" class="w-64 bg-slate-950 border-r border-slate-800/80 flex flex-col justify-between shrink-0">
-    <div class="p-3.5 flex flex-col gap-3">
-      <!-- App Brand & Mobile/Tablet Close Button -->
-      <div class="flex items-center justify-between px-2 pt-1 pb-2">
-        <div class="flex items-center gap-2.5">
-          <div class="h-8 w-8 rounded-xl overflow-hidden shadow-md shadow-indigo-500/20 shrink-0">
-            <img src="/assets/avatars/woman-3d-avatar.jpg" alt="NasInfinity AI Avatar" class="h-full w-full object-cover" onerror="this.parentElement.textContent='👩‍💻'">
+  <!-- Sidebar: Glass Rail -->
+  <aside id="sidebar" class="w-[272px] glass-sidebar flex flex-col justify-between shrink-0 relative z-30">
+    <div class="p-3.5 flex flex-col gap-3 flex-1 overflow-hidden">
+      <!-- App Brand & Mobile Close -->
+      <div class="flex items-center justify-between px-1.5 pt-1 pb-1.5">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="relative h-9 w-9 rounded-2xl overflow-hidden shadow-lg shadow-indigo-500/25 ring-1 ring-white/15 shrink-0">
+            <img src="/assets/avatars/woman-3d-avatar.jpg" alt="NasInfinity AI Avatar" class="h-full w-full object-cover" onerror="this.parentElement.textContent='✨'">
           </div>
-          <div>
+          <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <span class="font-bold text-sm text-white tracking-tight">NasInfinity AI</span>
-              <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">v1.2.0</span>
+              <span class="font-bold text-sm text-white tracking-tight truncate">NasInfinity AI</span>
+              <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 tracking-wide">v2.0.0</span>
             </div>
-            <span class="block text-[10px] text-slate-400">Live AI Assistant</span>
+            <span class="block text-[10px] text-slate-400 truncate">Spatial AI Workspace</span>
           </div>
         </div>
-        <!-- Close button visible only on mobile/tablet screen sizes -->
-        <button id="closeSidebarBtn" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition active:scale-95" aria-label="Close navigation sidebar">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        <button id="closeSidebarBtn" class="lg:hidden p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition active:scale-95" aria-label="Close navigation sidebar">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <!-- New Chat Button -->
-      <button id="newChatBtn" class="w-full flex items-center justify-center sm:justify-start gap-2 px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white text-xs font-semibold shadow-sm shadow-indigo-600/30 transition">
-        <span>➕</span> New Chat
+      <!-- New Thread Button -->
+      <button id="newChatBtn" class="keep-white w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 active:scale-[0.98] text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 ring-1 ring-white/15 transition">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          <span>New Thread</span>
+        </span>
+        <kbd class="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-white/15 text-white/90">⌘K</kbd>
       </button>
 
-      <!-- Model Engine Selector -->
-      <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-2.5 flex flex-col gap-1.5 text-xs">
-        <label class="text-slate-400 text-[11px] font-medium flex items-center justify-between">
-          <span>AI Engine</span>
-          <span id="activeStatusBadge" class="text-emerald-400 text-[10px] flex items-center gap-1">
-            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Live Internet AI
+      <!-- Model & Engine Selector -->
+      <div class="glass-panel rounded-2xl p-2.5 flex flex-col gap-2 text-xs">
+        <label for="engineSelector" class="text-slate-400 text-[11px] font-medium flex items-center justify-between">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+            <span>AI Model</span>
+          </span>
+          <span id="activeStatusBadge" class="text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Live AI
           </span>
         </label>
-        <select id="engineSelector" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 cursor-pointer">
-          <option value="online_first" selected>🌐 Live Internet AI (Default • Free)</option>
-          <option value="gemini">✨ Gemini 2.5 Flash API</option>
-          <option value="openai">🔮 OpenAI GPT-4o mini API</option>
+        <select id="engineSelector" class="w-full bg-slate-950/90 border border-white/10 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 outline-none focus:border-indigo-500 cursor-pointer transition">
+          <option value="online_first" selected>Live Internet AI (Auto • Free)</option>
+          <option value="gemini">Google Gemini API</option>
+          <option value="openai">OpenAI API</option>
         </select>
+
+        <!-- API Key & Custom Model ID Drawer -->
+        <div id="apiKeySection" class="hidden flex flex-col gap-2 pt-1.5 border-t border-white/10">
+          <div class="flex flex-col gap-1">
+            <label for="apiKeyInput" class="text-slate-300 text-[10px] font-medium flex items-center justify-between">
+              <span id="apiKeyLabel">API Key</span>
+              <a id="apiKeyHelp" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-indigo-400 hover:underline text-[10px]">Get key &rarr;</a>
+            </label>
+            <input type="password" id="apiKeyInput" placeholder="Paste API key..." class="w-full bg-slate-950/90 border border-white/10 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 outline-none focus:border-indigo-500 font-mono">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="customModelInput" class="text-slate-400 text-[10px] font-medium flex items-center justify-between">
+              <span>Model ID Override</span>
+              <span class="text-[9px] text-slate-500">Optional</span>
+            </label>
+            <input type="text" id="customModelInput" placeholder="e.g. gemini-2.5-flash" class="w-full bg-slate-950/90 border border-white/10 text-slate-200 text-[11px] rounded-xl px-2.5 py-1.5 outline-none focus:border-indigo-500 font-mono">
+          </div>
+          <span class="text-[10px] text-slate-500 leading-tight">Stored locally in your browser sandbox.</span>
+        </div>
       </div>
 
-      <!-- API Key Drawer -->
-      <div id="apiKeySection" class="hidden bg-slate-900 border border-slate-800/80 rounded-xl p-2.5 flex flex-col gap-2 text-xs">
-        <label class="text-slate-300 text-[11px] font-medium flex items-center justify-between">
-          <span id="apiKeyLabel">API Key</span>
-          <a id="apiKeyHelp" href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-400 hover:underline text-[10px]">Get free key &rarr;</a>
-        </label>
-        <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 outline-none focus:border-indigo-500 font-mono">
-        <span class="text-[10px] text-slate-400 leading-tight">Key stays stored only in your local browser storage.</span>
-      </div>
-
-      <!-- Chat History List & Workspace Search -->
+      <!-- Chat History List & Search -->
       <div class="flex flex-col gap-1.5 pt-1 flex-1 overflow-hidden min-h-[120px]">
-        <div class="flex items-center justify-between px-2">
-          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Recent Chats</span>
+        <div class="relative px-0.5">
+          <svg class="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+          <input type="text" id="chatSearchInput" placeholder="Search threads..." class="w-full bg-slate-950/60 border border-white/10 text-slate-200 text-xs rounded-xl pl-8 pr-2.5 py-1.5 outline-none focus:border-indigo-500 placeholder:text-slate-500 transition">
         </div>
-        <div class="px-1">
-          <input type="text" id="chatSearchInput" placeholder="🔍 Search conversations..." class="w-full bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 outline-none focus:border-indigo-500 placeholder:text-slate-500">
-        </div>
-        <div id="chatHistoryList" class="flex flex-col gap-1 flex-1 overflow-y-auto pr-1"></div>
+        <div id="chatHistoryList" class="flex flex-col gap-1 flex-1 overflow-y-auto pr-1 pt-1"></div>
       </div>
     </div>
 
     <!-- Sidebar Footer -->
-    <div class="p-2.5 border-t border-slate-800/80 flex flex-col gap-1.5 text-xs text-slate-400">
-      <div class="flex items-center justify-between">
-        <button id="backupWorkspaceBtn" title="Export full workspace backup (JSON)" class="hover:text-indigo-400 transition text-[11px] py-1 flex items-center gap-1 font-medium"><span>📦</span> Backup</button>
-        <button id="restoreWorkspaceBtn" title="Restore workspace from backup" class="hover:text-indigo-400 transition text-[11px] py-1 flex items-center gap-1 font-medium"><span>📥</span> Restore</button>
+    <div class="p-3 border-t border-white/10 flex flex-col gap-2 text-xs text-slate-400">
+      <div class="flex items-center justify-between gap-1">
+        <button id="backupWorkspaceBtn" title="Export full workspace backup (JSON)" class="hover:text-indigo-400 hover:bg-white/5 px-2 py-1.5 rounded-lg transition text-[11px] flex items-center gap-1.5 font-medium">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+          <span>Backup</span>
+        </button>
+        <button id="restoreWorkspaceBtn" title="Restore workspace from backup" class="hover:text-indigo-400 hover:bg-white/5 px-2 py-1.5 rounded-lg transition text-[11px] flex items-center gap-1.5 font-medium">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+          <span>Restore</span>
+        </button>
         <input type="file" id="restoreFileInput" accept=".json" class="hidden">
-        <button id="clearAllBtn" class="hover:text-rose-400 transition text-[11px] py-1 font-medium">Clear all</button>
+        <button id="clearAllBtn" title="Delete all conversations" class="hover:text-rose-400 hover:bg-rose-500/10 px-2 py-1.5 rounded-lg transition text-[11px] flex items-center gap-1 font-medium">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+          <span>Clear</span>
+        </button>
       </div>
-      <div class="flex items-center justify-center pt-0.5 border-t border-slate-900">
-        <button id="privacyNoticeBtn" onclick="openPrivacyModal()" class="hover:text-indigo-400 transition text-[10px] text-slate-400 flex items-center gap-1"><span>🔒</span> Privacy & Legal</button>
+      <div class="flex items-center justify-center pt-1 border-t border-white/5">
+        <button id="privacyNoticeBtn" onclick="openPrivacyModal()" class="hover:text-indigo-400 transition text-[10px] text-slate-400 flex items-center gap-1.5">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+          <span>Local-First Privacy &amp; Legal</span>
+        </button>
       </div>
     </div>
   </aside>
 
-  <!-- Main Chat Container -->
-  <div class="flex-1 flex flex-col h-full overflow-hidden bg-slate-900/50 min-w-0">
-    
-    <!-- Top Bar -->
-    <header class="h-14 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur px-3 sm:px-5 flex items-center justify-between shrink-0">
+  <!-- Main Workspace Container -->
+  <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0 relative z-10">
+
+    <!-- Streamlined Spatial Top Bar -->
+    <header class="h-14 glass-header px-3 sm:px-5 flex items-center justify-between gap-2 shrink-0">
       <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-        <button id="toggleSidebarBtn" aria-label="Toggle navigation menu" class="p-1.5 sm:p-2 -ml-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 active:scale-95 transition shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <button id="toggleSidebarBtn" aria-label="Toggle navigation menu" class="p-2 -ml-1 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.85" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h10.5"/></svg>
         </button>
         <div class="flex items-center gap-2 min-w-0">
           <span id="netStatusDot" class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-          <span id="chatTitleHeader" class="text-xs sm:text-sm font-semibold text-slate-200 truncate max-w-[110px] xs:max-w-[170px] sm:max-w-xs md:max-w-sm">New Conversation</span>
-          <span id="activeEngineBadge" class="hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium shrink-0">Live Internet AI 🌐</span>
+          <span id="chatTitleHeader" class="text-xs sm:text-sm font-semibold text-slate-200 truncate max-w-[120px] xs:max-w-[180px] sm:max-w-xs md:max-w-sm">New Conversation</span>
+          <span id="activeEngineBadge" class="hidden sm:inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium shrink-0">Live Internet AI</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <button id="openGameBtn" onclick="openOfflineGameModal()" title="Play Offline Runner Arcade" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
-          <span>🎮</span> <span class="hidden sm:inline">Arcade</span>
+      <!-- Unified Studio Pill Dock & Command Launcher -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <!-- Spotlight Command Palette Trigger -->
+        <button id="commandPaletteBtn" onclick="openCommandPalette()" title="Open Studio Command Palette (Ctrl+K)" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel hover:border-indigo-500/50 text-xs text-slate-300 hover:text-white transition active:scale-95 mr-1">
+          <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+          <span class="text-[11px] font-medium">Studios</span>
+          <kbd class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-slate-400">⌘K</kbd>
         </button>
-        <button id="openPeriodicBtn" onclick="openPeriodicModal()" title="Open Interactive Periodic Table of Elements" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
-          <span>🧪</span> <span class="hidden xs:inline">Periodic</span><span class="hidden md:inline"> Table</span>
+
+        <!-- Studio Pill Strip (Preserves all original IDs) -->
+        <div class="flex items-center gap-1 p-1 rounded-full glass-panel">
+          <button id="openPeriodicBtn" onclick="openPeriodicModal()" title="Periodic Table Studio (118 Elements)" class="h-7 px-2 sm:px-2.5 rounded-full hover:bg-teal-500/15 text-teal-400 transition flex items-center gap-1.5 text-[11px] font-medium active:scale-95">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+            <span class="hidden xl:inline">Elements</span>
+          </button>
+          <button id="openNlpStudioBtn" onclick="openNlpModal()" title="NLP Tokenizer & Sentiment Studio" class="h-7 px-2 sm:px-2.5 rounded-full hover:bg-indigo-500/15 text-indigo-400 transition flex items-center gap-1.5 text-[11px] font-medium active:scale-95">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/></svg>
+            <span class="hidden xl:inline">NLP</span>
+          </button>
+          <button id="openCodingTutorBtn" onclick="openCodingTutorModal()" title="Coding Academy" class="h-7 px-2 sm:px-2.5 rounded-full hover:bg-amber-500/15 text-amber-400 transition flex items-center gap-1.5 text-[11px] font-medium active:scale-95">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>
+            <span class="hidden xl:inline">Learn</span>
+          </button>
+          <button id="openCodeWriterBtn" onclick="openCodeWriterModal()" title="Code Writer Studio" class="h-7 px-2 sm:px-2.5 rounded-full hover:bg-emerald-500/15 text-emerald-400 transition flex items-center gap-1.5 text-[11px] font-medium active:scale-95">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+            <span class="hidden xl:inline">Write</span>
+          </button>
+          <button id="openGameBtn" onclick="openOfflineGameModal()" title="Runner Zero Gravity Arcade" class="h-7 px-2 sm:px-2.5 rounded-full hover:bg-purple-500/15 text-purple-400 transition flex items-center gap-1.5 text-[11px] font-medium active:scale-95">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.39 48.39 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.96.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58v0z"/></svg>
+            <span class="hidden xl:inline">Arcade</span>
+          </button>
+        </div>
+
+        <button id="exportChatBtn" title="Export thread to Markdown" class="h-8 w-8 rounded-full glass-panel hover:border-indigo-500/40 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
         </button>
-        <button id="openNlpStudioBtn" onclick="openNlpModal()" title="Open NLP Tokenizer & Text Analysis Studio" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
-          <span>🔬</span> <span class="hidden xs:inline">NLP</span><span class="hidden md:inline"> Studio</span>
-        </button>
-        <button id="openCodingTutorBtn" onclick="openCodingTutorModal()" title="Teach Me Coding - Universal Programming Academy" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
-          <span>🎓</span> <span class="hidden xs:inline">Learn</span><span class="hidden md:inline"> Code</span>
-        </button>
-        <button id="openCodeWriterBtn" onclick="openCodeWriterModal()" title="Code Writer Studio - Step-by-Step Writing Guides" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
-          <span>✍️</span> <span class="hidden xs:inline">Write</span><span class="hidden md:inline"> Code</span>
-        </button>
-        <button id="exportChatBtn" title="Export conversation to text file" class="text-xs px-2 sm:px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition flex items-center gap-1 sm:gap-1.5 font-medium active:scale-95">
-          <span>💾</span> <span class="hidden xs:inline">Export</span>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" title="Switch Theme (Obsidian Dark / Daylight Paper)" class="h-8 w-8 rounded-full glass-panel hover:border-indigo-500/40 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95" aria-label="Toggle Light/Dark theme">
+          <svg id="themeSunIcon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>
+          <svg id="themeMoonIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
         </button>
       </div>
     </header>
-    <!-- Offline Notification Banner (Shown automatically when not connected to internet) -->
-    <div id="offlineBanner" class="hidden bg-gradient-to-r from-rose-950/95 via-purple-950/90 to-slate-950 border-b border-rose-500/30 px-3.5 py-2 flex items-center justify-between text-xs text-rose-200 animate-in fade-in duration-200 shrink-0 select-none">
+
+    <!-- Offline Notification Banner -->
+    <div id="offlineBanner" class="hidden bg-gradient-to-r from-rose-950/90 via-purple-950/85 to-slate-950/90 backdrop-blur-md border-b border-rose-500/30 px-4 py-2 flex items-center justify-between text-xs text-rose-200 shrink-0 select-none">
       <div class="flex items-center gap-2.5 min-w-0">
-        <span class="h-2.5 w-2.5 rounded-full bg-rose-400 animate-ping shrink-0"></span>
+        <span class="h-2 w-2 rounded-full bg-rose-400 animate-ping shrink-0"></span>
         <div class="truncate">
           <span class="font-semibold text-rose-300">Offline Mode:</span>
-          <span class="text-slate-300 ml-1 hidden xs:inline">Internet connection lost. You can chat with offline CI or play our retro arcade game!</span>
+          <span class="text-slate-300 ml-1 hidden xs:inline">Local-First studios &amp; Offline CI active. Play Runner Zero Gravity anytime!</span>
         </div>
       </div>
-      <button onclick="openOfflineGameModal()" class="ml-2 px-3 py-1 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] shadow-sm shadow-purple-600/30 transition active:scale-95 flex items-center gap-1.5 shrink-0">
-        <span>🎮</span> <span>Play Runner</span>
+      <button onclick="openOfflineGameModal()" class="keep-white ml-2 px-3 py-1 rounded-full bg-purple-600 hover:bg-purple-500 text-white font-semibold text-[11px] shadow-sm shadow-purple-600/30 transition active:scale-95 flex items-center gap-1.5 shrink-0">
+        <span>Play Runner</span>
       </button>
     </div>
 
     <!-- Message Stream -->
-    <div id="messageContainer" class="flex-1 overflow-y-auto p-3 sm:p-5 md:p-6 flex flex-col gap-4 sm:gap-5">
-      
-      <!-- Welcome Hero -->
-      <div id="welcomeHero" class="max-w-2xl mx-auto my-auto text-center flex flex-col items-center gap-3.5 sm:gap-4 py-4 sm:py-8 w-full">
-        <div class="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl overflow-hidden shadow-xl shadow-indigo-500/30 shrink-0">
-          <img src="/assets/avatars/woman-3d-avatar.jpg" alt="NasInfinity AI Avatar" class="h-full w-full object-cover" onerror="this.parentElement.textContent='👩‍💻'">
-        </div>
-        <div class="px-2">
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 mb-2">
-            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> NasInfinity AI v1.2.0 Stable
+    <div id="messageContainer" class="flex-1 overflow-y-auto px-3 sm:px-6 pt-5 pb-8 flex flex-col gap-6">
+
+      <!-- Bento Welcome Studio -->
+      <div id="welcomeHero" class="max-w-3xl mx-auto my-auto flex flex-col items-center gap-6 py-4 sm:py-6 w-full">
+        <!-- Halo Avatar & Headline -->
+        <div class="text-center flex flex-col items-center gap-3 px-2">
+          <div class="relative">
+            <div class="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-indigo-500/35 via-cyan-400/25 to-purple-500/35 blur-xl"></div>
+            <div class="relative h-16 w-16 sm:h-20 sm:w-20 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/20 shrink-0">
+              <img src="/assets/avatars/woman-3d-avatar.jpg" alt="NasInfinity AI Avatar" class="h-full w-full object-cover" onerror="this.parentElement.textContent='✨'">
+            </div>
           </div>
-          <h2 class="text-lg sm:text-2xl font-bold text-white tracking-tight">NasInfinity AI Assistant</h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-md mx-auto">Multimodal vision, in-browser Python execution, live streaming AI, and developer workspace.</p>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-semibold glass-panel text-indigo-300 mt-1">
+            <span class="h-2 w-2 rounded-full thinking-orb"></span>
+            <span>NasInfinity AI v2.0.0 • Production Spatial Edition</span>
+          </div>
+          <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight text-white">
+            What would you like to build or explore?
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+            Multimodal vision, live token streaming, in-browser Python Wasm, and local-first science studios.
+          </p>
+        </div>
+
+        <!-- Bento Studio Launchpad (2x3) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 w-full">
+          <button onclick="openPeriodicModal()" class="glass-card rounded-2xl p-3.5 text-left flex flex-col gap-2 group">
+            <div class="flex items-center justify-between">
+              <span class="h-8 w-8 rounded-xl bg-teal-500/15 text-teal-400 border border-teal-500/25 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3"/></svg>
+              </span>
+              <span class="text-[10px] font-mono text-slate-500 group-hover:text-teal-400 transition">118 Elements</span>
+            </div>
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-slate-100">Periodic Studio</div>
+              <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Atomic shells &amp; IUPAC grid</div>
+            </div>
+          </button>
+
+          <button onclick="openNlpModal()" class="glass-card rounded-2xl p-3.5 text-left flex flex-col gap-2 group">
+            <div class="flex items-center justify-between">
+              <span class="h-8 w-8 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/></svg>
+              </span>
+              <span class="text-[10px] font-mono text-slate-500 group-hover:text-indigo-400 transition">Tokenizer</span>
+            </div>
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-slate-100">NLP Inspector</div>
+              <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Tokens, polarity &amp; reading level</div>
+            </div>
+          </button>
+
+          <button onclick="sendQuickPrompt('Write a Python script using math and print a Fibonacci table up to 10 terms')" class="glass-card rounded-2xl p-3.5 text-left flex flex-col gap-2 group">
+            <div class="flex items-center justify-between">
+              <span class="h-8 w-8 rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/25 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z"/></svg>
+              </span>
+              <span class="text-[10px] font-mono text-slate-500 group-hover:text-cyan-400 transition">Wasm 3.12</span>
+            </div>
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-slate-100">Python Sandbox</div>
+              <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Run Python in-browser live</div>
+            </div>
+          </button>
+
+          <button onclick="openCodingTutorModal()" class="glass-card rounded-2xl p-3.5 text-left flex flex-col gap-2 group">
+            <div class="flex items-center justify-between">
+              <span class="h-8 w-8 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/25 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84"/></svg>
+              </span>
+              <span class="text-[10px] font-mono text-slate-500 group-hover:text-amber-400 transition">Academy</span>
+            </div>
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-slate-100">Coding Tutor</div>
+              <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">15+ languages explained clearly</div>
+            </div>
+          </button>
+
+          <button onclick="openCodeWriterModal()" class="glass-card rounded-2xl p-3.5 text-left flex flex-col gap-2 group">
+            <div class="flex items-center justify-between">
+              <span class="h-8 w-8 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+              </span>
+              <span class="text-[10px] font-mono text-slate-500 group-hover:text-emerald-400 transition">Blueprints</span>
+            </div>
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-slate-100">Code Writer</div>
+              <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Build programs step-by-step</div>
+            </div>
+          </button>
+
+          <button onclick="openOfflineGameModal()" class="glass-card rounded-2xl p-3.5 text-left flex flex-col gap-2 group">
+            <div class="flex items-center justify-between">
+              <span class="h-8 w-8 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/25 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+              </span>
+              <span class="text-[10px] font-mono text-slate-500 group-hover:text-purple-400 transition">60 FPS</span>
+            </div>
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-slate-100">Zero-G Arcade</div>
+              <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Offline retro runner &amp; synth</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Starter Prompt Pills -->
+        <div class="flex flex-wrap items-center justify-center gap-2 max-w-2xl">
+          <button onclick="sendQuickPrompt('Tell me about Element 79 Gold')" class="px-3 py-1.5 rounded-full glass-panel hover:border-indigo-500/40 text-[11px] text-slate-300 hover:text-white transition active:scale-95">
+            Element 79 (Gold) dossier
+          </button>
+          <button onclick="sendQuickPrompt('Build a sleek interactive calculator in HTML')" class="px-3 py-1.5 rounded-full glass-panel hover:border-indigo-500/40 text-[11px] text-slate-300 hover:text-white transition active:scale-95">
+            Build interactive HTML app
+          </button>
+          <button onclick="sendQuickPrompt('What can you do?')" class="px-3 py-1.5 rounded-full glass-panel hover:border-indigo-500/40 text-[11px] text-slate-300 hover:text-white transition active:scale-95">
+            Explore capabilities
+          </button>
         </div>
       </div>
 
     </div>
-    <!-- Input Area -->
-    <div class="p-2.5 sm:p-4 border-t border-slate-800/80 bg-slate-950/80 backdrop-blur shrink-0 safe-bottom">
-      <div class="max-w-3xl mx-auto flex flex-col gap-1.5 sm:gap-2">
-        
-        <div class="relative bg-slate-900 border border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-lg shadow-black/20 focus-within:border-indigo-500/80 transition-all">
-          <!-- Multimodal Attachment Tray -->
-          <div id="attachmentTray" class="hidden flex flex-wrap gap-2 mb-2 p-1 border-b border-slate-800/60 pb-2"></div>
 
-          <textarea id="userInput" rows="1" placeholder="Ask anything, write code, research topics... (Enter to send)" class="w-full bg-transparent text-slate-100 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 sm:py-2 outline-none resize-none max-h-36 leading-relaxed placeholder:text-slate-500"></textarea>
-          
-          <div class="flex items-center justify-between pt-1 px-1 gap-2">
-            <div class="text-[11px] text-slate-400 flex items-center gap-2 min-w-0 overflow-hidden">
-              <span id="typingIndicator" class="hidden text-indigo-400 animate-pulse flex items-center gap-1 shrink-0">
-                <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span> <span class="hidden sm:inline">Generating response...</span><span class="sm:hidden">Thinking...</span>
+    <!-- Floating Glass Capsule Composer Dock -->
+    <div class="composer-dock-fade px-3 sm:px-6 pb-3 pt-2 shrink-0 safe-bottom relative z-20">
+      <div class="max-w-3xl mx-auto flex flex-col gap-2">
+
+        <div id="composerDropZone" class="composer-capsule relative rounded-[24px] p-2.5 sm:p-3">
+          <!-- Multimodal Attachment Tray -->
+          <div id="attachmentTray" class="hidden flex flex-wrap gap-2 mb-2 pb-2 border-b border-white/10"></div>
+
+          <textarea id="userInput" rows="1" placeholder="Message NasInfinity AI, drop files, or press ⌘K for studios..." class="w-full bg-transparent text-slate-100 text-xs sm:text-sm px-2.5 py-1.5 outline-none resize-none max-h-36 leading-relaxed placeholder:text-slate-500"></textarea>
+
+          <div class="flex items-center justify-between pt-1.5 px-1 gap-2">
+            <div class="text-[11px] text-slate-400 flex items-center gap-2.5 min-w-0 overflow-hidden">
+              <span id="typingIndicator" class="hidden text-indigo-400 flex items-center gap-1.5 shrink-0 font-medium">
+                <span class="h-2 w-2 rounded-full thinking-orb"></span>
+                <span class="hidden sm:inline">Synthesizing...</span>
+                <span class="sm:hidden">Thinking...</span>
               </span>
-              <span id="inputNlpStats" class="text-[10px] sm:text-[11px] text-slate-500 truncate">0 words &bull; ~0 tokens</span>
+              <span id="inputNlpStats" class="text-[10px] sm:text-[11px] text-slate-500 font-mono truncate">0 words &bull; ~0 tokens</span>
             </div>
 
             <div class="flex items-center gap-1.5 shrink-0">
-              <!-- Multimodal File / Image Attachment Button -->
-              <button id="attachBtn" type="button" title="Attach image or document (Multimodal Vision)" class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-xs transition border border-slate-700/60 active:scale-95" aria-label="Attach file">
-                <span>📎</span>
-              </button>
-              <input type="file" id="fileAttachmentInput" multiple class="hidden" accept="image/*,.txt,.py,.js,.json,.csv,.md,.html,.css,.cpp,.java,.ts">
+              <!-- Unified File & Folder Attachment Menu -->
+              <div class="relative" id="attachMenuWrapper">
+                <div id="attachMenuPopover" class="hidden absolute bottom-11 right-0 w-48 modal-shell rounded-2xl p-1.5 z-40 shadow-2xl flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-150">
+                  <button id="attachFilesOption" type="button" class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-left text-xs text-slate-200 flex items-center gap-2.5 transition">
+                    <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                    <span>Upload Files</span>
+                  </button>
+                  <button id="attachFolderOption" type="button" class="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-left text-xs text-slate-200 flex items-center gap-2.5 transition">
+                    <svg class="w-4 h-4 text-cyan-400 shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+                    <span>Upload Folder</span>
+                  </button>
+                </div>
+                <button id="attachBtn" type="button" title="Attach files, images, or folder" class="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition border border-white/10 active:scale-95" aria-label="Attach files or folder" aria-haspopup="true" aria-expanded="false">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"/></svg>
+                </button>
+                <input type="file" id="fileAttachmentInput" multiple class="hidden" accept="image/*,.txt,.py,.js,.jsx,.ts,.tsx,.json,.csv,.md,.html,.css,.scss,.cpp,.c,.h,.java,.go,.rs,.sql,.yaml,.yml,.xml,.sh">
+                <input type="file" id="folderAttachmentInput" webkitdirectory directory multiple class="hidden">
+              </div>
 
-              <!-- Speech-to-Text Voice Recognition -->
-              <button id="voiceInputBtn" type="button" title="Voice Input (Speech-to-Text • Fully Automatic Auto-Send)" class="h-8 w-8 sm:h-9 sm:w-auto sm:px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-xs transition border border-slate-700/60 active:scale-95" aria-label="Voice input">
-                <span id="micIcon">🎙️</span>
+              <!-- Voice Dictation -->
+              <button id="voiceInputBtn" type="button" title="Voice Input (Hands-free Speech-to-Text)" class="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition border border-white/10 active:scale-95" aria-label="Voice input">
+                <span id="micIcon" class="flex items-center justify-center">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg>
+                </span>
               </button>
 
-              <button id="sendBtn" class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center transition disabled:opacity-40 disabled:pointer-events-none shadow-sm shadow-indigo-600/30" aria-label="Send prompt">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Send / Stop Action -->
+              <button id="sendBtn" class="keep-white h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 active:scale-95 text-white flex items-center justify-center transition disabled:opacity-40 disabled:pointer-events-none shadow-md shadow-indigo-600/35" aria-label="Send prompt">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="22" y1="2" x2="11" y2="13"></line>
                   <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                 </svg>
@@ -202,218 +393,205 @@
           </div>
         </div>
 
-        <div class="text-center text-[10px] sm:text-[11px] text-slate-400 truncate px-2">
-          NasInfinity AI v1.2.0 &bull; NasInfinity AI may make mistakes &bull; <button onclick="openPrivacyModal()" class="underline hover:text-slate-200 transition">Privacy Notice &amp; Legal Disclaimer</button>
+        <div class="text-center text-[10px] text-slate-500 truncate px-2">
+          NasInfinity AI v2.0.0 &bull; Local-First Zero Telemetry &bull; <button onclick="openPrivacyModal()" class="underline hover:text-slate-300 transition">Privacy &amp; Legal</button>
         </div>
       </div>
     </div>
 
   </div>
 
+  <!-- Spotlight Studio & Action Command Palette (Ctrl+K / ⌘K) -->
+  <div id="commandPaletteModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-start justify-center pt-[12vh] p-3 hidden" onclick="if(event.target===this) closeCommandPalette()">
+    <div class="modal-shell rounded-3xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-4 py-3 border-b border-white/10 flex items-center gap-3">
+        <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+        <input id="commandPaletteInput" type="text" placeholder="Jump to a studio, action, or conversation..." class="w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500">
+        <button onclick="closeCommandPalette()" class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/10 text-slate-400 hover:text-white">ESC</button>
+      </div>
+      <div id="commandPaletteList" class="max-h-80 overflow-y-auto p-2 flex flex-col gap-1"></div>
+    </div>
+  </div>
+
   <!-- Live Code Preview Modal -->
-  <div id="previewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl sm:rounded-2xl w-full max-w-4xl h-[92vh] sm:h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950">
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-          <span class="font-bold text-xs sm:text-sm text-slate-200 truncate">Live App Sandbox Preview</span>
-          <span class="hidden sm:inline text-xs text-slate-400">(Interactive)</span>
+  <div id="previewModal" class="fixed inset-0 bg-black/75 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="modal-shell rounded-2xl sm:rounded-3xl w-full max-w-4xl h-[92vh] sm:h-[85vh] flex flex-col overflow-hidden">
+      <div class="px-4 sm:px-5 py-3 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          <span class="font-bold text-xs sm:text-sm text-slate-100 truncate">Live App Sandbox Preview</span>
+          <span class="hidden sm:inline text-[11px] text-slate-400">Interactive Client Runtime</span>
         </div>
-        <button onclick="closePreviewModal()" aria-label="Close Preview" class="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
+        <button onclick="closePreviewModal()" aria-label="Close Preview" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
           &times;
         </button>
       </div>
       <div class="flex-1 bg-white">
-        <iframe id="previewIframe" class="w-full h-full border-0"></iframe>
+        <iframe id="previewIframe" sandbox="allow-scripts allow-forms allow-modals" class="w-full h-full border-0"></iframe>
       </div>
     </div>
   </div>
 
   <!-- Offline Arcade Game Modal: Runner -->
-  <div id="gameModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 hidden" onclick="if(event.target===this) closeOfflineGameModal()">
-    <div class="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[96vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-      
-      <!-- Game Header -->
-      <div class="px-4 py-2.5 sm:py-3 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between gap-2 shrink-0">
+  <div id="gameModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4 hidden" onclick="if(event.target===this) closeOfflineGameModal()">
+    <div class="modal-shell rounded-3xl w-full max-w-4xl max-h-[96vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-2 shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="h-8 w-8 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white text-base shadow-md shadow-purple-500/20">
+          <div class="h-8 w-8 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white text-base shadow-md shadow-purple-500/25">
             🎮
           </div>
           <div>
             <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-2">
-              <span>Runner</span>
-              <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/30 font-mono">Offline Arcade</span>
+              <span>Runner Zero Gravity</span>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30 font-mono">Offline Arcade</span>
             </h3>
-            <p class="text-[10px] text-slate-400">Jump, double-jump, duck, and collect data cores!</p>
+            <p class="text-[10px] text-slate-400">Jump, double-jump, duck, and collect data cores</p>
           </div>
         </div>
 
-        <!-- Score & Quick Controls -->
         <div class="flex items-center gap-2 sm:gap-3">
-          <!-- Live FPS Counter -->
-          <div id="gameFpsBadge" class="bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg flex items-center gap-1.5 font-mono text-[11px]" title="Live Game Frame Rate (FPS)">
+          <div id="gameFpsBadge" class="glass-panel px-2.5 py-1 rounded-full flex items-center gap-1.5 font-mono text-[11px]" title="Live Game Frame Rate (FPS)">
             <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span id="gameFpsDisplay" class="font-bold text-emerald-400">60</span>
             <span class="text-slate-500 text-[10px]">FPS</span>
           </div>
 
-          <!-- Speed & Pace Selector -->
-          <button id="gameSpeedBtn" onclick="runner.toggleSpeedMode()" class="px-2 sm:px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/50 text-indigo-300 font-mono text-[11px] flex items-center gap-1 transition active:scale-95" title="Switch Game Velocity / Frame Rate Pace">
+          <button id="gameSpeedBtn" onclick="runner.toggleSpeedMode()" class="px-2.5 py-1 rounded-full bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-300 font-mono text-[11px] flex items-center gap-1 transition active:scale-95" title="Switch Game Velocity / Frame Rate Pace">
             <span id="gameSpeedIcon">⚡</span>
             <span id="gameSpeedLabel" class="font-semibold hidden xs:inline">Turbo (1.3x)</span>
           </button>
 
           <div class="hidden sm:flex items-center gap-2 text-xs font-mono">
-            <div class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg">
+            <div class="glass-panel px-2.5 py-1 rounded-full">
               <span class="text-slate-500 text-[10px]">SCORE:</span>
               <span id="gameScoreDisplay" class="font-bold text-teal-400">0</span>
             </div>
-            <div class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg">
+            <div class="glass-panel px-2.5 py-1 rounded-full">
               <span class="text-slate-500 text-[10px]">HIGH:</span>
               <span id="gameHighScoreDisplay" class="font-bold text-amber-400">0</span>
             </div>
           </div>
 
-          <!-- Audio Mute Button -->
-          <button id="gameAudioBtn" onclick="toggleGameAudio()" class="h-8 w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-xs transition" title="Toggle Sound">
+          <button id="gameAudioBtn" onclick="toggleGameAudio()" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-xs transition" title="Toggle Sound">
             <span id="gameAudioIcon">🔊</span>
           </button>
 
-          <!-- Close Button -->
-          <button onclick="closeOfflineGameModal()" aria-label="Close Arcade" class="h-8 w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
+          <button onclick="closeOfflineGameModal()" aria-label="Close Arcade" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
             &times;
           </button>
         </div>
       </div>
 
-      <!-- Game Canvas Container -->
       <div class="relative bg-slate-950 flex items-center justify-center overflow-hidden select-none touch-none aspect-[2/1] max-h-[60vh] w-full">
         <canvas id="gameCanvas" width="800" height="400" style="transform: translateZ(0); will-change: transform; image-rendering: -webkit-optimize-contrast; backface-visibility: hidden;" class="w-full h-full object-contain block cursor-pointer"></canvas>
       </div>
 
-      <!-- Controls bar & Mobile Touch Buttons -->
-      <div class="p-2.5 sm:p-3 bg-slate-900/80 border-t border-slate-800 flex items-center justify-between gap-3 text-xs shrink-0">
+      <div class="p-3 border-t border-white/10 flex items-center justify-between gap-3 text-xs shrink-0">
         <div class="text-slate-400 text-[11px] hidden sm:block">
-          <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">Space</kbd> / <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">&uarr;</kbd> Jump &bull; <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">&uarr; &uarr;</kbd> Double-Jump &bull; <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">&darr;</kbd> Duck
+          <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-slate-300 font-mono text-[10px]">Space</kbd> / <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-slate-300 font-mono text-[10px]">&uarr;</kbd> Jump &bull; <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-slate-300 font-mono text-[10px]">&uarr; &uarr;</kbd> Double-Jump &bull; <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-slate-300 font-mono text-[10px]">&darr;</kbd> Duck
         </div>
 
-        <!-- Mobile Touch Action Buttons -->
         <div class="flex items-center gap-2 w-full sm:w-auto ml-auto justify-end">
-          <button id="touchDuckBtn" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-indigo-600 text-white font-semibold text-xs border border-slate-700 transition select-none">
-            ⬇️ Slide / Duck
+          <button id="touchDuckBtn" class="flex-1 sm:flex-initial px-4 py-2 rounded-full bg-white/10 hover:bg-white/15 active:bg-indigo-600 text-slate-200 font-semibold text-xs border border-white/10 transition select-none">
+            Slide / Duck
           </button>
-          <button id="touchJumpBtn" class="flex-1 sm:flex-initial px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-400 text-white font-semibold text-xs shadow-md shadow-indigo-600/30 transition select-none">
-            ⬆️ Jump (Double)
+          <button id="touchJumpBtn" class="keep-white flex-1 sm:flex-initial px-6 py-2 rounded-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-400 text-white font-semibold text-xs shadow-md shadow-indigo-600/30 transition select-none">
+            Jump (Double)
           </button>
         </div>
       </div>
-
     </div>
   </div>
 
   <!-- Interactive Periodic Table of Elements Studio Modal -->
-  <div id="periodicModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-3 md:p-4 hidden" onclick="if(event.target===this) closePeriodicModal()">
-    <div class="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-[97vw] xl:max-w-7xl h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-      
-      <!-- Studio Header -->
-      <div class="px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-slate-800 bg-slate-900/95 flex flex-wrap items-center justify-between gap-2 shrink-0">
-        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-gradient-to-tr from-teal-500 via-emerald-500 to-cyan-500 flex items-center justify-center text-white text-base sm:text-lg shadow-md shadow-teal-500/20 shrink-0">
+  <div id="periodicModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-3 md:p-4 hidden" onclick="if(event.target===this) closePeriodicModal()">
+    <div class="modal-shell rounded-3xl w-full max-w-[97vw] xl:max-w-7xl h-[95vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-4 sm:px-5 py-3 border-b border-white/10 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="h-9 w-9 rounded-2xl bg-gradient-to-tr from-teal-500 via-emerald-500 to-cyan-500 flex items-center justify-center text-white text-lg shadow-md shadow-teal-500/25 shrink-0">
             🧪
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-2">
               <h3 class="font-bold text-xs sm:text-sm text-slate-100 truncate">Periodic Table of Elements Studio</h3>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 font-mono hidden xs:inline">118 IUPAC Elements</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-400 border border-teal-500/30 font-mono hidden xs:inline">118 IUPAC Elements</span>
             </div>
-            <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Atomic Data, Electron Shells, Categories & Thermodynamic Properties</p>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Atomic Data, Electron Shells, Categories &amp; Thermodynamic Properties</p>
           </div>
         </div>
 
-        <!-- Controls Toolbar -->
         <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap ml-auto">
-          <!-- Search Input -->
           <div class="relative">
-            <input id="ptSearchInput" type="text" placeholder="Search (Gold, Au, 79)..." class="bg-slate-950 border border-slate-800 focus:border-teal-400 rounded-lg pl-7 pr-2 py-1 text-xs text-slate-200 placeholder:text-slate-500 outline-none w-32 xs:w-44 sm:w-48 transition">
-            <span class="absolute left-2 top-1.5 text-slate-500 text-xs">🔍</span>
+            <input id="ptSearchInput" type="text" placeholder="Search (Gold, Au, 79)..." class="bg-slate-950/70 border border-white/10 focus:border-teal-400 rounded-full pl-8 pr-3 py-1 text-xs text-slate-200 placeholder:text-slate-500 outline-none w-36 sm:w-48 transition">
+            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
           </div>
 
-          <!-- Category Filter Select -->
-          <select id="ptCategoryFilter" class="bg-slate-950 border border-slate-800 focus:border-teal-400 rounded-lg px-2 py-1 text-xs text-slate-200 outline-none cursor-pointer hidden md:block">
-            <option value="all">All Categories</option>
-            <option value="alkali">Alkali Metals</option>
-            <option value="alkaline">Alkaline Earth</option>
-            <option value="transition">Transition Metals</option>
-            <option value="post-transition">Post-Transition</option>
-            <option value="metalloid">Metalloids</option>
-            <option value="nonmetal">Reactive Nonmetals</option>
-            <option value="halogen">Halogens</option>
-            <option value="noble">Noble Gases</option>
-            <option value="lanthanide">Lanthanides</option>
-            <option value="actinide">Actinides</option>
-          </select>
-
-          <!-- Phase Filter Select -->
-          <select id="ptPhaseFilter" class="bg-slate-950 border border-slate-800 focus:border-teal-400 rounded-lg px-2 py-1 text-xs text-slate-200 outline-none cursor-pointer hidden lg:block">
-            <option value="all">All States</option>
-            <option value="Solid">Solid</option>
-            <option value="Liquid">Liquid</option>
-            <option value="Gas">Gas</option>
-            <option value="Synthetic">Synthetic</option>
-          </select>
-
-          <!-- View Switcher -->
-          <div class="inline-flex rounded-lg bg-slate-950 p-0.5 border border-slate-800 text-[11px]">
-            <button id="ptViewGridBtn" onclick="setPtView('grid')" class="px-2 py-0.5 rounded font-medium bg-teal-600 text-white transition">Grid</button>
-            <button id="ptViewListBtn" onclick="setPtView('list')" class="px-2 py-0.5 rounded font-medium text-slate-400 hover:text-white transition">Cards</button>
+          <div class="relative hidden md:block shrink-0">
+            <select id="ptCategoryFilter" class="appearance-none h-8 bg-slate-950/70 border border-white/10 focus:border-teal-400 rounded-full pl-3 pr-7 text-xs text-slate-200 outline-none cursor-pointer whitespace-nowrap leading-none">
+              <option value="all">All Categories</option>
+              <option value="alkali">Alkali Metals</option>
+              <option value="alkaline">Alkaline Earth</option>
+              <option value="transition">Transition Metals</option>
+              <option value="post-transition">Post-Transition</option>
+              <option value="metalloid">Metalloids</option>
+              <option value="nonmetal">Reactive Nonmetals</option>
+              <option value="halogen">Halogens</option>
+              <option value="noble">Noble Gases</option>
+              <option value="lanthanide">Lanthanides</option>
+              <option value="actinide">Actinides</option>
+            </select>
+            <svg class="w-3 h-3 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
           </div>
 
-          <!-- Random Element Button -->
-          <button onclick="pickRandomElement()" title="Pick random element" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition active:scale-95 flex items-center gap-1">
+          <div class="relative hidden lg:block shrink-0">
+            <select id="ptPhaseFilter" class="appearance-none h-8 bg-slate-950/70 border border-white/10 focus:border-teal-400 rounded-full pl-3 pr-7 text-xs text-slate-200 outline-none cursor-pointer whitespace-nowrap leading-none">
+              <option value="all">All States</option>
+              <option value="Solid">Solid</option>
+              <option value="Liquid">Liquid</option>
+              <option value="Gas">Gas</option>
+              <option value="Synthetic">Synthetic</option>
+            </select>
+            <svg class="w-3 h-3 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+          </div>
+
+          <div class="inline-flex rounded-full glass-panel p-0.5 text-[11px]">
+            <button id="ptViewGridBtn" onclick="setPtView('grid')" class="keep-white px-2.5 py-0.5 rounded-full font-medium bg-teal-600 text-white transition">Grid</button>
+            <button id="ptViewListBtn" onclick="setPtView('list')" class="px-2.5 py-0.5 rounded-full font-medium text-slate-400 hover:text-white transition">Cards</button>
+          </div>
+
+          <button onclick="pickRandomElement()" title="Pick random element" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 text-xs transition active:scale-95 flex items-center gap-1">
             <span>🎲</span> <span class="hidden sm:inline">Random</span>
           </button>
 
-          <!-- Close Button -->
-          <button onclick="closePeriodicModal()" aria-label="Close Periodic Table" class="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition ml-1">
+          <button onclick="closePeriodicModal()" aria-label="Close Periodic Table" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition ml-1">
             &times;
           </button>
         </div>
       </div>
 
-      <!-- Main Layout Body (Grid / List on Left, Inspector on Right) -->
-      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 bg-slate-950">
-        
-        <!-- Left Display Panel -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-slate-800">
-          
-          <!-- Interactive Category Filter Bar -->
-          <div class="px-3 py-2 bg-slate-900/60 border-b border-slate-800/80 flex items-center gap-1.5 overflow-x-auto text-[10px] sm:text-[11px] shrink-0 no-scrollbar">
+      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
+          <div class="px-3 py-2 border-b border-white/10 flex items-center gap-1.5 overflow-x-auto text-[10px] sm:text-[11px] shrink-0 no-scrollbar">
             <span class="text-slate-500 font-semibold uppercase tracking-wider shrink-0 mr-1">Categories:</span>
-            <button onclick="filterPtCategory('all', this)" class="pt-filter-pill active px-2 py-0.5 rounded-full border border-teal-500/50 bg-teal-950/60 text-teal-300 shrink-0 font-medium">All (118)</button>
-            <button onclick="filterPtCategory('alkali', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-rose-500/40 bg-rose-950/40 text-rose-300 shrink-0">Alkali (6)</button>
-            <button onclick="filterPtCategory('alkaline', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-950/40 text-amber-300 shrink-0">Alkaline Earth (6)</button>
-            <button onclick="filterPtCategory('transition', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-sky-500/40 bg-sky-950/40 text-sky-300 shrink-0">Transition (38)</button>
-            <button onclick="filterPtCategory('lanthanide', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-yellow-500/40 bg-yellow-950/40 text-yellow-300 shrink-0">Lanthanides (15)</button>
-            <button onclick="filterPtCategory('actinide', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-red-600/40 bg-red-950/40 text-red-300 shrink-0">Actinides (15)</button>
-            <button onclick="filterPtCategory('post-transition', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-indigo-500/40 bg-indigo-950/40 text-indigo-300 shrink-0">Post-Transition (12)</button>
-            <button onclick="filterPtCategory('metalloid', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-teal-500/40 bg-teal-950/40 text-teal-300 shrink-0">Metalloids (7)</button>
-            <button onclick="filterPtCategory('nonmetal', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 shrink-0">Nonmetals (7)</button>
-            <button onclick="filterPtCategory('halogen', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-purple-500/40 bg-purple-950/40 text-purple-300 shrink-0">Halogens (6)</button>
-            <button onclick="filterPtCategory('noble', this)" class="pt-filter-pill px-2 py-0.5 rounded-full border border-pink-500/40 bg-pink-950/40 text-pink-300 shrink-0">Noble Gases (7)</button>
+            <button onclick="filterPtCategory('all', this)" class="pt-filter-pill active px-2.5 py-0.5 rounded-full border border-teal-500/50 bg-teal-950/60 text-teal-300 shrink-0 font-medium">All (118)</button>
+            <button onclick="filterPtCategory('alkali', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-rose-500/40 bg-rose-950/40 text-rose-300 shrink-0">Alkali (6)</button>
+            <button onclick="filterPtCategory('alkaline', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-amber-500/40 bg-amber-950/40 text-amber-300 shrink-0">Alkaline Earth (6)</button>
+            <button onclick="filterPtCategory('transition', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-sky-500/40 bg-sky-950/40 text-sky-300 shrink-0">Transition (38)</button>
+            <button onclick="filterPtCategory('lanthanide', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-yellow-500/40 bg-yellow-950/40 text-yellow-300 shrink-0">Lanthanides (15)</button>
+            <button onclick="filterPtCategory('actinide', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-red-600/40 bg-red-950/40 text-red-300 shrink-0">Actinides (15)</button>
+            <button onclick="filterPtCategory('post-transition', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-indigo-500/40 bg-indigo-950/40 text-indigo-300 shrink-0">Post-Transition (12)</button>
+            <button onclick="filterPtCategory('metalloid', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-teal-500/40 bg-teal-950/40 text-teal-300 shrink-0">Metalloids (7)</button>
+            <button onclick="filterPtCategory('nonmetal', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 shrink-0">Nonmetals (7)</button>
+            <button onclick="filterPtCategory('halogen', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-purple-500/40 bg-purple-950/40 text-purple-300 shrink-0">Halogens (6)</button>
+            <button onclick="filterPtCategory('noble', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-pink-500/40 bg-pink-950/40 text-pink-300 shrink-0">Noble Gases (7)</button>
           </div>
 
-          <!-- Table Grid Container -->
-          <div id="ptGridView" class="flex-1 overflow-auto p-2 sm:p-4 bg-slate-950/80">
+          <div id="ptGridView" class="flex-1 overflow-auto p-2 sm:p-4">
             <div class="pt-grid-wrapper min-w-[820px] max-w-[1100px] mx-auto">
-              <!-- Column Group Headers 1-18 -->
               <div class="grid grid-cols-18 gap-1 mb-1 text-center text-[9px] font-mono text-slate-500 select-none">
                 <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div>
               </div>
-              
-              <!-- The 18x10 Grid -->
               <div id="ptGridContainer" class="pt-grid"></div>
-
-              <!-- Period Legend / Footnote -->
               <div class="mt-3 flex items-center justify-between text-[10px] text-slate-500 px-1">
                 <span>* Lanthanide (57-71) &amp; Actinide (89-103) series extracted into separate f-block rows.</span>
                 <span id="ptCountDisplay">Showing 118 / 118 Elements</span>
@@ -421,13 +599,12 @@
             </div>
           </div>
 
-          <!-- Cards / List View Container (Hidden by default, great for mobile & searching) -->
-          <div id="ptListView" class="flex-1 overflow-y-auto p-3 sm:p-4 bg-slate-950 hidden">
+          <div id="ptListView" class="flex-1 overflow-y-auto p-3 sm:p-4 hidden">
             <div class="flex items-center justify-between mb-3 text-xs text-slate-400">
               <span id="ptListCountDisplay">Showing 118 elements</span>
               <div class="flex items-center gap-2">
                 <span>Sort by:</span>
-                <select id="ptSortSelect" onchange="sortPtList(this.value)" class="bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200 outline-none">
+                <select id="ptSortSelect" onchange="sortPtList(this.value)" class="bg-slate-900 border border-white/10 rounded-full px-3 py-1 text-xs text-slate-200 outline-none">
                   <option value="num-asc">Atomic Number (1 &rarr; 118)</option>
                   <option value="mass-asc">Atomic Mass (Low &rarr; High)</option>
                   <option value="mass-desc">Atomic Mass (High &rarr; Low)</option>
@@ -438,93 +615,83 @@
             </div>
             <div id="ptListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5"></div>
           </div>
-
         </div>
 
-        <!-- Right Side: Comprehensive Element Details Inspector Drawer -->
-        <div id="ptInspector" class="w-full lg:w-80 xl:w-96 bg-slate-900/90 flex flex-col shrink-0 overflow-y-auto p-3 sm:p-4 text-xs select-text">
-          <!-- Populated dynamically by selectElement(num) -->
-        </div>
-
+        <div id="ptInspector" class="w-full lg:w-80 xl:w-96 flex flex-col shrink-0 overflow-y-auto p-3 sm:p-4 text-xs select-text"></div>
       </div>
-
     </div>
   </div>
 
   <!-- NLP Inspector & Tokenizer Studio Modal -->
-  <div id="nlpModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl sm:rounded-2xl w-full max-w-3xl max-h-[94vh] sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950">
-        <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
-          <span class="text-base sm:text-lg shrink-0">🔬</span>
+  <div id="nlpModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="modal-shell rounded-3xl w-full max-w-3xl max-h-[94vh] sm:max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="px-4 sm:px-5 py-3 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="h-8 w-8 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/></svg>
+          </div>
           <div class="min-w-0">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-100 truncate">NLP Inspector & Tokenizer Studio</h3>
-            <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Tokenization, Sentiment & Readability Metrics</p>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-100 truncate">NLP Inspector &amp; Tokenizer Studio</h3>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">BPE Tokenization, Sentiment Polarity &amp; Readability Metrics</p>
           </div>
         </div>
-        <button onclick="closeNlpModal()" aria-label="Close NLP Studio" class="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition shrink-0 ml-2">
+        <button onclick="closeNlpModal()" aria-label="Close NLP Studio" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition shrink-0 ml-2">
           &times;
         </button>
       </div>
 
-      <div class="p-3.5 sm:p-5 flex-1 overflow-y-auto flex flex-col gap-3 sm:gap-4">
-        <!-- Input Analyzer Box -->
+      <div class="p-4 sm:p-5 flex-1 overflow-y-auto flex flex-col gap-4">
         <div>
           <label class="text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
             <span>Text to Analyze:</span>
-            <span class="text-[10px] text-slate-500 font-normal">Edit text to update live</span>
+            <span class="text-[10px] text-slate-500 font-normal">Live updates as you type</span>
           </label>
-          <textarea id="nlpInputText" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 sm:p-3 text-xs text-slate-200 outline-none focus:border-indigo-500 font-mono leading-relaxed resize-y" placeholder="Type or paste any text to run instant NLP analysis..."></textarea>
+          <textarea id="nlpInputText" rows="2" class="w-full glass-panel rounded-2xl p-3 text-xs text-slate-200 outline-none focus:border-indigo-500 font-mono leading-relaxed resize-y" placeholder="Type or paste any text to run instant NLP analysis..."></textarea>
         </div>
 
-        <!-- NLP Metric Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
-          <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 sm:p-3 rounded-xl flex flex-col gap-0.5">
-            <span class="text-[9px] sm:text-[10px] uppercase font-semibold text-indigo-400 tracking-wider">Tokens</span>
-            <span id="nlpTokenCount" class="text-base sm:text-lg font-bold text-white">0</span>
-            <span class="text-[9px] sm:text-[10px] text-slate-500 truncate">Subwords / Pieces</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div class="glass-panel p-3 rounded-2xl flex flex-col gap-0.5">
+            <span class="text-[10px] uppercase font-semibold text-indigo-400 tracking-wider">Tokens</span>
+            <span id="nlpTokenCount" class="text-lg font-bold text-white">0</span>
+            <span class="text-[10px] text-slate-500 truncate">Subwords / Pieces</span>
           </div>
 
-          <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 sm:p-3 rounded-xl flex flex-col gap-0.5">
-            <span class="text-[9px] sm:text-[10px] uppercase font-semibold text-purple-400 tracking-wider">Words & Chars</span>
-            <span id="nlpWordCharCount" class="text-base sm:text-lg font-bold text-white">0 w / 0 c</span>
-            <span class="text-[9px] sm:text-[10px] text-slate-500 truncate">Lexical length</span>
+          <div class="glass-panel p-3 rounded-2xl flex flex-col gap-0.5">
+            <span class="text-[10px] uppercase font-semibold text-purple-400 tracking-wider">Words &amp; Chars</span>
+            <span id="nlpWordCharCount" class="text-lg font-bold text-white">0 w / 0 c</span>
+            <span class="text-[10px] text-slate-500 truncate">Lexical length</span>
           </div>
 
-          <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 sm:p-3 rounded-xl flex flex-col gap-0.5">
-            <span class="text-[9px] sm:text-[10px] uppercase font-semibold text-emerald-400 tracking-wider">Sentiment</span>
-            <span id="nlpSentiment" class="text-xs sm:text-sm font-bold text-emerald-300 truncate">Neutral 😐</span>
-            <span id="nlpSentimentScore" class="text-[9px] sm:text-[10px] text-slate-500 truncate">Polarity: 0</span>
+          <div class="glass-panel p-3 rounded-2xl flex flex-col gap-0.5">
+            <span class="text-[10px] uppercase font-semibold text-emerald-400 tracking-wider">Sentiment</span>
+            <span id="nlpSentiment" class="text-sm font-bold text-emerald-300 truncate">Neutral 😐</span>
+            <span id="nlpSentimentScore" class="text-[10px] text-slate-500 truncate">Polarity: 0</span>
           </div>
 
-          <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 sm:p-3 rounded-xl flex flex-col gap-0.5">
-            <span class="text-[9px] sm:text-[10px] uppercase font-semibold text-amber-400 tracking-wider">Reading Level</span>
-            <span id="nlpReadingLevel" class="text-xs sm:text-sm font-bold text-amber-300 truncate">Standard</span>
-            <span id="nlpReadingTime" class="text-[9px] sm:text-[10px] text-slate-500 truncate">~0 sec read</span>
+          <div class="glass-panel p-3 rounded-2xl flex flex-col gap-0.5">
+            <span class="text-[10px] uppercase font-semibold text-amber-400 tracking-wider">Reading Level</span>
+            <span id="nlpReadingLevel" class="text-sm font-bold text-amber-300 truncate">Standard</span>
+            <span id="nlpReadingTime" class="text-[10px] text-slate-500 truncate">~0 sec read</span>
           </div>
         </div>
 
-        <!-- Visual Tokenizer -->
-        <div class="bg-slate-950/90 border border-slate-800/80 rounded-xl p-3 sm:p-3.5 flex flex-col gap-2">
+        <div class="glass-panel rounded-2xl p-3.5 flex flex-col gap-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <span>🧩</span> Visual Token Segmentation
-            </span>
-            <span class="text-[10px] text-slate-500 hidden sm:inline">Color pills = tokens</span>
+            <span class="text-xs font-semibold text-slate-300">Visual Token Segmentation</span>
+            <span class="text-[10px] text-slate-500 hidden sm:inline">Color pills = subword tokens</span>
           </div>
-          <div id="nlpTokenContainer" class="p-2.5 sm:p-3 bg-slate-900/90 rounded-lg border border-slate-800/60 font-mono text-[11px] sm:text-xs leading-relaxed flex flex-wrap gap-1 max-h-36 sm:max-h-48 overflow-y-auto">
+          <div id="nlpTokenContainer" class="p-3 bg-slate-950/60 rounded-xl border border-white/10 font-mono text-xs leading-relaxed flex flex-wrap gap-1 max-h-48 overflow-y-auto">
             <span class="text-slate-500 italic">No text analyzed yet.</span>
           </div>
         </div>
 
-        <!-- Keywords & Sentiments Highlight -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
-          <div class="p-2.5 sm:p-3 bg-slate-950/60 border border-slate-800/60 rounded-xl">
-            <span class="font-semibold text-emerald-400 block mb-1">😄 Positive Sentiment Signals:</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="p-3 glass-panel rounded-2xl">
+            <span class="font-semibold text-emerald-400 block mb-1">Positive Sentiment Signals</span>
             <div id="nlpPosKeywords" class="text-slate-400 text-[11px] flex flex-wrap gap-1">None</div>
           </div>
-          <div class="p-2.5 sm:p-3 bg-slate-950/60 border border-slate-800/60 rounded-xl">
-            <span class="font-semibold text-rose-400 block mb-1">🙁 Negative Sentiment Signals:</span>
+          <div class="p-3 glass-panel rounded-2xl">
+            <span class="font-semibold text-rose-400 block mb-1">Negative Sentiment Signals</span>
             <div id="nlpNegKeywords" class="text-slate-400 text-[11px] flex flex-wrap gap-1">None</div>
           </div>
         </div>
@@ -533,114 +700,78 @@
   </div>
 
   <!-- Privacy Notice & Legal Disclaimer Modal -->
-  <div id="privacyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden" onclick="if(event.target===this) closePrivacyModal()">
-    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-      
-      <!-- Modal Header -->
-      <div class="px-4 sm:px-6 py-3.5 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2">
-          <span class="text-base sm:text-lg">🔒</span>
+  <div id="privacyModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-3 sm:p-4 hidden" onclick="if(event.target===this) closePrivacyModal()">
+    <div class="modal-shell rounded-3xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 sm:px-6 py-4 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="h-8 w-8 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+          </div>
           <div>
-            <h3 class="font-bold text-sm sm:text-base text-white">Privacy Notice & Legal Disclaimer</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">NasInfinity AI v1.1.0 &bull; Transparent, Client-First AI Architecture</p>
+            <h3 class="font-bold text-sm sm:text-base text-white">Privacy Notice &amp; Legal Disclaimer</h3>
+            <p class="text-[10px] sm:text-xs text-slate-400">NasInfinity AI v2.0.0 &bull; Local-First, Zero-Telemetry Architecture</p>
           </div>
         </div>
-        <button onclick="closePrivacyModal()" aria-label="Close Privacy Modal" class="h-8 w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition shrink-0 ml-2">
+        <button onclick="closePrivacyModal()" aria-label="Close Privacy Modal" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition shrink-0 ml-2">
           &times;
         </button>
       </div>
 
-      <!-- Modal Body -->
-      <div class="p-4 sm:p-6 flex-1 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
-        
-        <!-- Section 1 -->
-        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-          <h4 class="font-bold text-indigo-400 flex items-center gap-2 text-xs uppercase tracking-wide">
-            <span>🛡️</span> 1. Local-First Client Architecture (Zero Remote Logging)
-          </h4>
+      <div class="p-4 sm:p-6 flex-1 overflow-y-auto space-y-3.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+        <div class="p-4 rounded-2xl glass-panel space-y-1.5">
+          <h4 class="font-bold text-indigo-400 text-xs uppercase tracking-wide">1. Local-First Client Architecture (Zero Remote Logging)</h4>
           <p class="text-slate-300 text-xs">
-            NasInfinity AI is designed with privacy by default. The host web server (<code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">server.js</code>) operates as a zero-dependency static file server. It collects <strong>no tracking cookies</strong>, no analytics telemetry, and records <strong>zero database logs</strong> of your conversations, inputs, or personal information.
+            The host web server (<code class="bg-slate-900 px-1.5 py-0.5 rounded text-indigo-300">server.js</code>) collects <strong>no tracking cookies</strong>, zero analytics telemetry, and maintains <strong>zero database logs</strong> of your prompts or personal data.
           </p>
           <p class="text-slate-400 text-[11px]">
-            Your conversation history, user profile memory, and settings are stored locally on your own device using browser <code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300">localStorage</code>.
+            Your conversation history, profile memory, theme preference, and workspace settings stay inside your device's <code class="bg-slate-900 px-1.5 py-0.5 rounded text-indigo-300">localStorage</code>.
           </p>
         </div>
 
-        <!-- Section 2 -->
-        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-          <h4 class="font-bold text-indigo-400 flex items-center gap-2 text-xs uppercase tracking-wide">
-            <span>🌐</span> 2. Third-Party AI Services & Network Transmission
-          </h4>
-          <p class="text-slate-300 text-xs">
-            When you interact with online AI features, your prompt text is transmitted directly and securely over encrypted HTTPS to the service provider selected in your session:
-          </p>
+        <div class="p-4 rounded-2xl glass-panel space-y-1.5">
+          <h4 class="font-bold text-indigo-400 text-xs uppercase tracking-wide">2. Third-Party AI Services &amp; Network Transmission</h4>
           <ul class="list-disc pl-5 space-y-1 text-slate-300 text-xs">
-            <li><strong>Online First AI:</strong> Proxied via public text generation endpoints (<a href="https://pollinations.ai" target="_blank" rel="noopener" class="text-indigo-400 underline">Pollinations.ai</a>).</li>
-            <li><strong>Google Gemini API:</strong> When selected, prompts are sent directly to Google Generative AI servers using your personal API key, subject to the <a href="https://ai.google.dev/terms" target="_blank" rel="noopener" class="text-indigo-400 underline">Google Generative AI Terms of Service</a>.</li>
-            <li><strong>OpenAI API:</strong> When selected, prompts are sent directly to OpenAI servers using your personal API key, governed by the <a href="https://openai.com/policies/terms-of-use" target="_blank" rel="noopener" class="text-indigo-400 underline">OpenAI Terms of Use</a>.</li>
-            <li><strong>Wikipedia REST API:</strong> Factual summaries are retrieved from Wikimedia Foundation APIs under the <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener" class="text-indigo-400 underline">Creative Commons Attribution-ShareAlike (CC BY-SA 4.0)</a> license.</li>
+            <li><strong>Online First AI:</strong> Proxied via public text endpoints (<a href="https://pollinations.ai" target="_blank" rel="noopener" class="text-indigo-400 underline">Pollinations.ai</a>).</li>
+            <li><strong>Google Gemini API:</strong> Prompts &amp; attachments go directly to Google servers using your personal key (<a href="https://ai.google.dev/terms" target="_blank" rel="noopener" class="text-indigo-400 underline">Terms</a>).</li>
+            <li><strong>OpenAI API:</strong> Prompts &amp; attachments go directly to OpenAI using your personal key (<a href="https://openai.com/policies/terms-of-use" target="_blank" rel="noopener" class="text-indigo-400 underline">Terms</a>).</li>
+            <li><strong>Wikipedia REST API:</strong> Factual summaries retrieved under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener" class="text-indigo-400 underline">CC BY-SA 4.0</a>.</li>
           </ul>
         </div>
 
-        <!-- Section 3 -->
-        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-          <h4 class="font-bold text-indigo-400 flex items-center gap-2 text-xs uppercase tracking-wide">
-            <span>🔑</span> 3. API Keys & Credentials Safety
-          </h4>
+        <div class="p-4 rounded-2xl glass-panel space-y-1.5">
+          <h4 class="font-bold text-indigo-400 text-xs uppercase tracking-wide">3. API Keys &amp; Data Erasure</h4>
           <p class="text-slate-300 text-xs">
-            If you provide a Google Gemini or OpenAI API key, it is saved exclusively in your browser's local sandbox storage. Your key is <strong>never transmitted</strong> to our server, third-party loggers, or unauthorized intermediaries.
+            Personal API keys are saved solely inside your browser storage and never logged by our server. You can purge all chats anytime via <strong>Clear</strong> in the sidebar or say <em>"Reset memory"</em>.
           </p>
         </div>
 
-        <!-- Section 4 -->
-        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-          <h4 class="font-bold text-indigo-400 flex items-center gap-2 text-xs uppercase tracking-wide">
-            <span>🧹</span> 4. User Control & Instant Data Erasure
-          </h4>
+        <div class="p-4 rounded-2xl glass-panel space-y-1.5">
+          <h4 class="font-bold text-amber-400 text-xs uppercase tracking-wide">4. Warranty Disclaimer</h4>
           <p class="text-slate-300 text-xs">
-            You hold complete ownership and control over your data. You can erase all chat history and cached memories instantly at any time by clicking <strong>"Clear all chats"</strong> in the sidebar, or by asking the assistant to <em>"Forget my name"</em> / <em>"Reset memory"</em>.
+            Provided <strong>"AS IS"</strong> under the MIT License. AI models can produce inaccuracies; always verify critical code and scientific/medical/legal outputs.
           </p>
         </div>
-
-        <!-- Section 5 -->
-        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-          <h4 class="font-bold text-amber-400 flex items-center gap-2 text-xs uppercase tracking-wide">
-            <span>⚖️</span> 5. Commercial Warranty & Liability Disclaimer
-          </h4>
-          <p class="text-slate-300 text-xs">
-            <strong>Provided "AS IS":</strong> NasInfinity AI and its AI outputs are provided for informational, developer, and educational purposes without warranties of any kind, express or implied.
-          </p>
-          <p class="text-slate-400 text-[11px]">
-            AI models may occasionally generate inaccurate, incomplete, or biased information. NasInfinity AI is not a certified provider of medical, legal, financial, or safety-critical counsel. Always verify critical code and data prior to production deployment.
-          </p>
-        </div>
-
       </div>
 
-      <!-- Modal Footer -->
-      <div class="px-4 sm:px-6 py-3 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between shrink-0">
-        <span class="text-[11px] text-slate-400">NasInfinity AI v1.2.0 &bull; Licensed under the <a href="LICENSE" target="_blank" class="text-indigo-400 hover:underline">MIT License</a></span>
-        <button onclick="closePrivacyModal()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-semibold text-xs transition">
+      <div class="px-5 sm:px-6 py-3.5 border-t border-white/10 flex items-center justify-between shrink-0">
+        <span class="text-[11px] text-slate-400">NasInfinity AI v2.0.0 &bull; <a href="LICENSE" target="_blank" class="text-indigo-400 hover:underline">MIT License</a></span>
+        <button onclick="closePrivacyModal()" class="keep-white px-4 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-semibold text-xs transition">
           I Understand &amp; Agree
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- Application Logic -->
-  <!-- ========================================================================= -->
-  <!-- Modular Feature Engines & Studios (Separated Files)                      -->
-  <!-- ========================================================================= -->
-  <script src="js/periodic-table.js?v=1.2.0"></script>
-  <script src="js/game.js?v=1.2.0"></script>
-  <script src="js/nlp.js?v=1.2.0"></script>
-  <script src="js/code-generators.js?v=1.2.0"></script>
-  <script src="js/coding-tutor.js?v=1.2.0"></script>
-  <script src="js/code-writer.js?v=1.2.0"></script>
-  <script src="js/conversational-ai.js?v=1.2.0"></script>
-  <script src="js/document-processor.js?v=1.2.0"></script>
-  <script src="js/python-runner.js?v=1.2.0"></script>
-  <script src="js/app.js?v=1.2.0"></script>
+  <!-- Modular Feature Engines & Studios -->
+  <script src="js/periodic-table.js?v=2.0.0"></script>
+  <script src="js/game.js?v=2.0.0"></script>
+  <script src="js/nlp.js?v=2.0.0"></script>
+  <script src="js/code-generators.js?v=2.0.0"></script>
+  <script src="js/coding-tutor.js?v=2.0.0"></script>
+  <script src="js/code-writer.js?v=2.0.0"></script>
+  <script src="js/conversational-ai.js?v=2.0.0"></script>
+  <script src="js/document-processor.js?v=2.0.0"></script>
+  <script src="js/python-runner.js?v=2.0.0"></script>
+  <script src="js/app.js?v=2.0.0"></script>
 </body>
 </html>

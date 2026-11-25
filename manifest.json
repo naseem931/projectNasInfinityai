@@ -1,13 +1,18 @@
 {
-  "name": "NasInfinity AI - Personal AI Assistant & Code Studio",
+  "name": "NasInfinity AI - Spatial AI Assistant & Developer Studio",
   "short_name": "NasInfinity AI",
-  "version": "1.2.0",
-  "description": "Browser-native AI assistant, offline developer workspace, and NLP Studio.",
+  "version": "2.0.0",
+  "description": "Browser-native AI assistant, multimodal developer workspace, and science studio.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#4f46e5",
+  "background_color": "#06070b",
+  "theme_color": "#6366f1",
   "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
     {
       "src": "/assets/avatars/woman-3d-avatar.jpg",
       "sizes": "192x192",

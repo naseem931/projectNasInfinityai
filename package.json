@@ -1,10 +1,14 @@
 {
   "name": "nasinfinity-ai",
-  "version": "1.2.0",
-  "description": "Personal AI Assistant, Developer Workspace, and NLP Studio powered by live internet AI and zero-dependency local server.",
+  "version": "2.0.0",
+  "description": "Production-grade Personal AI Assistant, Spatial Developer Workspace, and NLP Studio powered by live internet AI and zero-dependency Node.js server.",
   "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node server.js",
+    "prod": "node server.js",
     "test": "node tests/test-suite.js"
   },
   "keywords": [
@@ -15,7 +19,8 @@
     "developer-tools",
     "code-studio",
     "python-wasm",
-    "multimodal"
+    "multimodal",
+    "pwa"
   ],
   "author": "NasInfinity",
   "license": "MIT"

@@ -1,10 +1,31 @@
 // =========================================================================
-// NasInfinity AI v1.2.0 - Core Application Controller
-// Multimodal Vision, Real-Time Streaming, Wasm Python Sandbox & Workspace Mgmt
+// NasInfinity AI v2.0.0 — Core Application Controller
+// Spatial Theme, Command Palette, Editorial Streaming, Vision & Python Wasm
 // =========================================================================
 
 (function(window) {
   'use strict';
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  window.escapeHtml = escapeHtml;
+
+  const SVG_ICONS = {
+    micIdle: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg>`,
+    micActive: `<svg class="w-4 h-4 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>`,
+    send: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`,
+    stop: `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2.5"></rect></svg>`,
+    pin: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9"/></svg>`,
+    pinFilled: `<svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75h9z"/></svg>`,
+    trash: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>`,
+    play: `<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>`
+  };
 
   window.showToast = function(message, type = 'info') {
     let container = document.getElementById('toastContainer');
@@ -16,7 +37,7 @@
     }
     const toast = document.createElement('div');
     const bgColors = {
-      info: 'bg-slate-900/95 border-indigo-500/40 text-indigo-200',
+      info: 'glass-panel border-indigo-500/40 text-indigo-200',
       success: 'bg-emerald-950/95 border-emerald-500/40 text-emerald-200',
       warning: 'bg-amber-950/95 border-amber-500/40 text-amber-200',
       error: 'bg-rose-950/95 border-rose-500/40 text-rose-200'
@@ -27,8 +48,8 @@
       warning: '⚠️',
       error: '❌'
     };
-    toast.className = `p-3 rounded-xl border shadow-2xl text-xs flex items-center gap-2.5 backdrop-blur-md animate-in slide-in-from-bottom-5 duration-200 pointer-events-auto ${bgColors[type] || bgColors.info}`;
-    toast.innerHTML = `<span class="text-sm shrink-0">${icons[type] || 'ℹ️'}</span><span class="flex-1 font-medium leading-relaxed">${message}</span>`;
+    toast.className = `p-3 rounded-2xl border shadow-2xl text-xs flex items-center gap-2.5 backdrop-blur-xl animate-in slide-in-from-bottom-5 duration-200 pointer-events-auto ${bgColors[type] || bgColors.info}`;
+    toast.innerHTML = `<span class="text-sm shrink-0">${icons[type] || 'ℹ️'}</span><span class="flex-1 font-medium leading-relaxed">${escapeHtml(message)}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
       toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
@@ -63,6 +84,7 @@
   const apiKeyLabel = document.getElementById('apiKeyLabel');
   const apiKeyInput = document.getElementById('apiKeyInput');
   const apiKeyHelp = document.getElementById('apiKeyHelp');
+  const customModelInput = document.getElementById('customModelInput');
   const typingIndicator = document.getElementById('typingIndicator');
   const clearAllBtn = document.getElementById('clearAllBtn');
   const exportChatBtn = document.getElementById('exportChatBtn');
@@ -73,7 +95,122 @@
   const closeSidebarBtn = document.getElementById('closeSidebarBtn');
   const sidebarBackdrop = document.getElementById('sidebarBackdrop');
   const sidebar = document.getElementById('sidebar');
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const themeSunIcon = document.getElementById('themeSunIcon');
+  const themeMoonIcon = document.getElementById('themeMoonIcon');
+  const commandPaletteModal = document.getElementById('commandPaletteModal');
+  const commandPaletteInput = document.getElementById('commandPaletteInput');
+  const commandPaletteList = document.getElementById('commandPaletteList');
 
+  // --- Theme Management (Obsidian Dark & Daylight Paper Light) ---
+  function applyTheme(theme) {
+    const isLight = theme === 'light';
+    if (isLight) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.setAttribute('content', isLight ? '#f4f6fb' : '#06070b');
+    if (themeSunIcon && themeMoonIcon) {
+      themeSunIcon.classList.toggle('hidden', !isLight);
+      themeMoonIcon.classList.toggle('hidden', isLight);
+    }
+    try {
+      localStorage.setItem('nasinfinity_theme', isLight ? 'light' : 'dark');
+    } catch (e) {}
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    showToast(`Switched to ${next === 'light' ? 'Daylight Paper' : 'Obsidian Spatial'} theme`, 'info');
+  }
+  window.toggleTheme = toggleTheme;
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+  }
+
+  // --- Command Palette (Ctrl+K / ⌘K) ---
+  const COMMAND_ACTIONS = [
+    { id: 'cmd_new_chat', title: 'New Conversation Thread', subtitle: 'Start a fresh context window', tag: 'Action', run: () => createNewChat() },
+    { id: 'cmd_periodic', title: 'Periodic Table of Elements Studio', subtitle: 'Explore 118 IUPAC elements & atomic shells', tag: 'Studio', run: () => typeof openPeriodicModal === 'function' && openPeriodicModal() },
+    { id: 'cmd_nlp', title: 'NLP Inspector & Tokenizer', subtitle: 'Analyze tokens, sentiment & readability', tag: 'Studio', run: () => typeof openNlpModal === 'function' && openNlpModal() },
+    { id: 'cmd_tutor', title: 'NasInfinity Coding Academy', subtitle: 'Interactive lessons across 15+ languages', tag: 'Studio', run: () => typeof openCodingTutorModal === 'function' && openCodingTutorModal() },
+    { id: 'cmd_writer', title: 'Code Writer Blueprints', subtitle: 'Step-by-step code construction guides', tag: 'Studio', run: () => typeof openCodeWriterModal === 'function' && openCodeWriterModal() },
+    { id: 'cmd_arcade', title: 'Runner Zero Gravity Arcade', subtitle: '60 FPS offline retro runner game', tag: 'Arcade', run: () => typeof openOfflineGameModal === 'function' && openOfflineGameModal() },
+    { id: 'cmd_theme', title: 'Toggle Light / Dark Theme', subtitle: 'Switch between Obsidian Dark & Daylight Paper', tag: 'Theme', run: () => toggleTheme() },
+    { id: 'cmd_export', title: 'Export Current Thread (.md)', subtitle: 'Download active conversation as Markdown', tag: 'Export', run: () => exportCurrentChat() }
+  ];
+
+  function renderCommandPalette(filterText = '') {
+    if (!commandPaletteList) return;
+    const q = filterText.trim().toLowerCase();
+    commandPaletteList.innerHTML = '';
+
+    const matchedActions = COMMAND_ACTIONS.filter(a =>
+      !q || a.title.toLowerCase().includes(q) || a.subtitle.toLowerCase().includes(q) || a.tag.toLowerCase().includes(q)
+    );
+
+    const matchedChats = chats
+      .filter(c => !q || (c.title || '').toLowerCase().includes(q))
+      .slice(0, 5)
+      .map(c => ({
+        id: c.id,
+        title: c.title || 'Conversation',
+        subtitle: `${c.messages ? c.messages.length : 0} messages`,
+        tag: 'Thread',
+        run: () => loadChat(c.id)
+      }));
+
+    const combined = [...matchedActions, ...matchedChats];
+    if (combined.length === 0) {
+      commandPaletteList.innerHTML = `<div class="px-4 py-6 text-center text-xs text-slate-500">No studios or threads match "${escapeHtml(filterText)}"</div>`;
+      return;
+    }
+
+    combined.forEach(item => {
+      const btn = document.createElement('button');
+      btn.className = 'w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/10 text-left flex items-center justify-between gap-3 transition group';
+      btn.innerHTML = `
+        <div class="min-w-0">
+          <div class="text-xs font-semibold text-slate-100 group-hover:text-indigo-400 transition truncate">${escapeHtml(item.title)}</div>
+          <div class="text-[11px] text-slate-400 truncate">${escapeHtml(item.subtitle)}</div>
+        </div>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full glass-panel text-slate-400 shrink-0">${escapeHtml(item.tag)}</span>
+      `;
+      btn.addEventListener('click', () => {
+        closeCommandPalette();
+        item.run();
+      });
+      commandPaletteList.appendChild(btn);
+    });
+  }
+
+  window.openCommandPalette = function() {
+    if (!commandPaletteModal) return;
+    commandPaletteModal.classList.remove('hidden');
+    if (commandPaletteInput) {
+      commandPaletteInput.value = '';
+      renderCommandPalette('');
+      setTimeout(() => commandPaletteInput.focus(), 30);
+    }
+  };
+
+  window.closeCommandPalette = function() {
+    if (!commandPaletteModal) return;
+    commandPaletteModal.classList.add('hidden');
+  };
+
+  if (commandPaletteInput) {
+    commandPaletteInput.addEventListener('input', (e) => {
+      renderCommandPalette(e.target.value);
+    });
+  }
+
+  // --- Sidebar Responsive Drawer Helpers ---
   function isMobileOrTablet() {
     return window.innerWidth < 1024;
   }
@@ -118,6 +255,17 @@
   const micIcon = document.getElementById('micIcon');
   const netStatusDot = document.getElementById('netStatusDot');
 
+  function getActiveModelDisplayName() {
+    const mode = (engineSelector && engineSelector.value) || 'online_first';
+    if (mode === 'gemini') {
+      return localStorage.getItem('nasinfinity_custom_gemini_model') || 'Gemini 2.5 Flash';
+    }
+    if (mode === 'openai') {
+      return localStorage.getItem('nasinfinity_custom_openai_model') || 'GPT-4o mini';
+    }
+    return 'Live Internet AI';
+  }
+
   function updateNetworkStatus() {
     const isOnline = navigator.onLine;
     const mode = (engineSelector && engineSelector.value) || 'online_first';
@@ -125,18 +273,18 @@
 
     if (mode === 'online_first') {
       if (isOnline) {
-        activeEngineBadge.textContent = 'Live Internet AI 🌐';
-        activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium shrink-0';
+        activeEngineBadge.textContent = 'Live Internet AI';
+        activeEngineBadge.className = 'hidden sm:inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium shrink-0';
         activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Online';
-        if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-emerald-400 animate-pulse';
+        if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0';
         if (banner) banner.classList.add('hidden');
         activeEngineBadge.onclick = null;
         activeEngineBadge.style.cursor = 'default';
       } else {
-        activeEngineBadge.textContent = 'Offline • Play Game 🎮';
-        activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-medium shrink-0 cursor-pointer hover:bg-rose-500/30';
-        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-rose-400"></span> Disconnected';
-        if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-rose-400 animate-ping';
+        activeEngineBadge.textContent = 'Offline • Play Runner';
+        activeEngineBadge.className = 'hidden sm:inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-medium shrink-0 cursor-pointer hover:bg-rose-500/30';
+        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-rose-400"></span> Offline';
+        if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-rose-400 animate-ping shrink-0';
         if (banner) banner.classList.remove('hidden');
         activeEngineBadge.onclick = (typeof openOfflineGameModal === 'function') ? openOfflineGameModal : (window.openOfflineGameModal || null);
         activeEngineBadge.style.cursor = 'pointer';
@@ -147,33 +295,45 @@
   window.addEventListener('online', updateNetworkStatus);
   window.addEventListener('offline', updateNetworkStatus);
 
-  // Engine switch
-  if (engineSelector) {
-    engineSelector.addEventListener('change', () => {
-      const mode = engineSelector.value;
-      if (mode === 'online_first') {
-        updateNetworkStatus();
-        if (apiKeySection) apiKeySection.classList.add('hidden');
-      } else if (mode === 'gemini') {
-        activeEngineBadge.textContent = 'Gemini 2.5 Flash API';
-        activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium shrink-0';
-        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span> Streaming API';
-        if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-indigo-400';
-        if (apiKeyLabel) apiKeyLabel.textContent = 'Google AI Gemini API Key';
-        if (apiKeyHelp) apiKeyHelp.href = 'https://aistudio.google.com/app/apikey';
-        if (apiKeyInput) apiKeyInput.value = localStorage.getItem('nasinfinity_gemini_key') || '';
-        if (apiKeySection) apiKeySection.classList.remove('hidden');
-      } else if (mode === 'openai') {
-        activeEngineBadge.textContent = 'OpenAI GPT-4o mini API';
-        activeEngineBadge.className = 'hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 font-medium shrink-0';
-        activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-purple-400"></span> Streaming API';
-        if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-purple-400';
-        if (apiKeyLabel) apiKeyLabel.textContent = 'OpenAI API Key';
-        if (apiKeyHelp) apiKeyHelp.href = 'https://platform.openai.com/api-keys';
-        if (apiKeyInput) apiKeyInput.value = localStorage.getItem('nasinfinity_openai_key') || '';
-        if (apiKeySection) apiKeySection.classList.remove('hidden');
+  function syncEngineSelectorUI() {
+    if (!engineSelector) return;
+    const mode = engineSelector.value;
+    if (mode === 'online_first') {
+      updateNetworkStatus();
+      if (apiKeySection) apiKeySection.classList.add('hidden');
+    } else if (mode === 'gemini') {
+      const modelLabel = localStorage.getItem('nasinfinity_custom_gemini_model') || 'Gemini 2.5 Flash';
+      activeEngineBadge.textContent = modelLabel;
+      activeEngineBadge.className = 'hidden sm:inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 font-medium shrink-0';
+      activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span> Streaming';
+      if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-indigo-400 shrink-0';
+      if (apiKeyLabel) apiKeyLabel.textContent = 'Google Gemini API Key';
+      if (apiKeyHelp) apiKeyHelp.href = 'https://aistudio.google.com/app/apikey';
+      if (apiKeyInput) apiKeyInput.value = localStorage.getItem('nasinfinity_gemini_key') || '';
+      if (customModelInput) {
+        customModelInput.placeholder = 'gemini-2.5-flash';
+        customModelInput.value = localStorage.getItem('nasinfinity_custom_gemini_model') || '';
       }
-    });
+      if (apiKeySection) apiKeySection.classList.remove('hidden');
+    } else if (mode === 'openai') {
+      const modelLabel = localStorage.getItem('nasinfinity_custom_openai_model') || 'GPT-4o mini';
+      activeEngineBadge.textContent = modelLabel;
+      activeEngineBadge.className = 'hidden sm:inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25 font-medium shrink-0';
+      activeStatusBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-purple-400"></span> Streaming';
+      if (netStatusDot) netStatusDot.className = 'h-2 w-2 rounded-full bg-purple-400 shrink-0';
+      if (apiKeyLabel) apiKeyLabel.textContent = 'OpenAI API Key';
+      if (apiKeyHelp) apiKeyHelp.href = 'https://platform.openai.com/api-keys';
+      if (apiKeyInput) apiKeyInput.value = localStorage.getItem('nasinfinity_openai_key') || '';
+      if (customModelInput) {
+        customModelInput.placeholder = 'gpt-4o-mini';
+        customModelInput.value = localStorage.getItem('nasinfinity_custom_openai_model') || '';
+      }
+      if (apiKeySection) apiKeySection.classList.remove('hidden');
+    }
+  }
+
+  if (engineSelector) {
+    engineSelector.addEventListener('change', syncEngineSelectorUI);
   }
 
   if (apiKeyInput) {
@@ -181,6 +341,21 @@
       const mode = engineSelector.value;
       if (mode === 'gemini') localStorage.setItem('nasinfinity_gemini_key', apiKeyInput.value.trim());
       if (mode === 'openai') localStorage.setItem('nasinfinity_openai_key', apiKeyInput.value.trim());
+    });
+  }
+
+  if (customModelInput) {
+    customModelInput.addEventListener('input', () => {
+      const mode = engineSelector.value;
+      const val = customModelInput.value.trim();
+      if (mode === 'gemini') {
+        if (val) localStorage.setItem('nasinfinity_custom_gemini_model', val);
+        else localStorage.removeItem('nasinfinity_custom_gemini_model');
+      } else if (mode === 'openai') {
+        if (val) localStorage.setItem('nasinfinity_custom_openai_model', val);
+        else localStorage.removeItem('nasinfinity_custom_openai_model');
+      }
+      syncEngineSelectorUI();
     });
   }
 
@@ -237,11 +412,11 @@
       speechInitialText = userInput.value.trim();
       if (voiceInputBtn) {
         voiceInputBtn.classList.add('bg-rose-600', 'text-white', 'border-rose-500', 'animate-pulse', 'shadow-md', 'shadow-rose-600/40');
-        voiceInputBtn.classList.remove('bg-slate-800', 'text-slate-300');
+        voiceInputBtn.classList.remove('bg-white/5', 'text-slate-300');
         voiceInputBtn.title = 'Listening hands-free... Click to send now, or stop speaking to auto-send';
       }
-      if (micIcon) micIcon.textContent = '⏹️';
-      userInput.placeholder = '🎙️ Listening hands-free... Speak now! (Auto-sends when done)';
+      if (micIcon) micIcon.innerHTML = SVG_ICONS.micActive;
+      userInput.placeholder = 'Listening hands-free... Speak now (auto-sends when done)';
     };
 
     speechRecognition.onresult = (e) => {
@@ -258,7 +433,7 @@
 
       if (transcript.trim().length > 0) {
         voiceHasCapturedSpeech = true;
-        userInput.placeholder = '🎙️ Listening... (Auto-sending when you finish speaking)';
+        userInput.placeholder = 'Listening... Auto-sending when you pause';
 
         if (voiceAutoSendTimer) clearTimeout(voiceAutoSendTimer);
         voiceAutoSendTimer = setTimeout(() => {
@@ -309,7 +484,7 @@
 
     const textToSend = userInput.value.trim();
     if (textToSend && !isGenerating) {
-      userInput.placeholder = '🚀 Auto-sending prompt...';
+      userInput.placeholder = 'Auto-sending prompt...';
       handleSendMessage();
     }
     setTimeout(() => {
@@ -325,11 +500,11 @@
     }
     if (voiceInputBtn) {
       voiceInputBtn.classList.remove('bg-rose-600', 'text-white', 'border-rose-500', 'animate-pulse', 'shadow-md', 'shadow-rose-600/40');
-      voiceInputBtn.classList.add('bg-slate-800', 'text-slate-300');
-      voiceInputBtn.title = 'Voice Input (Speech-to-Text • Fully Automatic Auto-Send)';
+      voiceInputBtn.classList.add('bg-white/5', 'text-slate-300');
+      voiceInputBtn.title = 'Voice Input (Hands-free Speech-to-Text)';
     }
-    if (micIcon) micIcon.textContent = '🎙️';
-    userInput.placeholder = 'Ask anything, write code, research topics, or explore ideas... (Enter to send)';
+    if (micIcon) micIcon.innerHTML = SVG_ICONS.micIdle;
+    userInput.placeholder = 'Message NasInfinity AI, drop files, or press ⌘K for studios...';
     if (speechRecognition) {
       try { speechRecognition.stop(); } catch (err) {}
     }
@@ -371,10 +546,27 @@
     });
   }
 
+  // Global Keyboard Shortcuts (Ctrl+K / ⌘K for Command Palette, Esc for Stop/Close)
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isGenerating) {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
-      stopGeneration();
+      if (commandPaletteModal && commandPaletteModal.classList.contains('hidden')) {
+        openCommandPalette();
+      } else {
+        closeCommandPalette();
+      }
+      return;
+    }
+    if (e.key === 'Escape') {
+      if (commandPaletteModal && !commandPaletteModal.classList.contains('hidden')) {
+        e.preventDefault();
+        closeCommandPalette();
+        return;
+      }
+      if (isGenerating) {
+        e.preventDefault();
+        stopGeneration();
+      }
     }
   });
 
@@ -420,7 +612,7 @@
   if (backupWorkspaceBtn) {
     backupWorkspaceBtn.addEventListener('click', () => {
       const backupData = {
-        version: '1.2.0',
+        version: '2.0.0',
         exportedAt: new Date().toISOString(),
         chats: chats,
         userProfile: JSON.parse(localStorage.getItem('nasinfinity_user_profile') || '{}'),
@@ -480,34 +672,19 @@
   let activeAbortController = null;
   let stopRequested = false;
 
-  const SEND_ICON_HTML = `
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="22" y1="2" x2="11" y2="13"></line>
-      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-    </svg>
-  `;
-
-  const STOP_ICON_HTML = `
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-      <rect x="5" y="5" width="14" height="14" rx="2.5"></rect>
-    </svg>
-  `;
-
   function updateSendButtonUI(state) {
     if (!sendBtn) return;
     if (state === 'stop') {
-      sendBtn.innerHTML = STOP_ICON_HTML;
+      sendBtn.innerHTML = SVG_ICONS.stop;
       sendBtn.title = 'Stop generating response (Esc)';
       sendBtn.setAttribute('aria-label', 'Stop generating response');
-      sendBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-500', 'shadow-indigo-600/30');
-      sendBtn.classList.add('bg-rose-600', 'hover:bg-rose-500', 'shadow-rose-600/40', 'ring-2', 'ring-rose-400/30');
+      sendBtn.className = 'keep-white h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-rose-600 hover:bg-rose-500 active:scale-95 text-white flex items-center justify-center transition shadow-md shadow-rose-600/40 ring-2 ring-rose-400/30';
       sendBtn.disabled = false;
     } else {
-      sendBtn.innerHTML = SEND_ICON_HTML;
+      sendBtn.innerHTML = SVG_ICONS.send;
       sendBtn.title = 'Send prompt (Enter)';
       sendBtn.setAttribute('aria-label', 'Send prompt');
-      sendBtn.classList.remove('bg-rose-600', 'hover:bg-rose-500', 'shadow-rose-600/40', 'ring-2', 'ring-rose-400/30');
-      sendBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-500', 'shadow-indigo-600/30');
+      sendBtn.className = 'keep-white h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 active:scale-95 text-white flex items-center justify-center transition disabled:opacity-40 disabled:pointer-events-none shadow-md shadow-indigo-600/35';
       sendBtn.disabled = false;
     }
   }
@@ -526,6 +703,8 @@
   window.stopGeneration = stopGeneration;
 
   function init() {
+    const savedTheme = localStorage.getItem('nasinfinity_theme') || 'dark';
+    applyTheme(savedTheme);
     updateNetworkStatus();
     updateInputStats();
     initSpeechRecognition();
@@ -533,7 +712,6 @@
     else loadChat(chats[0].id);
     renderChatHistory();
 
-    // Register Progressive Web App Service Worker for offline resilience
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(err => {
@@ -581,7 +759,52 @@
       localStorage.setItem('nasinfinity_chats', JSON.stringify(chats));
     } catch (err) {
       console.warn('Unable to persist chats to localStorage:', err);
+      if (err && (err.name === 'QuotaExceededError' || String(err.message).toLowerCase().includes('quota'))) {
+        showToast('Browser chat storage is nearly full; consider exporting or clearing old threads.', 'warning');
+      }
     }
+  }
+
+  function renderChatGroup(label, items) {
+    if (items.length === 0) return;
+
+    const header = document.createElement('div');
+    header.className = 'text-[10px] font-semibold uppercase tracking-wider text-slate-500 px-2.5 pt-2 pb-0.5';
+    header.textContent = label;
+    chatHistoryList.appendChild(header);
+
+    items.forEach(chat => {
+      const item = document.createElement('button');
+      const isActive = chat.id === currentChatId;
+      item.className = `w-full text-left px-2.5 py-2 rounded-xl text-xs flex items-center justify-between group transition ${
+        isActive
+          ? 'bg-indigo-500/15 text-indigo-300 font-semibold border border-indigo-500/30'
+          : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 border border-transparent'
+      }`;
+
+      const pinIconHtml = chat.isPinned ? SVG_ICONS.pinFilled : SVG_ICONS.pin;
+      const pinTitle = chat.isPinned ? 'Unpin thread' : 'Pin thread to top';
+
+      item.innerHTML = `
+        <div class="flex items-center gap-1.5 min-w-0 flex-1 pr-1.5">
+          ${chat.isPinned ? `<span class="shrink-0" title="Pinned">${SVG_ICONS.pinFilled}</span>` : ''}
+          <span class="truncate">${escapeHtml(chat.title || 'Conversation')}</span>
+        </div>
+        <div class="flex items-center gap-0.5 shrink-0 opacity-75 sm:opacity-0 sm:group-hover:opacity-100 transition">
+          <span class="pin-chat-btn text-slate-400 hover:text-amber-400 p-1 rounded-lg hover:bg-white/10 transition" title="${pinTitle}">${pinIconHtml}</span>
+          <span class="delete-chat-btn text-slate-400 hover:text-rose-400 p-1 rounded-lg hover:bg-rose-500/10 transition" title="Delete thread">${SVG_ICONS.trash}</span>
+        </div>
+      `;
+      const pinBtn = item.querySelector('.pin-chat-btn');
+      const deleteBtn = item.querySelector('.delete-chat-btn');
+      if (pinBtn) pinBtn.addEventListener('click', (e) => window.togglePinChat(e, chat.id));
+      if (deleteBtn) deleteBtn.addEventListener('click', (e) => window.deleteChat(e, chat.id));
+      item.addEventListener('click', () => {
+        loadChat(chat.id);
+        if (isMobileOrTablet()) closeSidebar();
+      });
+      chatHistoryList.appendChild(item);
+    });
   }
 
   function renderChatHistory() {
@@ -597,44 +820,22 @@
       });
     }
 
-    // Sort pinned conversations to the top
-    const sorted = [...filtered].sort((a, b) => {
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      return (b.timestamp || 0) - (a.timestamp || 0);
-    });
-
-    if (sorted.length === 0) {
-      chatHistoryList.innerHTML = `<div class="px-2.5 py-3 text-[11px] text-slate-500 text-center italic">No conversations found</div>`;
+    if (filtered.length === 0) {
+      chatHistoryList.innerHTML = `<div class="px-2.5 py-4 text-[11px] text-slate-500 text-center italic">No matching threads</div>`;
       return;
     }
 
-    sorted.forEach(chat => {
-      const item = document.createElement('button');
-      const isActive = chat.id === currentChatId;
-      item.className = `w-full text-left px-2.5 py-2 rounded-xl text-xs flex items-center justify-between group transition ${
-        isActive ? 'bg-indigo-600/20 text-indigo-300 font-semibold border border-indigo-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'
-      }`;
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const todayTs = startOfToday.getTime();
 
-      const pinIcon = chat.isPinned ? '📌' : '📍';
-      const pinTitle = chat.isPinned ? 'Unpin chat' : 'Pin chat to top';
+    const pinned = filtered.filter(c => c.isPinned).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    const today = filtered.filter(c => !c.isPinned && (c.timestamp || 0) >= todayTs).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    const earlier = filtered.filter(c => !c.isPinned && (c.timestamp || 0) < todayTs).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-      item.innerHTML = `
-        <div class="flex items-center gap-1.5 min-w-0 flex-1 pr-1.5">
-          ${chat.isPinned ? '<span class="text-[10px] shrink-0 text-amber-400" title="Pinned conversation">📌</span>' : ''}
-          <span class="truncate">${chat.title || 'Conversation'}</span>
-        </div>
-        <div class="flex items-center gap-0.5 shrink-0 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition">
-          <span class="text-[11px] text-slate-400 hover:text-amber-400 px-1 py-0.5 rounded transition" title="${pinTitle}" onclick="togglePinChat(event, '${chat.id}')">${pinIcon}</span>
-          <span class="text-[11px] text-slate-400 hover:text-red-400 px-1 py-0.5 rounded transition" title="Delete chat" onclick="deleteChat(event, '${chat.id}')">&times;</span>
-        </div>
-      `;
-      item.addEventListener('click', () => {
-        loadChat(chat.id);
-        if (isMobileOrTablet()) closeSidebar();
-      });
-      chatHistoryList.appendChild(item);
-    });
+    renderChatGroup('Pinned', pinned);
+    renderChatGroup('Today', today);
+    renderChatGroup('Earlier', earlier);
   }
 
   window.togglePinChat = function(e, id) {
@@ -675,7 +876,15 @@
     }
   };
 
-  // --- Markdown, Code & Table Formatting ---
+  function formatInlineMarkdown(str) {
+    return str
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 underline font-medium inline-flex items-center gap-1">$1 ↗</a>')
+      .replace(/`([^`]+)`/g, '<code class="bg-indigo-500/15 text-indigo-300 border border-indigo-500/20 px-1.5 py-0.5 rounded-md text-xs code-font">$1</code>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
+      .replace(/(?<!\*)\*([^\s\*][^*]*[^\s\*]|\w)\*(?!\*)/g, '<em class="text-slate-300 italic">$1</em>');
+  }
+
+  // --- Markdown, IDE Code Cards & Table Formatting ---
   function formatMarkdown(text) {
     let formatted = text
       .replace(/&/g, '&amp;')
@@ -684,7 +893,7 @@
 
     const blocks = [];
 
-    // 1. Code blocks with syntax copy, live HTML preview & in-browser Python runner
+    // 1. Code blocks with IDE window header, syntax copy, live HTML preview & Python Wasm runner
     formatted = formatted.replace(/```([a-z0-9_-]*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
       const l = (lang || '').toLowerCase();
       const unescapedCode = code
@@ -693,30 +902,37 @@
         .replace(/&gt;/g, '>');
 
       const isWebExecutable = l === 'html' || unescapedCode.includes('<!DOCTYPE html>') || (unescapedCode.includes('<html') && unescapedCode.includes('</html>'));
-      const isPythonExecutable = l === 'python' || l === 'py';
+      const isPythonExecutable = (l === 'python' || l === 'py');
       const pyOutId = `pyOut_${Math.random().toString(36).substring(2, 9)}`;
 
       let actionBtn = '';
       if (isWebExecutable) {
-        actionBtn = `<button onclick="previewCode(this)" class="px-2 sm:px-2.5 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 font-semibold text-[10px] sm:text-[11px] border border-emerald-500/30 flex items-center gap-1 transition active:scale-95"><span>▶</span> <span class="hidden xs:inline">Run / </span>Preview Live</button>`;
+        actionBtn = `<button onclick="previewCode(this)" class="px-2.5 py-1 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 font-semibold text-[10px] sm:text-[11px] border border-emerald-500/30 flex items-center gap-1 transition active:scale-95">${SVG_ICONS.play} <span class="hidden xs:inline">Run / </span>Preview</button>`;
       } else if (isPythonExecutable) {
-        actionBtn = `<button onclick="runPythonCodeFromCard(this, '${pyOutId}')" class="px-2 sm:px-2.5 py-1 rounded bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 font-semibold text-[10px] sm:text-[11px] border border-amber-500/30 flex items-center gap-1 transition active:scale-95"><span>▶</span> <span class="hidden xs:inline">Run </span>Python (Wasm)</button>`;
+        actionBtn = `<button onclick="runPythonCodeFromCard(this, '${pyOutId}')" class="px-2.5 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 font-semibold text-[10px] sm:text-[11px] border border-amber-500/30 flex items-center gap-1 transition active:scale-95">${SVG_ICONS.play} <span class="hidden xs:inline">Run </span>Python (Wasm)</button>`;
       }
 
-      const pythonOutputContainer = isPythonExecutable 
-        ? `<div id="${pyOutId}" class="hidden p-3 bg-slate-900 border-t border-slate-800"></div>`
+      const pythonOutputContainer = isPythonExecutable
+        ? `<div id="${pyOutId}" class="hidden p-3 bg-slate-950 border-t border-white/10"></div>`
         : '';
 
       const html = `
-        <div class="code-card relative my-3 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden shadow-lg">
-          <div class="flex flex-wrap items-center justify-between gap-1.5 px-3 py-2 bg-slate-900 border-b border-slate-800 text-xs text-slate-400">
-            <span class="font-mono text-indigo-400 font-semibold text-[11px] sm:text-xs">${l || 'code'}</span>
-            <div class="flex items-center gap-1.5 sm:gap-2">
+        <div class="code-card code-card-shell relative my-3.5 rounded-2xl overflow-hidden">
+          <div class="code-card-header flex flex-wrap items-center justify-between gap-2 px-3.5 py-2 text-xs text-slate-400">
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5 opacity-75">
+                <span class="h-2 w-2 rounded-full bg-rose-500/70"></span>
+                <span class="h-2 w-2 rounded-full bg-amber-500/70"></span>
+                <span class="h-2 w-2 rounded-full bg-emerald-500/70"></span>
+              </div>
+              <span class="font-mono text-indigo-400 font-semibold text-[11px] uppercase tracking-wider ml-1">${l || 'code'}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
               ${actionBtn}
-              <button onclick="copyCode(this)" class="px-2 sm:px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] sm:text-[11px] border border-slate-700 transition active:scale-95">Copy<span class="hidden xs:inline"> Code</span></button>
+              <button onclick="copyCode(this)" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 text-[10px] sm:text-[11px] border border-white/10 transition active:scale-95">Copy</button>
             </div>
           </div>
-          <pre class="!m-0 !p-3 sm:!p-3.5 !bg-slate-950 !border-0 overflow-x-auto"><code class="code-font text-slate-200 text-xs leading-relaxed">${code.trim()}</code></pre>
+          <pre class="!m-0 !p-3.5 !bg-transparent !border-0 overflow-x-auto"><code class="code-font text-slate-200 text-xs leading-relaxed">${code.trim()}</code></pre>
           ${pythonOutputContainer}
         </div>
       `;
@@ -729,27 +945,27 @@
     formatted = formatted.replace(/(?:(?:^|\n)\|[^\n]+\|\r?\n(?:\|[\s:-]+)+\|\r?\n(?:\|[^\n]+\|\r?\n?)+)/g, (tableText) => {
       const lines = tableText.trim().split('\n').filter(l => l.trim().startsWith('|'));
       if (lines.length < 2) return tableText;
-      
+
       const headers = lines[0].split('|').slice(1, -1).map(c => c.trim());
       const rows = lines.slice(2).map(line => line.split('|').slice(1, -1).map(c => c.trim()));
-      
-      let html = '<div class="overflow-x-auto my-3 rounded-xl border border-slate-700/80 bg-slate-950/80 shadow-md">';
-      html += '<table class="min-w-full divide-y divide-slate-800 text-xs text-left">';
-      html += '<thead class="bg-slate-800/90 text-indigo-300 font-semibold uppercase tracking-wider text-[10px] sm:text-[11px]"><tr>';
+
+      let html = '<div class="overflow-x-auto my-3.5 rounded-2xl glass-panel shadow-md">';
+      html += '<table class="min-w-full divide-y divide-white/10 text-xs text-left">';
+      html += '<thead class="bg-white/5 text-indigo-400 font-semibold uppercase tracking-wider text-[10px] sm:text-[11px]"><tr>';
       headers.forEach(h => {
-        html += `<th class="px-2.5 sm:px-3.5 py-2 sm:py-2.5 whitespace-nowrap">${h}</th>`;
+        html += `<th class="px-3.5 py-2.5 whitespace-nowrap">${formatInlineMarkdown(h)}</th>`;
       });
       html += '</tr></thead>';
-      html += '<tbody class="divide-y divide-slate-800/50 text-slate-300">';
+      html += '<tbody class="divide-y divide-white/5 text-slate-300">';
       rows.forEach(r => {
-        html += '<tr class="hover:bg-slate-800/40 transition">';
+        html += '<tr class="hover:bg-white/5 transition">';
         r.forEach(cell => {
-          html += `<td class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs">${cell}</td>`;
+          html += `<td class="px-3.5 py-2 text-[11px] sm:text-xs">${formatInlineMarkdown(cell)}</td>`;
         });
         html += '</tr>';
       });
       html += '</tbody></table></div>';
-      
+
       const idx = blocks.length;
       blocks.push(html);
       return `\n%%%BLOCK_${idx}%%%\n`;
@@ -759,19 +975,21 @@
     formatted = formatted.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 underline font-medium inline-flex items-center gap-1">$1 ↗</a>');
 
     // 4. Headers
-    formatted = formatted.replace(/^### (.*$)/gim, '<h3 class="text-sm font-bold text-white mt-3 mb-1">$1</h3>');
+    formatted = formatted.replace(/^### (.*$)/gim, '<h3 class="text-sm font-bold text-white mt-3.5 mb-1.5">$1</h3>');
     formatted = formatted.replace(/^## (.*$)/gim, '<h2 class="text-base font-bold text-white mt-4 mb-2">$1</h2>');
     formatted = formatted.replace(/^# (.*$)/gim, '<h1 class="text-lg font-bold text-white mt-4 mb-2">$1</h1>');
 
-    // 5. Horizontal rules
-    formatted = formatted.replace(/^---$/gim, '<hr class="border-slate-800 my-3">');
+    // 5. Horizontal rules & Blockquotes
+    formatted = formatted.replace(/^---$/gim, '<hr class="border-white/10 my-3.5">');
+    formatted = formatted.replace(/^[ \t]*&gt;\s?(.*$)/gim, '<blockquote class="border-l-2 border-indigo-400/70 pl-3.5 py-1 my-2 text-slate-300 bg-indigo-500/5 rounded-r-xl italic">$1</blockquote>');
 
-    // 6. Lists
-    formatted = formatted.replace(/^[\*\-] (.*$)/gim, '<li class="ml-4 list-disc text-slate-200">$1</li>');
+    // 6. Lists (Bullet & Numbered, supporting indented items)
+    formatted = formatted.replace(/^[ \t]*[\*\-] (.*$)/gim, '<li class="ml-5 list-disc text-slate-200 my-0.5">$1</li>');
+    formatted = formatted.replace(/^[ \t]*(\d+)\.\s+(.*$)/gim, '<div class="ml-1 my-0.5"><span class="font-semibold text-indigo-400 mr-1.5">$1.</span>$2</div>');
 
     // 7. Inline code
-    formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-slate-800/80 text-indigo-300 px-1.5 py-0.5 rounded text-xs code-font">$1</code>');
-    
+    formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-indigo-500/15 text-indigo-300 border border-indigo-500/20 px-1.5 py-0.5 rounded-md text-xs code-font">$1</code>');
+
     // 8. Bold & Italic
     formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
     formatted = formatted.replace(/(?<!\*)\*([^\s\*][^*]*[^\s\*]|\w)\*(?!\*)/g, '<em class="text-slate-300 italic">$1</em>');
@@ -786,6 +1004,7 @@
     return formatted;
   }
 
+  // --- Editorial Message Stream Renderer ---
   function appendMessageElement(role, content) {
     if (welcomeHero && welcomeHero.parentNode === messageContainer) {
       welcomeHero.classList.add('hidden');
@@ -793,32 +1012,47 @@
 
     const isUser = role === 'user';
     const msgDiv = document.createElement('div');
-    msgDiv.className = `flex gap-2 sm:gap-3 max-w-3xl w-full mx-auto ${isUser ? 'justify-end' : 'justify-start'}`;
+    msgDiv.className = `msg-enter max-w-3xl w-full mx-auto ${isUser ? 'flex justify-end' : 'flex flex-col gap-2'}`;
 
-    const avatar = document.createElement('div');
     if (isUser) {
-      avatar.className = 'h-7 w-7 sm:h-8 sm:w-8 rounded-xl flex items-center justify-center shrink-0 text-xs sm:text-sm shadow-sm select-none bg-indigo-600 text-white order-2';
-      avatar.textContent = '👤';
-    } else {
-      avatar.className = 'h-7 w-7 sm:h-8 sm:w-8 rounded-xl overflow-hidden shadow-sm shrink-0 select-none';
-      avatar.innerHTML = '<img src="/assets/avatars/woman-3d-avatar.jpg" alt="AI" class="h-full w-full object-cover" onerror="this.parentElement.textContent=\'👩‍💻\'">';
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble user-capsule max-w-[85%] sm:max-w-[78%] rounded-3xl rounded-br-md px-4 py-2.5 text-xs sm:text-sm leading-relaxed break-words';
+      bubble.textContent = content;
+      msgDiv.appendChild(bubble);
+      messageContainer.appendChild(msgDiv);
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+      return bubble;
     }
 
-    const bubble = document.createElement('div');
-    bubble.className = `message-bubble max-w-[88%] sm:max-w-[85%] md:max-w-[80%] rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed overflow-hidden break-words shadow-sm ${
-      isUser ? 'bg-indigo-600/90 text-white rounded-br-none shadow-md' : 'bg-slate-900 border border-slate-800/90 text-slate-200 rounded-bl-none'
-    }`;
+    // Editorial Assistant Header (Avatar + Brand + Active Model Tag)
+    const authorRow = document.createElement('div');
+    authorRow.className = 'flex items-center gap-2.5 select-none';
+    authorRow.innerHTML = `
+      <div class="h-6 w-6 rounded-xl overflow-hidden shadow-sm ring-1 ring-white/15 shrink-0">
+        <img src="/assets/avatars/woman-3d-avatar.jpg" alt="AI" class="h-full w-full object-cover" onerror="this.parentElement.textContent='✨'">
+      </div>
+      <span class="text-xs font-bold text-slate-100 tracking-tight">NasInfinity AI</span>
+      <span class="text-[10px] font-mono px-2 py-0.5 rounded-full glass-panel text-slate-400">${escapeHtml(getActiveModelDisplayName())}</span>
+    `;
 
-    if (isUser) {
-      bubble.textContent = content;
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble editorial-assistant pl-0 sm:pl-8 text-xs sm:text-[14px] leading-relaxed overflow-hidden break-words';
+
+    if (content === 'Thinking...') {
+      bubble.innerHTML = `
+        <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full glass-panel text-xs text-indigo-300">
+          <span class="h-2.5 w-2.5 rounded-full thinking-orb"></span>
+          <span>Thinking &amp; synthesizing response...</span>
+        </div>
+      `;
     } else {
       bubble.innerHTML = formatMarkdown(content);
-      if (content !== 'Thinking...' && typeof attachNlpToolbar === 'function') {
+      if (typeof attachNlpToolbar === 'function') {
         attachNlpToolbar(bubble, content);
       }
     }
 
-    msgDiv.appendChild(avatar);
+    msgDiv.appendChild(authorRow);
     msgDiv.appendChild(bubble);
     messageContainer.appendChild(msgDiv);
     messageContainer.scrollTop = messageContainer.scrollHeight;
@@ -838,19 +1072,21 @@
     userInput.style.height = 'auto';
     updateInputStats();
 
-    // Prepare full prompt with text attachments if present
     let promptWithAttachments = rawText;
     const textAtts = activeAtts.filter(a => !a.isImage);
     const imageAtts = activeAtts.filter(a => a.isImage);
+    const folderNames = [...new Set(activeAtts.map(a => a.folderName).filter(Boolean))];
 
     if (textAtts.length > 0) {
-      const docHeader = textAtts.map(t => `--- Attached Document (${t.name}) ---\n${t.content}\n--- End Document ---`).join('\n\n');
-      promptWithAttachments = docHeader + (rawText ? `\n\n${rawText}` : '\n\nPlease analyze and explain the attached documents.');
+      const treeBlock = (folderNames.length > 0 && typeof window.buildFolderTreeSummary === 'function')
+        ? window.buildFolderTreeSummary(activeAtts) + '\n\n'
+        : '';
+      const docHeader = textAtts.map(t => `--- Attached File: ${t.relativePath || t.name} ---\n${t.content}\n--- End File ---`).join('\n\n');
+      promptWithAttachments = treeBlock + docHeader + (rawText ? `\n\n${rawText}` : '\n\nPlease analyze and explain the attached files.');
     } else if (!rawText && imageAtts.length > 0) {
       promptWithAttachments = 'Please analyze this attached image in detail.';
     }
 
-    // Clear attachment tray
     if (typeof window.clearAttachments === 'function') {
       window.clearAttachments();
     }
@@ -863,16 +1099,28 @@
     if (!chat) return;
 
     if (chat.messages.length === 0) {
-      chat.title = (rawText || 'Multimodal Query').slice(0, 32) + (rawText.length > 32 ? '...' : '');
+      const defaultTitle = folderNames.length > 0 ? `Folder: ${folderNames[0]}` : 'Multimodal Query';
+      const titleSource = rawText || defaultTitle;
+      chat.title = titleSource.slice(0, 32) + (titleSource.length > 32 ? '...' : '');
       if (chatTitleHeader) chatTitleHeader.textContent = chat.title;
       renderChatHistory();
     }
 
-    // Display user bubble with image thumbnails if attached
-    let displayContent = rawText;
-    if (imageAtts.length > 0) {
-      displayContent = `[Attached ${imageAtts.length} Image${imageAtts.length > 1 ? 's' : ''}] ${rawText}`;
+    const summaryTags = [];
+    if (folderNames.length > 0) {
+      folderNames.forEach(fn => {
+        const count = activeAtts.filter(a => a.folderName === fn).length;
+        summaryTags.push(`[📁 Folder: ${fn}/ (${count} file${count !== 1 ? 's' : ''})]`);
+      });
     }
+    const standaloneDocs = textAtts.filter(a => !a.folderName);
+    if (standaloneDocs.length > 0) {
+      summaryTags.push(`[📄 ${standaloneDocs.map(d => d.name).join(', ')}]`);
+    }
+    if (imageAtts.length > 0) {
+      summaryTags.push(`[🖼️ ${imageAtts.length} Image${imageAtts.length > 1 ? 's' : ''}]`);
+    }
+    const displayContent = [summaryTags.join(' '), rawText].filter(Boolean).join('\n\n');
     chat.messages.push({ role: 'user', content: promptWithAttachments });
     appendMessageElement('user', displayContent || promptWithAttachments);
     saveChats();
@@ -889,8 +1137,7 @@
     const mode = (engineSelector && engineSelector.value) || 'online_first';
     const isOnline = navigator.onLine;
 
-    // Real-Time Streaming Callback
-    const onStreamChunk = (accumulated, chunk) => {
+    const onStreamChunk = (accumulated) => {
       responseStreamedLive = true;
       fullResponse = accumulated;
       responseBubble.innerHTML = formatMarkdown(accumulated);
@@ -912,7 +1159,12 @@
               : synthesizeConversationalResponse(promptWithAttachments, chat.messages, false);
             fullResponse = offlineFallback || synthesizeConversationalResponse(promptWithAttachments, chat.messages, false);
           } else {
-            responseBubble.innerHTML = '<span class="text-indigo-400 flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span> Querying Live Internet AI...</span>';
+            responseBubble.innerHTML = `
+              <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full glass-panel text-xs text-emerald-300">
+                <span class="h-2.5 w-2.5 rounded-full thinking-orb"></span>
+                <span>Querying Live Internet AI...</span>
+              </div>
+            `;
             try {
               fullResponse = await fetchOnlineAIResponse(promptWithAttachments, chat.messages, activeAbortController ? activeAbortController.signal : null);
             } catch (onlineErr) {
@@ -941,8 +1193,8 @@
           } else {
             try {
               fullResponse = await callGeminiAPI(
-                promptWithAttachments, 
-                chat.messages, 
+                promptWithAttachments,
+                chat.messages,
                 activeAbortController ? activeAbortController.signal : null,
                 onStreamChunk,
                 imageAtts
@@ -962,8 +1214,8 @@
           } else {
             try {
               fullResponse = await callOpenAIAPI(
-                promptWithAttachments, 
-                chat.messages, 
+                promptWithAttachments,
+                chat.messages,
                 activeAbortController ? activeAbortController.signal : null,
                 onStreamChunk,
                 imageAtts
@@ -977,7 +1229,6 @@
         }
       }
 
-      // Smooth simulated typewriter for non-streamed responses
       if (!responseStreamedLive && fullResponse) {
         responseBubble.innerHTML = '';
         let charsShown = 0;
@@ -993,8 +1244,8 @@
         }
       }
 
-      const finalMsg = stopRequested 
-        ? (fullResponse + '\n\n*(Generation stopped by user)*') 
+      const finalMsg = stopRequested
+        ? (fullResponse + '\n\n*(Generation stopped by user)*')
         : fullResponse;
       responseBubble.innerHTML = formatMarkdown(finalMsg);
       if (typeof attachNlpToolbar === 'function') {
@@ -1012,7 +1263,7 @@
         chat.messages.push({ role: 'assistant', content: stoppedMsg });
         saveChats();
       } else {
-        responseBubble.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Error: ${err.message}</span>`;
+        responseBubble.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Error: ${escapeHtml(err && err.message ? err.message : 'Unexpected error')}</span>`;
       }
     } finally {
       isGenerating = false;
@@ -1044,7 +1295,6 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
-  // Self-initialize on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

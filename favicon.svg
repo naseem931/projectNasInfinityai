@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="nasGrad" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="55%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#06070b"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" stroke="url(#nasGrad)" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M22.5 41.5c-5.247 0-9.5-4.253-9.5-9.5s4.253-9.5 9.5-9.5c4.6 0 7.7 3.4 9.5 9.5 1.8 6.1 4.9 9.5 9.5 9.5 5.247 0 9.5-4.253 9.5-9.5s-4.253-9.5-9.5-9.5c-4.6 0-7.7 3.4-9.5 9.5-1.8 6.1-4.9 9.5-9.5 9.5Z" stroke="url(#nasGrad)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

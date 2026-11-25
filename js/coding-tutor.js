@@ -1334,14 +1334,14 @@ Welcome to our **Zero-Friction Coding Tutor**! We break down programming into pl
 
     modal = document.createElement('div');
     modal.id = 'codingTutorModal';
-    modal.className = 'fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 hidden';
+    modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4 hidden';
     modal.setAttribute('onclick', 'if(event.target===this) closeCodingTutorModal()');
 
     const langCards = Object.entries(TUTOR_LANGUAGES).map(([key, data]) => `
-      <div onclick="selectTutorLanguage('${key}')" class="p-3 sm:p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-850 cursor-pointer transition flex flex-col gap-1.5 group active:scale-[0.98]">
+      <div onclick="selectTutorLanguage('${key}')" class="glass-card p-3 sm:p-3.5 rounded-2xl cursor-pointer flex flex-col gap-1.5 group active:scale-[0.98]">
         <div class="flex items-center justify-between">
           <span class="text-xl sm:text-2xl">${data.icon}</span>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 group-hover:text-amber-300 font-mono">${data.level.split(' ')[0]}</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-400 group-hover:text-amber-300 font-mono">${data.level.split(' ')[0]}</span>
         </div>
         <h4 class="font-bold text-xs sm:text-sm text-slate-100 group-hover:text-amber-300 transition">${data.name}</h4>
         <p class="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">${data.popularFor}</p>
@@ -1349,7 +1349,7 @@ Welcome to our **Zero-Friction Coding Tutor**! We break down programming into pl
     `).join('');
 
     const conceptCards = Object.entries(TUTOR_CONCEPTS).map(([key, data]) => `
-      <div onclick="selectTutorConcept('${key}')" class="p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-850 cursor-pointer transition flex items-center gap-2.5 group active:scale-[0.98]">
+      <div onclick="selectTutorConcept('${key}')" class="glass-card p-3 rounded-2xl cursor-pointer flex items-center gap-2.5 group active:scale-[0.98]">
         <span class="text-xl shrink-0">${data.icon}</span>
         <div class="min-w-0 flex-1">
           <h4 class="font-bold text-xs text-slate-200 group-hover:text-indigo-300 transition truncate">${data.title.split('(')[0]}</h4>
@@ -1359,38 +1359,38 @@ Welcome to our **Zero-Friction Coding Tutor**! We break down programming into pl
     `).join('');
 
     modal.innerHTML = `
-      <div class="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="modal-shell rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-slate-800/80 bg-slate-900/60 shrink-0">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-white/10 shrink-0">
           <div class="flex items-center gap-2.5">
             <span class="text-xl sm:text-2xl">🎓</span>
             <div>
               <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-2">
                 NasInfinity Coding Academy
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">Simple & Intuitive</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/25 font-mono">Simple & Intuitive</span>
               </h3>
               <p class="text-[11px] text-slate-400">Master all major programming languages with plain-English lessons & interactive examples</p>
             </div>
           </div>
-          <button onclick="closeCodingTutorModal()" class="h-8 w-8 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
-            ✕
+          <button onclick="closeCodingTutorModal()" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
+            &times;
           </button>
         </div>
 
-        <!-- Modal Body -->
+        <!-- Body -->
         <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 text-slate-200 text-xs sm:text-sm">
           
           <!-- Recommendation Banner -->
-          <div class="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-indigo-500/10 border border-amber-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-indigo-500/10 border border-amber-500/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <h4 class="font-bold text-xs sm:text-sm text-amber-300 flex items-center gap-1.5">
                 <span>🧭</span> Not sure where to begin?
               </h4>
               <p class="text-[11px] text-slate-300 mt-0.5">Let NasInfinity AI recommend the ideal language for your dream project.</p>
             </div>
-            <button onclick="askTutorWhichLanguage()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition active:scale-95 shrink-0 flex items-center gap-1.5 shadow-sm shadow-amber-500/20">
-              <span>Find My Language</span> <span>→</span>
+            <button onclick="askTutorWhichLanguage()" class="keep-white px-3.5 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition active:scale-95 shrink-0 flex items-center gap-1.5 shadow-sm shadow-amber-500/20">
+              <span>Find My Language</span> <span>&rarr;</span>
             </button>
           </div>
 
@@ -1419,10 +1419,10 @@ Welcome to our **Zero-Friction Coding Tutor**! We break down programming into pl
 
         </div>
 
-        <!-- Modal Footer -->
-        <div class="px-4 sm:px-6 py-3 border-t border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
-          <span>💡 Click any card to launch an interactive lesson in chat</span>
-          <button onclick="closeCodingTutorModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+        <!-- Footer -->
+        <div class="px-4 sm:px-6 py-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+          <span>Click any card to launch an interactive lesson in chat</span>
+          <button onclick="closeCodingTutorModal()" class="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition">
             Close
           </button>
         </div>

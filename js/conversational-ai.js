@@ -2,7 +2,7 @@
 // NasInfinity AI - Conversational Memory, NLU & Live Web Intelligence Engine
 // =========================================================================
 
-    var APP_VERSION = '1.2.0';
+    var APP_VERSION = '2.0.0';
 
     // =========================================================================
     // NasInfinity AI Conversational Intelligence Engine (Memory, Math, NLU & Knowledge)
@@ -1184,10 +1184,12 @@ function buildConversationMessages(prompt, history) {
         }
       }
 
+      const customGeminiModel = (typeof localStorage !== 'undefined' && localStorage.getItem('nasinfinity_custom_gemini_model')) || 'gemini-2.5-flash';
+
       // True Real-Time SSE Streaming
       if (typeof streamCallback === 'function' && typeof ReadableStream !== 'undefined') {
         try {
-          const streamRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?key=${apiKey}&alt=sse`, {
+          const streamRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(customGeminiModel)}:streamGenerateContent?key=${apiKey}&alt=sse`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1237,7 +1239,7 @@ function buildConversationMessages(prompt, history) {
       }
 
       // Standard Non-streaming Fallback
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(customGeminiModel)}:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1284,6 +1286,8 @@ function buildConversationMessages(prompt, history) {
         }
       }
 
+      const customOpenAIModel = (typeof localStorage !== 'undefined' && localStorage.getItem('nasinfinity_custom_openai_model')) || 'gpt-4o-mini';
+
       // True Real-Time SSE Streaming
       if (typeof streamCallback === 'function' && typeof ReadableStream !== 'undefined') {
         try {
@@ -1293,7 +1297,7 @@ function buildConversationMessages(prompt, history) {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${apiKey}`
             },
-            body: JSON.stringify({ model: 'gpt-4o-mini', messages, stream: true }),
+            body: JSON.stringify({ model: customOpenAIModel, messages, stream: true }),
             signal: userSignal || undefined
           });
 
@@ -1342,7 +1346,7 @@ function buildConversationMessages(prompt, history) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
         },
-        body: JSON.stringify({ model: 'gpt-4o-mini', messages }),
+        body: JSON.stringify({ model: customOpenAIModel, messages }),
         signal: userSignal || undefined
       });
 

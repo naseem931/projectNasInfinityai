@@ -1,5 +1,5 @@
 // =========================================================================
-// NasInfinity AI v1.2.0 - In-Browser Python WebAssembly Runner (Pyodide)
+// NasInfinity AI v2.0.0 - In-Browser Python WebAssembly Runner (Pyodide)
 // Executes Python code directly in the client browser with zero server latency
 // =========================================================================
 

@@ -4351,8 +4351,8 @@
         const isSelected = el.num === currentSelectedElement;
         const phase = getPhaseBadge(el.phase);
         const card = document.createElement('div');
-        card.className = `p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between gap-2 ${
-          isSelected ? 'border-teal-400 bg-teal-950/30 shadow-lg shadow-teal-500/10' : 'border-slate-800 bg-slate-900/60 hover:bg-slate-800/60'
+        card.className = `p-3 rounded-2xl border transition cursor-pointer flex flex-col justify-between gap-2 ${
+          isSelected ? 'border-teal-400 bg-teal-950/30 shadow-lg shadow-teal-500/15' : 'glass-card'
         }`;
         card.onclick = () => selectElement(el.num);
 
@@ -4428,9 +4428,9 @@
 
       ptInspector.innerHTML = `
         <!-- Element Hero Header Card -->
-        <div class="p-4 rounded-xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 shadow-md relative overflow-hidden flex flex-col gap-3">
+        <div class="p-4 rounded-2xl glass-panel shadow-md relative overflow-hidden flex flex-col gap-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono font-bold text-teal-400 bg-teal-950/60 border border-teal-500/30 px-2 py-0.5 rounded-full">Atomic # ${el.num}</span>
+            <span class="text-xs font-mono font-bold text-teal-400 bg-teal-500/15 border border-teal-500/30 px-2.5 py-0.5 rounded-full">Atomic # ${el.num}</span>
             <span class="text-[10px] px-2 py-0.5 rounded-full border font-medium ${phase.class}">${phase.label}</span>
           </div>
 
@@ -4448,14 +4448,14 @@
           </div>
 
           <!-- Action Buttons Bar -->
-          <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-800/80">
-            <button onclick="speakElementDetails(${el.num})" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white active:scale-95 transition flex items-center justify-center gap-1 text-[11px] font-medium" title="Read element details aloud">
+          <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-white/10">
+            <button onclick="speakElementDetails(${el.num})" class="py-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white active:scale-95 transition flex items-center justify-center gap-1 text-[11px] font-medium" title="Read element details aloud">
               <span>🔊</span> <span>Listen</span>
             </button>
-            <button onclick="copyElementSpecs(${el.num})" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white active:scale-95 transition flex items-center justify-center gap-1 text-[11px] font-medium" title="Copy element details to clipboard">
+            <button onclick="copyElementSpecs(${el.num})" class="py-1.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white active:scale-95 transition flex items-center justify-center gap-1 text-[11px] font-medium" title="Copy element details to clipboard">
               <span>📋</span> <span>Copy</span>
             </button>
-            <button onclick="askAboutElement(${el.num})" class="py-1.5 px-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white active:scale-95 transition flex items-center justify-center gap-1 text-[11px] font-semibold shadow-sm shadow-teal-600/30" title="Ask NasInfinity AI about this element in chat">
+            <button onclick="askAboutElement(${el.num})" class="keep-white py-1.5 px-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white active:scale-95 transition flex items-center justify-center gap-1 text-[11px] font-semibold shadow-sm shadow-teal-600/30" title="Ask NasInfinity AI about this element in chat">
               <span>💬</span> <span>Ask AI</span>
             </button>
           </div>
