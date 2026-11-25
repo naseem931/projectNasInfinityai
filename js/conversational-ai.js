@@ -803,7 +803,7 @@ Your core mission is to deeply understand ALL human conversation across all dime
 The user's current local date is ${dateStr}, local time is ${timeStr}, and timezone is ${tzStr}. Use this context for temporal questions; do not infer a different timezone.`;
     }
 
-function buildConversationMessages(prompt, history) {
+function buildConversationMessages(prompt, history, maxChars = 24000) {
       const recentMessages = (Array.isArray(history) ? history : [])
         .filter(message => message && (message.role === 'user' || message.role === 'assistant') && typeof message.content === 'string')
         .map(message => ({ role: message.role, content: message.content }));
@@ -813,7 +813,7 @@ function buildConversationMessages(prompt, history) {
       }
 
       const selected = [];
-      let remainingCharacters = 24000;
+      let remainingCharacters = maxChars;
       for (let i = recentMessages.length - 1; i >= 0 && selected.length < 24; i--) {
         const message = recentMessages[i];
         if (selected.length > 0 && message.content.length > remainingCharacters) break;
@@ -1146,8 +1146,8 @@ function buildConversationMessages(prompt, history) {
       const apiKey = localStorage.getItem('nasinfinity_gemini_key');
       if (!apiKey) throw new Error('Please enter your Gemini API key in the sidebar under "AI Engine".');
 
-      // Gemini requires alternating user/model turns starting with user
-      const rawContents = buildConversationMessages(prompt, history).map(m => ({
+      // Gemini requires alternating user/model turns starting with user (160KB history budget for folder uploads)
+      const rawContents = buildConversationMessages(prompt, history, 160000).map(m => ({
         role: m.role === 'user' ? 'user' : 'model',
         text: m.content
       }));
@@ -1167,15 +1167,15 @@ function buildConversationMessages(prompt, history) {
         contents.shift();
       }
 
-      // Multimodal image injection
+      // Multimodal image & PDF injection
       if (Array.isArray(attachments) && attachments.length > 0) {
         const lastUser = contents.slice().reverse().find(c => c.role === 'user');
         if (lastUser) {
           attachments.forEach(att => {
-            if (att.isImage && att.base64) {
+            if ((att.isImage || att.isPdf) && att.base64) {
               lastUser.parts.push({
                 inlineData: {
-                  mimeType: att.mimeType || 'image/jpeg',
+                  mimeType: att.mimeType || (att.isPdf ? 'application/pdf' : 'image/jpeg'),
                   data: att.base64
                 }
               });
@@ -1266,7 +1266,7 @@ function buildConversationMessages(prompt, history) {
 
       const messages = [
         { role: 'system', content: buildAssistantSystemPrompt() },
-        ...buildConversationMessages(prompt, history)
+        ...buildConversationMessages(prompt, history, 120000)
       ];
 
       // Multimodal vision injection
@@ -1361,6 +1361,7 @@ function buildConversationMessages(prompt, history) {
     // Global exports for browser window and Node environments
     if (typeof window !== 'undefined') {
       window.APP_VERSION = APP_VERSION;
+      window.buildConversationMessages = buildConversationMessages;
       window.getInstantConversationalResponse = getInstantConversationalResponse;
       window.synthesizeConversationalResponse = synthesizeConversationalResponse;
       window.shouldUseWikipedia = shouldUseWikipedia;
@@ -1373,6 +1374,7 @@ function buildConversationMessages(prompt, history) {
     if (typeof module !== 'undefined' && module.exports) {
       module.exports = {
         APP_VERSION,
+        buildConversationMessages,
         getInstantConversationalResponse,
         synthesizeConversationalResponse,
         shouldUseWikipedia,

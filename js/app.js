@@ -714,7 +714,9 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          if (reg && typeof reg.update === 'function') reg.update();
+        }).catch(err => {
           console.debug('Service Worker registration note:', err);
         });
       });
@@ -1060,6 +1062,33 @@
     return bubble;
   }
 
+  function buildLocalAttachmentSummary(rawText, attachments) {
+    const atts = attachments || [];
+    const lines = ['### 📎 Local Attachment Inspection', ''];
+    if (rawText) lines.push(`> **Your prompt:** ${rawText}`, '');
+
+    const rows = atts.map(a => {
+      const kind = a.isImage ? 'Image' : a.isPdf ? 'PDF' : 'Text / Code';
+      const lineCount = a.content ? a.content.split(/\r?\n/).length : '—';
+      const sizeKb = ((a.size || 0) / 1024).toFixed(1) + ' KB';
+      return `| \`${a.relativePath || a.name}\` | ${kind} | ${sizeKb} | ${lineCount} |`;
+    });
+
+    lines.push('| File | Type | Size | Lines |', '| :--- | :--- | :--- | :--- |', ...rows, '');
+
+    const hasMedia = atts.some(a => a.isImage || a.isPdf);
+    if (hasMedia) {
+      lines.push(
+        '#### 💡 Multimodal Vision & PDF Notice',
+        '* The default **Live Internet AI** engine only processes plain text prompts.',
+        '* Switch **AI Model** in the sidebar to **Google Gemini API** (supports both Images & PDFs) or **OpenAI API** (supports Images) for deep visual/PDF analysis.'
+      );
+    } else {
+      lines.push('* Online AI was unavailable or offline, so a local structural inventory is shown above. Reconnect or switch to **Gemini / OpenAI** in the sidebar for full code & document analysis.');
+    }
+    return lines.join('\n');
+  }
+
   // --- Main Prompt Submission & Dispatcher ---
   async function handleSendMessage() {
     const rawText = userInput.value.trim();
@@ -1073,8 +1102,9 @@
     updateInputStats();
 
     let promptWithAttachments = rawText;
-    const textAtts = activeAtts.filter(a => !a.isImage);
+    const textAtts = activeAtts.filter(a => !a.isImage && !a.isPdf);
     const imageAtts = activeAtts.filter(a => a.isImage);
+    const pdfAtts = activeAtts.filter(a => a.isPdf);
     const folderNames = [...new Set(activeAtts.map(a => a.folderName).filter(Boolean))];
 
     if (textAtts.length > 0) {
@@ -1083,8 +1113,8 @@
         : '';
       const docHeader = textAtts.map(t => `--- Attached File: ${t.relativePath || t.name} ---\n${t.content}\n--- End File ---`).join('\n\n');
       promptWithAttachments = treeBlock + docHeader + (rawText ? `\n\n${rawText}` : '\n\nPlease analyze and explain the attached files.');
-    } else if (!rawText && imageAtts.length > 0) {
-      promptWithAttachments = 'Please analyze this attached image in detail.';
+    } else if (!rawText && (imageAtts.length > 0 || pdfAtts.length > 0)) {
+      promptWithAttachments = 'Please analyze the attached file(s) in detail.';
     }
 
     if (typeof window.clearAttachments === 'function') {
@@ -1099,7 +1129,9 @@
     if (!chat) return;
 
     if (chat.messages.length === 0) {
-      const defaultTitle = folderNames.length > 0 ? `Folder: ${folderNames[0]}` : 'Multimodal Query';
+      const defaultTitle = folderNames.length > 0
+        ? `Folder: ${folderNames[0]}`
+        : (activeAtts.length > 0 ? activeAtts[0].name : 'Multimodal Query');
       const titleSource = rawText || defaultTitle;
       chat.title = titleSource.slice(0, 32) + (titleSource.length > 32 ? '...' : '');
       if (chatTitleHeader) chatTitleHeader.textContent = chat.title;
@@ -1116,6 +1148,9 @@
     const standaloneDocs = textAtts.filter(a => !a.folderName);
     if (standaloneDocs.length > 0) {
       summaryTags.push(`[📄 ${standaloneDocs.map(d => d.name).join(', ')}]`);
+    }
+    if (pdfAtts.length > 0) {
+      summaryTags.push(`[📕 ${pdfAtts.map(d => d.name).join(', ')}]`);
     }
     if (imageAtts.length > 0) {
       summaryTags.push(`[🖼️ ${imageAtts.length} Image${imageAtts.length > 1 ? 's' : ''}]`);
@@ -1153,12 +1188,26 @@
         fullResponse = instantResponse;
       } else {
         if (mode === 'online_first') {
-          if (!isOnline) {
-            const offlineFallback = (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(promptWithAttachments))
-              ? synthesizeCodeFallback(promptWithAttachments)
-              : synthesizeConversationalResponse(promptWithAttachments, chat.messages, false);
-            fullResponse = offlineFallback || synthesizeConversationalResponse(promptWithAttachments, chat.messages, false);
+          if ((imageAtts.length > 0 || pdfAtts.length > 0) && textAtts.length === 0) {
+            if (typeof window.showToast === 'function') {
+              window.showToast('Switch to Google Gemini API (Images & PDFs) or OpenAI API (Images) for multimodal inspection.', 'info');
+            }
+            fullResponse = buildLocalAttachmentSummary(rawText, activeAtts);
+          } else if (!isOnline) {
+            if (activeAtts.length > 0) {
+              fullResponse = buildLocalAttachmentSummary(rawText, activeAtts);
+            } else {
+              const offlineFallback = (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(rawText))
+                ? synthesizeCodeFallback(rawText)
+                : synthesizeConversationalResponse(rawText, chat.messages, false);
+              fullResponse = offlineFallback || synthesizeConversationalResponse(rawText, chat.messages, false);
+            }
           } else {
+            if (imageAtts.length > 0 || pdfAtts.length > 0) {
+              if (typeof window.showToast === 'function') {
+                window.showToast('Live Internet AI only reads text files; switch to Gemini/OpenAI for attached images or PDFs.', 'warning');
+              }
+            }
             responseBubble.innerHTML = `
               <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full glass-panel text-xs text-emerald-300">
                 <span class="h-2.5 w-2.5 rounded-full thinking-orb"></span>
@@ -1169,27 +1218,31 @@
               fullResponse = await fetchOnlineAIResponse(promptWithAttachments, chat.messages, activeAbortController ? activeAbortController.signal : null);
             } catch (onlineErr) {
               console.warn('Online AI failed, evaluating fallback strategy:', onlineErr);
-              if (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(promptWithAttachments)) {
-                const codeFallback = synthesizeCodeFallback(promptWithAttachments);
-                fullResponse = codeFallback || synthesizeConversationalResponse(promptWithAttachments, chat.messages, true);
-              } else if (typeof shouldUseWikipedia === 'function' && shouldUseWikipedia(promptWithAttachments)) {
-                const webAnswer = await fetchWebAnswer(promptWithAttachments);
+              if (activeAtts.length > 0) {
+                fullResponse = buildLocalAttachmentSummary(rawText, activeAtts);
+              } else if (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(rawText)) {
+                const codeFallback = synthesizeCodeFallback(rawText);
+                fullResponse = codeFallback || synthesizeConversationalResponse(rawText, chat.messages, true);
+              } else if (typeof shouldUseWikipedia === 'function' && shouldUseWikipedia(rawText)) {
+                const webAnswer = await fetchWebAnswer(rawText);
                 if (webAnswer) {
                   fullResponse = `### 🌐 ${webAnswer.title}\n*${webAnswer.description}*\n\n${webAnswer.extract}\n\n---\n🔗 **Live Web Source:** [Read more on Wikipedia](${webAnswer.url})`;
                 } else {
-                  fullResponse = synthesizeConversationalResponse(promptWithAttachments, chat.messages, true);
+                  fullResponse = synthesizeConversationalResponse(rawText, chat.messages, true);
                 }
               } else {
-                fullResponse = synthesizeConversationalResponse(promptWithAttachments, chat.messages, true);
+                fullResponse = synthesizeConversationalResponse(rawText, chat.messages, true);
               }
             }
           }
         } else if (mode === 'gemini') {
           if (!isOnline) {
             if (typeof window.showToast === 'function') window.showToast('Offline Mode: Switched to Offline Knowledge Engine.', 'info');
-            fullResponse = (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(promptWithAttachments))
-              ? synthesizeCodeFallback(promptWithAttachments)
-              : synthesizeConversationalResponse(promptWithAttachments, chat.messages, false);
+            fullResponse = activeAtts.length > 0
+              ? buildLocalAttachmentSummary(rawText, activeAtts)
+              : ((typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(rawText))
+                ? synthesizeCodeFallback(rawText)
+                : synthesizeConversationalResponse(rawText, chat.messages, false));
           } else {
             try {
               fullResponse = await callGeminiAPI(
@@ -1197,21 +1250,28 @@
                 chat.messages,
                 activeAbortController ? activeAbortController.signal : null,
                 onStreamChunk,
-                imageAtts
+                [...imageAtts, ...pdfAtts]
               );
             } catch (geminiErr) {
-              console.warn('Gemini API call failed, falling back to conversational handler:', geminiErr);
+              console.warn('Gemini API call failed, falling back:', geminiErr);
               if (typeof window.showToast === 'function') window.showToast(`Gemini: ${geminiErr.message}`, 'warning');
-              fullResponse = synthesizeConversationalResponse(promptWithAttachments, chat.messages, true);
+              fullResponse = activeAtts.length > 0
+                ? buildLocalAttachmentSummary(rawText, activeAtts)
+                : synthesizeConversationalResponse(rawText, chat.messages, true);
             }
           }
         } else if (mode === 'openai') {
           if (!isOnline) {
             if (typeof window.showToast === 'function') window.showToast('Offline Mode: Switched to Offline Knowledge Engine.', 'info');
-            fullResponse = (typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(promptWithAttachments))
-              ? synthesizeCodeFallback(promptWithAttachments)
-              : synthesizeConversationalResponse(promptWithAttachments, chat.messages, false);
+            fullResponse = activeAtts.length > 0
+              ? buildLocalAttachmentSummary(rawText, activeAtts)
+              : ((typeof isCodeGenerationPrompt === 'function' && isCodeGenerationPrompt(rawText))
+                ? synthesizeCodeFallback(rawText)
+                : synthesizeConversationalResponse(rawText, chat.messages, false));
           } else {
+            if (pdfAtts.length > 0 && typeof window.showToast === 'function') {
+              window.showToast('OpenAI GPT-4o mini chat API does not support direct PDF uploads; use Google Gemini API for PDFs.', 'warning');
+            }
             try {
               fullResponse = await callOpenAIAPI(
                 promptWithAttachments,
@@ -1221,9 +1281,11 @@
                 imageAtts
               );
             } catch (openaiErr) {
-              console.warn('OpenAI API call failed, falling back to conversational handler:', openaiErr);
+              console.warn('OpenAI API call failed, falling back:', openaiErr);
               if (typeof window.showToast === 'function') window.showToast(`OpenAI: ${openaiErr.message}`, 'warning');
-              fullResponse = synthesizeConversationalResponse(promptWithAttachments, chat.messages, true);
+              fullResponse = activeAtts.length > 0
+                ? buildLocalAttachmentSummary(rawText, activeAtts)
+                : synthesizeConversationalResponse(rawText, chat.messages, true);
             }
           }
         }

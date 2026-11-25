@@ -214,6 +214,38 @@ async function runAllTests() {
 
     mockWindow.removeFolderGroup('my-app');
     assert.strictEqual(mockWindow.activeAttachments.length, 0, 'removeFolderGroup should clear folder files');
+
+    // Test standalone binary rejection, PDF base64 handling, and image preview
+    await mockWindow.handleFilesSelection([
+      { name: 'payload.exe', size: 1024, type: 'application/octet-stream', _mockText: 'MZ' },
+      { name: 'spec.pdf', size: 2048, type: 'application/pdf' },
+      { name: 'photo.jpg', size: 4096, type: 'image/jpeg' }
+    ]);
+    assert.strictEqual(mockWindow.activeAttachments.length, 2, 'Expected PDF + Image accepted and .exe binary rejected');
+    assert.strictEqual(mockWindow.activeAttachments[0].isPdf, true, 'PDF should set isPdf: true');
+    assert.strictEqual(mockWindow.activeAttachments[1].isImage, true, 'Image should set isImage: true');
+    assert(toasts.some(t => t.msg.includes('payload.exe') && t.type === 'warning'), 'Expected warning toast for .exe');
+  });
+
+  report('Upload pipeline supports input reset, PDF accept, rawText fallback & 160KB history budget', () => {
+    const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const docJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'document-processor.js'), 'utf8');
+    const appJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'app.js'), 'utf8');
+    const convMod = require(path.join(__dirname, '..', 'js', 'conversational-ai.js'));
+
+    assert(html.includes('.pdf'), 'Missing .pdf in #fileAttachmentInput accept');
+    assert(docJs.includes("e.target.value = ''"), 'Missing input value reset on change event');
+    assert(appJs.includes('buildLocalAttachmentSummary'), 'Missing buildLocalAttachmentSummary offline/multimodal helper');
+    assert(appJs.includes('isCodeGenerationPrompt(rawText)'), 'Fallback should inspect rawText rather than full file payload');
+
+    const bigHistory = [
+      { role: 'user', content: 'A'.repeat(40000) },
+      { role: 'assistant', content: 'Summary ok' }
+    ];
+    const trimmedPollinations = convMod.buildConversationMessages('follow up', bigHistory, 24000);
+    const retainedGemini = convMod.buildConversationMessages('follow up', bigHistory, 160000);
+    assert.strictEqual(trimmedPollinations.length, 1, '24KB cap trims 40KB first turn (and shifts orphan assistant reply)');
+    assert.strictEqual(retainedGemini.length, 3, '160KB cap retains 40KB first turn across follow-ups');
   });
 
   report('Studio modals use valid glass classes without invalid bg-slate-850', () => {

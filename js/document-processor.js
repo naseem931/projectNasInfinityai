@@ -9,8 +9,16 @@
   const MAX_STANDALONE_FILES = 10;
   const MAX_FOLDER_FILES = 25;
   const MAX_IMAGE_BYTES = 12 * 1024 * 1024; // 12 MB
+  const MAX_PDF_BYTES = 10 * 1024 * 1024; // 10 MB
   const MAX_SINGLE_TEXT_FILE_BYTES = 200 * 1024; // 200 KB
   const MAX_FOLDER_TEXT_CHARS = 150000; // ~150 KB combined text context
+
+  const BINARY_EXTENSIONS = new Set([
+    'exe', 'dll', 'zip', 'tar', 'gz', '7z', 'rar', 'wasm', 'bin',
+    'pyc', 'class', 'so', 'dylib', 'mp3', 'mp4', 'mov', 'avi',
+    'woff', 'woff2', 'ttf', 'eot', 'otf', 'ico', 'dmg', 'iso',
+    'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'
+  ]);
 
   const IGNORED_DIR_SEGMENTS = new Set([
     'node_modules', '.git', '.next', '.nuxt', '__pycache__',
@@ -69,6 +77,7 @@
       case 'csv': return '📊';
       case 'md':
       case 'markdown': return '📝';
+      case 'pdf': return '📕';
       case 'cpp':
       case 'c':
       case 'h': return '⚙️';
@@ -269,12 +278,52 @@
   async function processFile(file, options = {}) {
     const { isFolderMode = false, relativePath = '', folderName = '' } = options;
     const isImage = Boolean(file.type && file.type.startsWith('image/'));
+    const ext = (file.name && file.name.includes('.')) ? file.name.split('.').pop().toLowerCase() : '';
+    const isPdf = file.type === 'application/pdf' || ext === 'pdf';
 
     if (isImage && file.size > MAX_IMAGE_BYTES) {
       if (!isFolderMode && typeof window.showToast === 'function') {
         window.showToast(`"${file.name}" exceeds the 12MB image limit.`, 'warning');
       }
       return { skipped: 'size' };
+    }
+
+    if (isPdf) {
+      if (isFolderMode) return { skipped: 'binary' };
+      if (file.size > MAX_PDF_BYTES) {
+        if (typeof window.showToast === 'function') {
+          window.showToast(`"${file.name}" exceeds the 10MB PDF limit.`, 'warning');
+        }
+        return { skipped: 'size' };
+      }
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = String(e.target.result || '');
+          resolve({
+            attachment: {
+              name: file.name,
+              relativePath: relativePath || file.name,
+              folderName: folderName || '',
+              size: file.size,
+              type: 'application/pdf',
+              isImage: false,
+              isPdf: true,
+              base64: dataUrl.split(',')[1] || '',
+              mimeType: 'application/pdf'
+            }
+          });
+        };
+        reader.onerror = () => resolve({ skipped: 'read' });
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (!isImage && BINARY_EXTENSIONS.has(ext)) {
+      if (!isFolderMode && typeof window.showToast === 'function') {
+        window.showToast(`Binary file "${file.name}" cannot be analyzed as plain text.`, 'warning');
+      }
+      return { skipped: 'binary' };
     }
 
     if (!isImage && isFolderMode && file.size > MAX_SINGLE_TEXT_FILE_BYTES) {
@@ -597,16 +646,20 @@
 
     if (fileInput) {
       fileInput.addEventListener('change', (e) => {
-        if (e.target.files) {
-          window.handleFilesSelection(e.target.files);
+        if (e.target.files && e.target.files.length > 0) {
+          const picked = Array.from(e.target.files);
+          e.target.value = '';
+          window.handleFilesSelection(picked);
         }
       });
     }
 
     if (folderInput) {
       folderInput.addEventListener('change', (e) => {
-        if (e.target.files) {
-          window.handleFolderFilesSelection(e.target.files);
+        if (e.target.files && e.target.files.length > 0) {
+          const picked = Array.from(e.target.files);
+          e.target.value = '';
+          window.handleFolderFilesSelection(picked);
         }
       });
     }
