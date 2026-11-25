@@ -140,7 +140,7 @@
     { id: 'cmd_nlp', title: 'NLP Inspector & Tokenizer', subtitle: 'Analyze tokens, sentiment & readability', tag: 'Studio', run: () => typeof openNlpModal === 'function' && openNlpModal() },
     { id: 'cmd_tutor', title: 'NasInfinity Coding Academy', subtitle: 'Interactive lessons across 15+ languages', tag: 'Studio', run: () => typeof openCodingTutorModal === 'function' && openCodingTutorModal() },
     { id: 'cmd_writer', title: 'Code Writer Blueprints', subtitle: 'Step-by-step code construction guides', tag: 'Studio', run: () => typeof openCodeWriterModal === 'function' && openCodeWriterModal() },
-    { id: 'cmd_arcade', title: 'Runner Zero Gravity Arcade', subtitle: '60 FPS offline retro runner game', tag: 'Arcade', run: () => typeof openOfflineGameModal === 'function' && openOfflineGameModal() },
+    { id: 'cmd_arcade', title: 'Runner', subtitle: '60 FPS offline arcade game', tag: 'Arcade', run: () => typeof openOfflineGameModal === 'function' && openOfflineGameModal() },
     { id: 'cmd_theme', title: 'Toggle Light / Dark Theme', subtitle: 'Switch between Obsidian Dark & Daylight Paper', tag: 'Theme', run: () => toggleTheme() },
     { id: 'cmd_export', title: 'Export Current Thread (.md)', subtitle: 'Download active conversation as Markdown', tag: 'Export', run: () => exportCurrentChat() }
   ];
@@ -191,6 +191,7 @@
 
   window.openCommandPalette = function() {
     if (!commandPaletteModal) return;
+    if (isMobileOrTablet()) closeSidebar();
     commandPaletteModal.classList.remove('hidden');
     if (commandPaletteInput) {
       commandPaletteInput.value = '';
@@ -561,6 +562,11 @@
       if (commandPaletteModal && !commandPaletteModal.classList.contains('hidden')) {
         e.preventDefault();
         closeCommandPalette();
+        return;
+      }
+      if (isMobileOrTablet() && sidebar && sidebar.classList.contains('sidebar-open')) {
+        e.preventDefault();
+        closeSidebar();
         return;
       }
       if (isGenerating) {

@@ -24,7 +24,7 @@
     })();
   </script>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=2.0.0&rev=6">
+  <link rel="stylesheet" href="style.css?v=2.0.0&rev=8">
 </head>
 <body class="h-full flex overflow-hidden antialiased selection:bg-indigo-500 selection:text-white relative">
 
@@ -35,7 +35,7 @@
   <div id="sidebarBackdrop" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
 
   <!-- Sidebar: Glass Rail -->
-  <aside id="sidebar" class="w-[272px] glass-sidebar flex flex-col justify-between shrink-0 relative z-30">
+  <aside id="sidebar" class="w-[272px] glass-sidebar flex flex-col justify-between shrink-0 relative z-50 lg:z-30">
     <div class="p-3.5 flex flex-col gap-3 flex-1 overflow-hidden">
       <!-- App Brand & Mobile Close -->
       <div class="flex items-center justify-between px-1.5 pt-1 pb-1.5">
@@ -181,9 +181,9 @@
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
             <span class="hidden xl:inline">Write</span>
           </button>
-          <button id="openGameBtn" onclick="openOfflineGameModal()" title="Runner Zero Gravity Arcade" class="h-7 px-2 sm:px-2.5 rounded-full hover:bg-purple-500/15 text-purple-400 transition flex items-center gap-1.5 text-[11px] font-medium active:scale-95">
+          <button id="openGameBtn" onclick="openOfflineGameModal()" title="Runner" class="h-7 px-2 sm:px-2.5 rounded-full hover:bg-purple-500/15 text-purple-400 transition flex items-center gap-1.5 text-[11px] font-medium active:scale-95">
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.39 48.39 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.96.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58v0z"/></svg>
-            <span class="hidden xl:inline">Arcade</span>
+            <span class="hidden xl:inline">Runner</span>
           </button>
         </div>
 
@@ -205,7 +205,7 @@
         <span class="h-2 w-2 rounded-full bg-rose-400 animate-ping shrink-0"></span>
         <div class="truncate">
           <span class="font-semibold text-rose-300">Offline Mode:</span>
-          <span class="text-slate-300 ml-1 hidden xs:inline">Local-First studios &amp; Offline CI active. Play Runner Zero Gravity anytime!</span>
+          <span class="text-slate-300 ml-1 hidden xs:inline">Local-First studios &amp; Offline CI active. Play Runner anytime!</span>
         </div>
       </div>
       <button onclick="openOfflineGameModal()" class="keep-white ml-2 px-3 py-1 rounded-full bg-purple-600 hover:bg-purple-500 text-white font-semibold text-[11px] shadow-sm shadow-purple-600/30 transition active:scale-95 flex items-center gap-1.5 shrink-0">
@@ -313,7 +313,7 @@
               <span class="text-[10px] font-mono text-slate-500 group-hover:text-purple-400 transition">60 FPS</span>
             </div>
             <div>
-              <div class="font-bold text-xs sm:text-sm text-slate-100">Zero-G Arcade</div>
+              <div class="font-bold text-xs sm:text-sm text-slate-100">Runner</div>
               <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Offline retro runner &amp; synth</div>
             </div>
           </button>
@@ -442,7 +442,7 @@
           </div>
           <div>
             <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-2">
-              <span>Runner Zero Gravity</span>
+              <span>Runner</span>
               <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30 font-mono">Offline Arcade</span>
             </h3>
             <p class="text-[10px] text-slate-400">Jump, double-jump, duck, and collect data cores</p>
@@ -520,10 +520,11 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap ml-auto">
-          <div class="relative">
-            <input id="ptSearchInput" type="text" placeholder="Search (Gold, Au, 79)..." class="bg-slate-950/70 border border-white/10 focus:border-teal-400 rounded-full pl-8 pr-3 py-1 text-xs text-slate-200 placeholder:text-slate-500 outline-none w-36 sm:w-48 transition">
-            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap w-full sm:w-auto sm:ml-auto">
+          <div class="relative flex-1 min-w-[140px] sm:flex-initial">
+            <input id="ptSearchInput" type="text" placeholder="Search (Gold, Au, 79)..." class="w-full sm:w-48 bg-slate-950/70 border border-white/10 focus:border-teal-400 rounded-full pl-8 pr-7 py-1 text-xs text-slate-200 placeholder:text-slate-500 outline-none transition">
+            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+            <button id="ptSearchClearBtn" type="button" onclick="clearPtSearch()" aria-label="Clear element search" class="hidden absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full bg-white/15 hover:bg-white/25 text-slate-300 text-[10px] leading-none flex items-center justify-center transition">&times;</button>
           </div>
 
           <div class="relative hidden md:block shrink-0">
@@ -543,34 +544,46 @@
             <svg class="w-3 h-3 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
           </div>
 
-          <div class="relative hidden lg:block shrink-0">
-            <select id="ptPhaseFilter" class="appearance-none h-8 bg-slate-950/70 border border-white/10 focus:border-teal-400 rounded-full pl-3 pr-7 text-xs text-slate-200 outline-none cursor-pointer whitespace-nowrap leading-none">
+          <div class="relative shrink-0">
+            <select id="ptPhaseFilter" aria-label="Filter by state of matter" class="appearance-none h-8 bg-slate-950/70 border border-white/10 focus:border-teal-400 rounded-full pl-2.5 sm:pl-3 pr-6 sm:pr-7 text-xs text-slate-200 outline-none cursor-pointer whitespace-nowrap leading-none">
               <option value="all">All States</option>
               <option value="Solid">Solid</option>
               <option value="Liquid">Liquid</option>
               <option value="Gas">Gas</option>
               <option value="Synthetic">Synthetic</option>
             </select>
-            <svg class="w-3 h-3 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+            <svg class="w-3 h-3 text-slate-400 absolute right-2 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
           </div>
 
-          <div class="inline-flex rounded-full glass-panel p-0.5 text-[11px]">
-            <button id="ptViewGridBtn" onclick="setPtView('grid')" class="keep-white px-2.5 py-0.5 rounded-full font-medium bg-teal-600 text-white transition">Grid</button>
-            <button id="ptViewListBtn" onclick="setPtView('list')" class="px-2.5 py-0.5 rounded-full font-medium text-slate-400 hover:text-white transition">Cards</button>
+          <div class="inline-flex rounded-full glass-panel p-0.5 text-[11px] shrink-0">
+            <button id="ptViewGridBtn" type="button" onclick="setPtView('grid')" class="keep-white px-2.5 py-0.5 rounded-full font-medium bg-teal-600 text-white transition">Grid</button>
+            <button id="ptViewListBtn" type="button" onclick="setPtView('list')" class="px-2.5 py-0.5 rounded-full font-medium text-slate-400 hover:text-white transition">Cards</button>
           </div>
 
-          <button onclick="pickRandomElement()" title="Pick random element" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 text-xs transition active:scale-95 flex items-center gap-1">
+          <button type="button" onclick="pickRandomElement()" title="Pick random element" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 text-xs transition active:scale-95 flex items-center gap-1 shrink-0">
             <span>🎲</span> <span class="hidden sm:inline">Random</span>
           </button>
 
-          <button onclick="closePeriodicModal()" aria-label="Close Periodic Table" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition ml-1">
+          <button type="button" onclick="closePeriodicModal()" aria-label="Close Periodic Table" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition ml-auto sm:ml-1 shrink-0">
             &times;
           </button>
         </div>
       </div>
 
+      <!-- Mobile Pane Switcher (< 1024px) -->
+      <div id="ptMobileTabs" class="lg:hidden px-3 py-2 border-b border-white/10 flex items-center gap-2 bg-slate-950/40 shrink-0">
+        <button id="ptMobileBrowseTab" type="button" onclick="setPtMobilePane('browse')" class="keep-white flex-1 py-1.5 px-3 rounded-full text-xs font-semibold bg-teal-600 text-white transition flex items-center justify-center gap-1.5">
+          <span>Elements</span>
+          <span id="ptMobileMatchBadge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-black/25 font-mono leading-none">118</span>
+        </button>
+        <button id="ptMobileInspectorTab" type="button" onclick="setPtMobilePane('inspector')" class="flex-1 py-1.5 px-3 rounded-full text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 transition flex items-center justify-center gap-1.5 min-w-0">
+          <span class="shrink-0">Inspector:</span>
+          <span id="ptMobileSelectedLabel" class="font-mono font-bold text-teal-400 truncate">H #1</span>
+        </button>
+      </div>
+
       <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
+        <div id="ptBrowsePane" class="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden lg:border-r border-white/10">
           <div class="px-3 py-2 border-b border-white/10 flex items-center gap-1.5 overflow-x-auto text-[10px] sm:text-[11px] shrink-0 no-scrollbar">
             <span class="text-slate-500 font-semibold uppercase tracking-wider shrink-0 mr-1">Categories:</span>
             <button onclick="filterPtCategory('all', this)" class="pt-filter-pill active px-2.5 py-0.5 rounded-full border border-teal-500/50 bg-teal-950/60 text-teal-300 shrink-0 font-medium">All (118)</button>
@@ -586,7 +599,11 @@
             <button onclick="filterPtCategory('noble', this)" class="pt-filter-pill px-2.5 py-0.5 rounded-full border border-pink-500/40 bg-pink-950/40 text-pink-300 shrink-0">Noble Gases (7)</button>
           </div>
 
-          <div id="ptGridView" class="flex-1 overflow-auto p-2 sm:p-4">
+          <div id="ptGridView" class="flex-1 overflow-auto p-2 sm:p-4 min-h-0">
+            <div id="ptGridEmptyState" class="hidden py-8 text-center flex flex-col items-center gap-2 text-xs text-slate-400">
+              <span>No elements match your current search or filter criteria.</span>
+              <button type="button" onclick="resetPeriodicFilters()" class="keep-white px-3.5 py-1.5 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs transition active:scale-95">Reset Filters</button>
+            </div>
             <div class="pt-grid-wrapper min-w-[820px] max-w-[1100px] mx-auto">
               <div class="grid grid-cols-18 gap-1 mb-1 text-center text-[9px] font-mono text-slate-500 select-none">
                 <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div>
@@ -599,12 +616,12 @@
             </div>
           </div>
 
-          <div id="ptListView" class="flex-1 overflow-y-auto p-3 sm:p-4 hidden">
-            <div class="flex items-center justify-between mb-3 text-xs text-slate-400">
+          <div id="ptListView" class="flex-1 overflow-y-auto p-3 sm:p-4 min-h-0 hidden">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3 text-xs text-slate-400">
               <span id="ptListCountDisplay">Showing 118 elements</span>
               <div class="flex items-center gap-2">
                 <span>Sort by:</span>
-                <select id="ptSortSelect" onchange="sortPtList(this.value)" class="bg-slate-900 border border-white/10 rounded-full px-3 py-1 text-xs text-slate-200 outline-none">
+                <select id="ptSortSelect" onchange="sortPtList(this.value)" class="appearance-none bg-slate-900 border border-white/10 rounded-full px-3 py-1 text-xs text-slate-200 outline-none">
                   <option value="num-asc">Atomic Number (1 &rarr; 118)</option>
                   <option value="mass-asc">Atomic Mass (Low &rarr; High)</option>
                   <option value="mass-desc">Atomic Mass (High &rarr; Low)</option>
@@ -617,7 +634,15 @@
           </div>
         </div>
 
-        <div id="ptInspector" class="w-full lg:w-80 xl:w-96 flex flex-col shrink-0 overflow-y-auto p-3 sm:p-4 text-xs select-text"></div>
+        <div id="ptInspectorPane" class="hidden lg:flex w-full lg:w-80 xl:w-96 flex-1 lg:flex-initial flex-col shrink-0 min-h-0 overflow-hidden">
+          <div class="lg:hidden px-3 py-2 shrink-0 flex items-center justify-between border-b border-white/10">
+            <button id="ptMobileBackBtn" type="button" onclick="setPtMobilePane('browse')" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+              <span>&larr;</span><span>Back to Elements</span>
+            </button>
+            <span class="text-[10px] text-slate-400 font-mono">Element Dossier</span>
+          </div>
+          <div id="ptInspector" class="flex-1 flex flex-col gap-3 min-h-0 overflow-y-auto p-3 sm:p-4 text-xs select-text"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -763,15 +788,15 @@
   </div>
 
   <!-- Modular Feature Engines & Studios -->
-  <script src="js/periodic-table.js?v=2.0.0&rev=6"></script>
-  <script src="js/game.js?v=2.0.0&rev=6"></script>
-  <script src="js/nlp.js?v=2.0.0&rev=6"></script>
-  <script src="js/code-generators.js?v=2.0.0&rev=6"></script>
-  <script src="js/coding-tutor.js?v=2.0.0&rev=6"></script>
-  <script src="js/code-writer.js?v=2.0.0&rev=6"></script>
-  <script src="js/conversational-ai.js?v=2.0.0&rev=6"></script>
-  <script src="js/document-processor.js?v=2.0.0&rev=6"></script>
-  <script src="js/python-runner.js?v=2.0.0&rev=6"></script>
-  <script src="js/app.js?v=2.0.0&rev=6"></script>
+  <script src="js/periodic-table.js?v=2.0.0&rev=8"></script>
+  <script src="js/game.js?v=2.0.0&rev=8"></script>
+  <script src="js/nlp.js?v=2.0.0&rev=8"></script>
+  <script src="js/code-generators.js?v=2.0.0&rev=8"></script>
+  <script src="js/coding-tutor.js?v=2.0.0&rev=8"></script>
+  <script src="js/code-writer.js?v=2.0.0&rev=8"></script>
+  <script src="js/conversational-ai.js?v=2.0.0&rev=8"></script>
+  <script src="js/document-processor.js?v=2.0.0&rev=8"></script>
+  <script src="js/python-runner.js?v=2.0.0&rev=8"></script>
+  <script src="js/app.js?v=2.0.0&rev=8"></script>
 </body>
 </html>

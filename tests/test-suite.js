@@ -135,6 +135,26 @@ async function runAllTests() {
       assert(!/Oct '26|2026 Oct|October 2026/i.test(text), `Found Oct 2026 text in ${rel}`);
     });
   });
+
+  report('Offline game name is set strictly to Runner across UI, scripts, and docs', () => {
+    const filesToCheck = [
+      'index.html',
+      'README.md',
+      path.join('js', 'app.js'),
+      path.join('js', 'game.js'),
+      path.join('js', 'conversational-ai.js')
+    ];
+    filesToCheck.forEach(rel => {
+      const text = fs.readFileSync(path.join(__dirname, '..', rel), 'utf8');
+      assert(!/Zero[- ]?Gravity|Zero-G/i.test(text), `Found legacy Zero-G/Zero Gravity title in ${rel}`);
+    });
+    const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const appJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'app.js'), 'utf8');
+    assert(html.includes('<span>Runner</span>'), 'Modal heading missing Runner title');
+    assert(html.includes('>Runner</div>'), 'Welcome studio card missing Runner title');
+    assert(html.includes('title="Runner"'), 'Top bar button missing Runner title');
+    assert(appJs.includes("id: 'cmd_arcade', title: 'Runner'"), 'Command palette missing Runner title');
+  });
   report('style.css defines Obsidian/Daylight tokens and has no stray </style> tag', () => {
     const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
     assert(!css.includes('</style>'), 'Stray </style> tag found in style.css');
@@ -263,6 +283,127 @@ async function runAllTests() {
     assert(matches && matches.length >= 118, `Expected at least 118 elements, found ${matches ? matches.length : 0}`);
     assert(ptContent.includes('Oganesson'), 'Oganesson (Element 118) missing');
     assert(ptContent.includes('Hydrogen'), 'Hydrogen (Element 1) missing');
+  });
+
+  report('Periodic Table search ranking, inspector auto-select & mobile layout fixes', () => {
+    const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
+    const tutor = fs.readFileSync(path.join(__dirname, '..', 'js', 'coding-tutor.js'), 'utf8');
+    const writer = fs.readFileSync(path.join(__dirname, '..', 'js', 'code-writer.js'), 'utf8');
+    const ptJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'periodic-table.js'), 'utf8');
+
+    assert(html.includes('id="ptSearchClearBtn"'), 'Missing #ptSearchClearBtn');
+    assert(html.includes('id="ptMobileTabs"'), 'Missing #ptMobileTabs');
+    assert(html.includes('id="ptBrowsePane"') && html.includes('id="ptInspectorPane"'), 'Missing #ptBrowsePane/#ptInspectorPane');
+    assert(html.includes('id="ptGridEmptyState"'), 'Missing #ptGridEmptyState');
+    assert(html.includes('pointer-events-none') && html.includes('id="ptSearchInput"'), 'Missing search icon pointer-events-none guard');
+    assert(html.includes('z-50 lg:z-30'), 'Sidebar mobile drawer z-index missing z-50 lg:z-30');
+    assert(css.includes('overflow-x: hidden;'), 'Missing overflow-x: hidden on html, body');
+    assert(css.includes('#ptSearchInput') && css.includes('#ptPhaseFilter'), 'Missing #ptSearchInput in 16px mobile rule');
+    assert(css.includes('#ptInspector > div'), 'Missing flex-shrink guard on #ptInspector cards');
+    assert(tutor.includes('aria-label="Close Coding Academy"'), 'Coding Academy close button missing aria-label/shrink fix');
+    assert(writer.includes('aria-label="Close Code Writer Studio"'), 'Code Writer close button missing aria-label/shrink fix');
+
+    // Run js/periodic-table.js inside vm with simulated mobile DOM elements
+    const makeEl = (id, initialCls = '') => {
+      const listeners = {};
+      const clsSet = new Set(initialCls.split(/\s+/).filter(Boolean));
+      let htmlValue = '';
+      const el = {
+        id,
+        value: '',
+        textContent: '',
+        title: '',
+        dataset: {},
+        style: {},
+        children: [],
+        scrollTop: 0,
+        set innerHTML(val) {
+          htmlValue = String(val || '');
+          if (htmlValue === '') el.children = [];
+        },
+        get innerHTML() { return htmlValue; },
+        classList: {
+          add: (...c) => c.forEach(x => clsSet.add(x)),
+          remove: (...c) => c.forEach(x => clsSet.delete(x)),
+          toggle: (c, force) => (force === undefined ? (clsSet.has(c) ? clsSet.delete(c) : clsSet.add(c)) : (force ? clsSet.add(c) : clsSet.delete(c))),
+          contains: (c) => clsSet.has(c)
+        },
+        set className(val) { clsSet.clear(); String(val).split(/\s+/).filter(Boolean).forEach(x => clsSet.add(x)); },
+        get className() { return Array.from(clsSet).join(' '); },
+        appendChild: (child) => { el.children.push(child); return child; },
+        addEventListener: (ev, fn) => { listeners[ev] = listeners[ev] || []; listeners[ev].push(fn); },
+        dispatchEvent: (ev) => { (listeners[ev.type] || []).forEach(fn => fn(ev)); },
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        getAttribute: () => '',
+        focus: () => {},
+        scrollIntoView: () => {}
+      };
+      return el;
+    };
+
+    const domMap = {
+      periodicModal: makeEl('periodicModal', 'hidden'),
+      ptGridContainer: makeEl('ptGridContainer'),
+      ptInspector: makeEl('ptInspector'),
+      ptSearchInput: makeEl('ptSearchInput'),
+      ptSearchClearBtn: makeEl('ptSearchClearBtn', 'hidden'),
+      ptCategoryFilter: makeEl('ptCategoryFilter'),
+      ptPhaseFilter: makeEl('ptPhaseFilter'),
+      ptGridView: makeEl('ptGridView'),
+      ptListView: makeEl('ptListView', 'hidden'),
+      ptListContainer: makeEl('ptListContainer'),
+      ptCountDisplay: makeEl('ptCountDisplay'),
+      ptListCountDisplay: makeEl('ptListCountDisplay'),
+      ptBrowsePane: makeEl('ptBrowsePane'),
+      ptInspectorPane: makeEl('ptInspectorPane', 'hidden'),
+      ptMobileBrowseTab: makeEl('ptMobileBrowseTab'),
+      ptMobileInspectorTab: makeEl('ptMobileInspectorTab'),
+      ptMobileMatchBadge: makeEl('ptMobileMatchBadge'),
+      ptMobileSelectedLabel: makeEl('ptMobileSelectedLabel'),
+      ptGridEmptyState: makeEl('ptGridEmptyState', 'hidden'),
+      ptViewGridBtn: makeEl('ptViewGridBtn'),
+      ptViewListBtn: makeEl('ptViewListBtn')
+    };
+
+    const mockWindow = {
+      innerWidth: 375,
+      isMobileOrTablet: () => true,
+      closeSidebar: () => {},
+      addEventListener: () => {}
+    };
+    const mockDocument = {
+      getElementById: (id) => domMap[id] || null,
+      createElement: () => makeEl('dyn'),
+      querySelectorAll: () => [],
+      activeElement: null
+    };
+    const sandbox = { window: mockWindow, document: mockDocument, global: {}, console, setTimeout, Math, Map, Set };
+    vm.runInNewContext(ptJs, sandbox);
+
+    mockWindow.openPeriodicModal();
+    assert(!domMap.ptListView.classList.contains('hidden'), 'Mobile viewport (<640px) should default to Cards list view');
+    assert(!domMap.ptBrowsePane.classList.contains('hidden'), 'Mobile modal should keep Elements browse pane visible');
+
+    // Type "Gold" into search bar
+    domMap.ptSearchInput.value = 'Gold';
+    domMap.ptSearchInput.dispatchEvent({ type: 'input', target: domMap.ptSearchInput });
+    assert(!domMap.ptSearchClearBtn.classList.contains('hidden'), 'Clear button should become visible when search is non-empty');
+    assert.strictEqual(domMap.ptMobileSelectedLabel.textContent, 'Au #79', 'Searching "Gold" should auto-select Au #79 in Inspector');
+    assert(domMap.ptListContainer.children[0].innerHTML.includes('Gold'), 'Gold should be ranked first ahead of uses-only matches');
+
+    // Switch to Grid view and verify search by atomic number "79"
+    mockWindow.setPtView('grid');
+    domMap.ptSearchInput.value = '79';
+    domMap.ptSearchInput.dispatchEvent({ type: 'input', target: domMap.ptSearchInput });
+    assert.strictEqual(domMap.ptCountDisplay.textContent, 'Showing 1 / 118 Elements');
+
+    // Whitespace-only query keeps all 118 elements
+    domMap.ptSearchInput.value = '   ';
+    domMap.ptSearchInput.dispatchEvent({ type: 'input', target: domMap.ptSearchInput });
+    assert.strictEqual(domMap.ptCountDisplay.textContent, 'Showing 118 / 118 Elements');
+    assert.strictEqual(domMap.ptMobileMatchBadge.textContent, '118');
   });
 
   // Test 4: HTTP Server Endpoints, Security, Compression & Healthcheck

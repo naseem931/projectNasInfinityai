@@ -1,6 +1,6 @@
 # NasInfinity AI (v2.0.0)
 
-A production-ready, browser-native AI assistant and spatial developer workspace featuring a **Spatial Obsidian & Daylight Paper UI**, **Multimodal Vision & Document Attachments**, **In-Browser Python WebAssembly Runner (Pyodide)**, **Real-Time Token Streaming**, **Spotlight Command Palette (`⌘K`)**, **Workspace Search & Full JSON Backup/Restore**, **NLP Studio**, **Interactive Periodic Table Studio (118 Elements)**, **Offline Arcade Game (Runner: Zero Gravity)**, and a **Hardened Zero-Dependency Node.js Server**.
+A production-ready, browser-native AI assistant and spatial developer workspace featuring a **Spatial Obsidian & Daylight Paper UI**, **Multimodal Vision & Document Attachments**, **In-Browser Python WebAssembly Runner (Pyodide)**, **Real-Time Token Streaming**, **Spotlight Command Palette (`⌘K`)**, **Workspace Search & Full JSON Backup/Restore**, **NLP Studio**, **Interactive Periodic Table Studio (118 Elements)**, **Offline Arcade Game (Runner)**, and a **Hardened Zero-Dependency Node.js Server**.
 
 [![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-indigo.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

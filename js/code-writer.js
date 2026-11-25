@@ -721,18 +721,18 @@ ${guide.walkthrough.fullCode}
       <div class="modal-shell rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-white/10 shrink-0">
-          <div class="flex items-center gap-2.5">
-            <span class="text-xl sm:text-2xl">✍️</span>
-            <div>
-              <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex items-center gap-2">
-                Code Writer Studio
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-mono">Hands-On Writing</span>
+        <div class="flex items-center justify-between gap-2 px-4 sm:px-6 py-3.5 border-b border-white/10 shrink-0">
+          <div class="flex items-center gap-2.5 min-w-0 flex-1">
+            <span class="text-xl sm:text-2xl shrink-0">✍️</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-bold text-xs sm:text-sm text-slate-100 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span>Code Writer Studio</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-mono shrink-0">Hands-On Writing</span>
               </h3>
-              <p class="text-[11px] text-slate-400">Step-by-step guides on how to construct and write code from a blank file</p>
+              <p class="text-[11px] text-slate-400 truncate">Step-by-step guides on how to construct and write code from a blank file</p>
             </div>
           </div>
-          <button onclick="closeCodeWriterModal()" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition">
+          <button type="button" onclick="closeCodeWriterModal()" aria-label="Close Code Writer Studio" class="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-slate-300 flex items-center justify-center text-sm font-bold transition shrink-0 ml-2">
             &times;
           </button>
         </div>
@@ -778,9 +778,9 @@ ${guide.walkthrough.fullCode}
         </div>
 
         <!-- Footer -->
-        <div class="px-4 sm:px-6 py-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
-          <span>Click any language to launch a step-by-step writing walkthrough in chat</span>
-          <button onclick="closeCodeWriterModal()" class="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition">
+        <div class="px-4 sm:px-6 py-3 border-t border-white/10 flex items-center justify-between gap-3 text-[11px] text-slate-400 shrink-0">
+          <span class="min-w-0 truncate">Click any language to launch a step-by-step writing walkthrough in chat</span>
+          <button type="button" onclick="closeCodeWriterModal()" class="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition shrink-0">
             Close
           </button>
         </div>

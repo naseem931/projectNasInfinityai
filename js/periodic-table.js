@@ -9,6 +9,7 @@
     const ptGridContainer = document.getElementById('ptGridContainer');
     const ptInspector = document.getElementById('ptInspector');
     const ptSearchInput = document.getElementById('ptSearchInput');
+    const ptSearchClearBtn = document.getElementById('ptSearchClearBtn');
     const ptCategoryFilter = document.getElementById('ptCategoryFilter');
     const ptPhaseFilter = document.getElementById('ptPhaseFilter');
     const ptGridView = document.getElementById('ptGridView');
@@ -16,6 +17,13 @@
     const ptListContainer = document.getElementById('ptListContainer');
     const ptCountDisplay = document.getElementById('ptCountDisplay');
     const ptListCountDisplay = document.getElementById('ptListCountDisplay');
+    const ptBrowsePane = document.getElementById('ptBrowsePane');
+    const ptInspectorPane = document.getElementById('ptInspectorPane');
+    const ptMobileBrowseTab = document.getElementById('ptMobileBrowseTab');
+    const ptMobileInspectorTab = document.getElementById('ptMobileInspectorTab');
+    const ptMobileMatchBadge = document.getElementById('ptMobileMatchBadge');
+    const ptMobileSelectedLabel = document.getElementById('ptMobileSelectedLabel');
+    const ptGridEmptyState = document.getElementById('ptGridEmptyState');
 
     let currentSelectedElement = 1; // Default to Hydrogen (1)
     let currentPtCategory = 'all';
@@ -23,6 +31,7 @@
     let currentPtSearch = '';
     let currentPtSort = 'num-asc';
     let currentPtView = 'grid';
+    let currentPtMobilePane = 'browse';
 
     const ELEMENTS_DATA = [
   {
@@ -4233,20 +4242,126 @@
       return mass || '';
     }
 
-    function isElementMatchingFilters(el) {
-      if (currentPtCategory !== 'all' && el.cat !== currentPtCategory) return false;
-      if (currentPtPhase !== 'all' && el.phase !== currentPtPhase) return false;
-      if (currentPtSearch) {
-        const q = currentPtSearch.toLowerCase().trim();
-        const numMatch = el.num.toString() === q || el.num.toString().startsWith(q);
-        const symMatch = el.sym.toLowerCase() === q || el.sym.toLowerCase().startsWith(q);
-        const nameMatch = el.name.toLowerCase().includes(q);
-        const catMatch = (PT_CATEGORY_NAMES[el.cat] || '').toLowerCase().includes(q);
-        const usesMatch = Array.isArray(el.uses) && el.uses.some(u => u.toLowerCase().includes(q));
-        if (!numMatch && !symMatch && !nameMatch && !catMatch && !usesMatch) return false;
-      }
-      return true;
+    function getElementMatchScore(el, rawQuery) {
+      if (currentPtCategory !== 'all' && el.cat !== currentPtCategory) return 0;
+      if (currentPtPhase !== 'all' && el.phase !== currentPtPhase) return 0;
+      const q = (rawQuery === undefined ? currentPtSearch : rawQuery || '').toLowerCase().trim();
+      if (!q) return 1;
+
+      const numStr = el.num.toString();
+      const symLower = el.sym.toLowerCase();
+      const nameLower = el.name.toLowerCase();
+      const catNameLower = (PT_CATEGORY_NAMES[el.cat] || '').toLowerCase();
+
+      if (numStr === q || symLower === q || nameLower === q) return 100;
+      if (symLower.startsWith(q) || nameLower.startsWith(q)) return 80;
+      if (nameLower.includes(q) || numStr.startsWith(q)) return 60;
+      if (catNameLower.includes(q)) return 40;
+      if (Array.isArray(el.uses) && el.uses.some(u => u.toLowerCase().includes(q))) return 20;
+      return 0;
     }
+
+    function isElementMatchingFilters(el) {
+      return getElementMatchScore(el) > 0;
+    }
+
+    function getRankedFilteredElements() {
+      const q = (currentPtSearch || '').trim();
+      const matches = [];
+      for (const el of ELEMENTS_DATA) {
+        const score = getElementMatchScore(el, q);
+        if (score > 0) matches.push({ el, score });
+      }
+      if (q) {
+        matches.sort((a, b) => (b.score - a.score) || (a.el.num - b.el.num));
+      }
+      return matches;
+    }
+
+    function updateMobileMatchBadge(count) {
+      if (ptMobileMatchBadge) ptMobileMatchBadge.textContent = String(count);
+    }
+
+    function setPtMobilePane(pane) {
+      currentPtMobilePane = pane === 'inspector' ? 'inspector' : 'browse';
+      if (ptBrowsePane) {
+        ptBrowsePane.className = currentPtMobilePane === 'browse'
+          ? 'flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden lg:border-r border-white/10'
+          : 'hidden lg:flex flex-1 flex-col min-w-0 min-h-0 overflow-hidden lg:border-r border-white/10';
+      }
+      if (ptInspectorPane) {
+        ptInspectorPane.className = currentPtMobilePane === 'inspector'
+          ? 'flex w-full lg:w-80 xl:w-96 flex-1 lg:flex-initial flex-col shrink-0 min-h-0 overflow-hidden'
+          : 'hidden lg:flex w-full lg:w-80 xl:w-96 flex-1 lg:flex-initial flex-col shrink-0 min-h-0 overflow-hidden';
+      }
+      if (ptMobileBrowseTab) {
+        ptMobileBrowseTab.className = currentPtMobilePane === 'browse'
+          ? 'keep-white flex-1 py-1.5 px-3 rounded-full text-xs font-semibold bg-teal-600 text-white transition flex items-center justify-center gap-1.5'
+          : 'flex-1 py-1.5 px-3 rounded-full text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 transition flex items-center justify-center gap-1.5';
+      }
+      if (ptMobileInspectorTab) {
+        ptMobileInspectorTab.className = currentPtMobilePane === 'inspector'
+          ? 'keep-white flex-1 py-1.5 px-3 rounded-full text-xs font-semibold bg-teal-600 text-white transition flex items-center justify-center gap-1.5 min-w-0'
+          : 'flex-1 py-1.5 px-3 rounded-full text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 transition flex items-center justify-center gap-1.5 min-w-0';
+      }
+    }
+    window.setPtMobilePane = setPtMobilePane;
+
+    function syncPtCategoryPills(cat) {
+      document.querySelectorAll('.pt-filter-pill').forEach(p => {
+        p.classList.remove('active', 'border-teal-500/50', 'bg-teal-950/60', 'text-teal-300', 'font-medium');
+        const onclickAttr = p.getAttribute('onclick') || '';
+        if (onclickAttr.includes(`'${cat}'`)) {
+          p.classList.add('active', 'border-teal-500/50', 'bg-teal-950/60', 'text-teal-300', 'font-medium');
+        }
+      });
+    }
+
+    function applyPtSearchAndFilters(autoFocusBestMatch = false) {
+      const q = (currentPtSearch || '').trim();
+      if (ptSearchClearBtn) ptSearchClearBtn.classList.toggle('hidden', q.length === 0);
+
+      const ranked = getRankedFilteredElements();
+      if (autoFocusBestMatch && q && ranked.length > 0) {
+        selectElement(ranked[0].el.num, { skipMobileSwitch: true });
+      }
+
+      if (currentPtView === 'grid') {
+        renderPeriodicTable();
+        if (q && ranked.length > 0 && ptGridContainer) {
+          const topCell = ptGridContainer.querySelector(`.pt-cell[data-num="${ranked[0].el.num}"]`);
+          if (topCell && typeof topCell.scrollIntoView === 'function') {
+            topCell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+          }
+        }
+      } else {
+        renderPeriodicList();
+      }
+      updateMobileMatchBadge(ranked.length);
+    }
+
+    function clearPtSearch() {
+      currentPtSearch = '';
+      if (ptSearchInput) {
+        ptSearchInput.value = '';
+        ptSearchInput.focus();
+      }
+      applyPtSearchAndFilters(false);
+    }
+    window.clearPtSearch = clearPtSearch;
+
+    function resetPeriodicFilters() {
+      currentPtSearch = '';
+      currentPtCategory = 'all';
+      currentPtPhase = 'all';
+      if (ptSearchInput) ptSearchInput.value = '';
+      if (ptSearchClearBtn) ptSearchClearBtn.classList.add('hidden');
+      if (ptCategoryFilter) ptCategoryFilter.value = 'all';
+      if (ptPhaseFilter) ptPhaseFilter.value = 'all';
+      syncPtCategoryPills('all');
+      applyPtSearchAndFilters(false);
+    }
+    window.resetPeriodicFilters = resetPeriodicFilters;
 
     function renderPeriodicTable() {
       if (!ptGridContainer) return;
@@ -4323,27 +4438,44 @@
       spacer.className = 'pointer-events-none';
       ptGridContainer.appendChild(spacer);
 
-      // Update counters
+      // Update counters & empty state
       if (ptCountDisplay) ptCountDisplay.textContent = `Showing ${visibleCount} / 118 Elements`;
+      if (ptGridEmptyState) ptGridEmptyState.classList.toggle('hidden', visibleCount > 0);
+      updateMobileMatchBadge(visibleCount);
     }
 
     function renderPeriodicList() {
       if (!ptListContainer) return;
       ptListContainer.innerHTML = '';
 
-      let filtered = ELEMENTS_DATA.filter(isElementMatchingFilters);
+      const q = (currentPtSearch || '').trim();
+      const ranked = getRankedFilteredElements();
+      let filtered = ranked.map(item => item.el);
+      const scoreMap = new Map(ranked.map(item => [item.el.num, item.score]));
 
-      // Sorting
-      if (currentPtSort === 'num-asc') filtered.sort((a, b) => a.num - b.num);
-      else if (currentPtSort === 'mass-asc') filtered.sort((a, b) => (parseFloat(a.mass) || 0) - (parseFloat(b.mass) || 0));
-      else if (currentPtSort === 'mass-desc') filtered.sort((a, b) => (parseFloat(b.mass) || 0) - (parseFloat(a.mass) || 0));
-      else if (currentPtSort === 'en-desc') filtered.sort((a, b) => (b.en || 0) - (a.en || 0));
-      else if (currentPtSort === 'name-asc') filtered.sort((a, b) => a.name.localeCompare(b.name));
+      // Sorting: preserve relevance order first when a search query is active
+      filtered.sort((a, b) => {
+        if (q) {
+          const scoreDiff = (scoreMap.get(b.num) || 0) - (scoreMap.get(a.num) || 0);
+          if (scoreDiff !== 0) return scoreDiff;
+        }
+        if (currentPtSort === 'mass-asc') return (parseFloat(a.mass) || 0) - (parseFloat(b.mass) || 0);
+        if (currentPtSort === 'mass-desc') return (parseFloat(b.mass) || 0) - (parseFloat(a.mass) || 0);
+        if (currentPtSort === 'en-desc') return (b.en || 0) - (a.en || 0);
+        if (currentPtSort === 'name-asc') return a.name.localeCompare(b.name);
+        return a.num - b.num;
+      });
 
       if (ptListCountDisplay) ptListCountDisplay.textContent = `Showing ${filtered.length} elements`;
+      updateMobileMatchBadge(filtered.length);
 
       if (filtered.length === 0) {
-        ptListContainer.innerHTML = '<div class="col-span-full py-12 text-center text-slate-500">No elements found matching your criteria.</div>';
+        ptListContainer.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 flex flex-col items-center gap-3">
+            <span>No elements found matching your criteria.</span>
+            <button type="button" onclick="resetPeriodicFilters()" class="keep-white px-4 py-1.5 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs transition active:scale-95">Reset Search &amp; Filters</button>
+          </div>
+        `;
         return;
       }
 
@@ -4363,9 +4495,9 @@
           </div>
           <div class="flex items-center gap-2.5">
             <span class="text-2xl font-black text-white font-mono">${el.sym}</span>
-            <div>
-              <div class="font-bold text-slate-200 text-xs">${el.name}</div>
-              <div class="text-[10px] text-slate-400">${PT_CATEGORY_NAMES[el.cat] || el.cat}</div>
+            <div class="min-w-0">
+              <div class="font-bold text-slate-200 text-xs truncate">${el.name}</div>
+              <div class="text-[10px] text-slate-400 truncate">${PT_CATEGORY_NAMES[el.cat] || el.cat}</div>
             </div>
           </div>
           <div class="text-[11px] text-slate-400 line-clamp-2 leading-relaxed pt-1 border-t border-slate-800/80">
@@ -4376,10 +4508,11 @@
       });
     }
 
-    function selectElement(num) {
+    function selectElement(num, options = {}) {
       const el = ELEMENTS_DATA.find(e => e.num === num);
       if (!el) return;
       currentSelectedElement = num;
+      if (ptMobileSelectedLabel) ptMobileSelectedLabel.textContent = `${el.sym} #${el.num}`;
 
       // Update grid selection rings
       if (ptGridContainer) {
@@ -4391,8 +4524,8 @@
         });
       }
 
-      // Update list view selection if rendered
-      if (currentPtView === 'list') {
+      // Refresh active card ring in list view without losing scroll position unnecessarily
+      if (currentPtView === 'list' && !options.skipListRerender) {
         renderPeriodicList();
       }
 
@@ -4428,7 +4561,7 @@
 
       ptInspector.innerHTML = `
         <!-- Element Hero Header Card -->
-        <div class="p-4 rounded-2xl glass-panel shadow-md relative overflow-hidden flex flex-col gap-3">
+        <div class="p-4 rounded-2xl glass-panel shadow-md relative flex flex-col gap-3 shrink-0">
           <div class="flex items-center justify-between">
             <span class="text-xs font-mono font-bold text-teal-400 bg-teal-500/15 border border-teal-500/30 px-2.5 py-0.5 rounded-full">Atomic # ${el.num}</span>
             <span class="text-[10px] px-2 py-0.5 rounded-full border font-medium ${phase.class}">${phase.label}</span>
@@ -4462,12 +4595,12 @@
         </div>
 
         <!-- Summary & Context -->
-        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-[11px] text-slate-300 leading-relaxed">
+        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-[11px] text-slate-300 leading-relaxed shrink-0">
           ${el.summary}
         </div>
 
         <!-- Electron Configuration & Shell Distribution -->
-        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-2">
+        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-2 shrink-0">
           <div class="flex items-center justify-between">
             <span class="text-[10px] uppercase font-bold text-teal-400 tracking-wider">Electron Configuration</span>
             <span class="text-[10px] font-mono text-slate-400">Total: ${el.num} e⁻</span>
@@ -4482,7 +4615,7 @@
         </div>
 
         <!-- Key Physical & Chemical Properties Grid -->
-        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-2">
+        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-2 shrink-0">
           <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Physical &amp; Chemical Properties</span>
           <div class="grid grid-cols-2 gap-2 text-[11px]">
             <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800/60">
@@ -4509,7 +4642,7 @@
         </div>
 
         <!-- History & Discovery -->
-        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-1 text-[11px]">
+        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-1 text-[11px] shrink-0">
           <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Discovery &amp; History</span>
           <div class="flex items-center justify-between text-slate-300">
             <span class="text-slate-400">Year:</span>
@@ -4522,19 +4655,37 @@
         </div>
 
         <!-- Key Applications & Uses -->
-        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-2">
+        <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col gap-2 shrink-0">
           <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Primary Applications</span>
           <div class="flex flex-wrap gap-1.5">
             ${usesHtml}
           </div>
         </div>
       `;
+
+      if (!options.skipMobileSwitch && typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setPtMobilePane('inspector');
+        ptInspector.scrollTop = 0;
+      }
     }
 
-    window.openPeriodicModal = function(initialSymbolOrNum) {
+    function openPeriodicModal(initialSymbolOrNum) {
       if (!periodicModal) return;
+      if (typeof window.isMobileOrTablet === 'function' && window.isMobileOrTablet() && typeof window.closeSidebar === 'function') {
+        window.closeSidebar();
+      }
       periodicModal.classList.remove('hidden');
 
+      currentPtSearch = '';
+      currentPtCategory = 'all';
+      currentPtPhase = 'all';
+      if (ptSearchInput) ptSearchInput.value = '';
+      if (ptSearchClearBtn) ptSearchClearBtn.classList.add('hidden');
+      if (ptCategoryFilter) ptCategoryFilter.value = 'all';
+      if (ptPhaseFilter) ptPhaseFilter.value = 'all';
+      syncPtCategoryPills('all');
+
+      let openedSpecificElement = false;
       if (initialSymbolOrNum !== undefined && initialSymbolOrNum !== null) {
         let target = null;
         if (typeof initialSymbolOrNum === 'number') {
@@ -4545,26 +4696,26 @@
         }
         if (target) {
           currentSelectedElement = target.num;
+          openedSpecificElement = true;
         }
       }
 
-      renderPeriodicTable();
-      selectElement(currentSelectedElement);
+      const defaultView = (typeof window !== 'undefined' && window.innerWidth < 640) ? 'list' : 'grid';
+      setPtView(defaultView);
+      selectElement(currentSelectedElement, { skipMobileSwitch: true, skipListRerender: true });
+      setPtMobilePane(openedSpecificElement ? 'inspector' : 'browse');
+    }
+    window.openPeriodicModal = openPeriodicModal;
 
-      if (ptSearchInput) {
-        ptSearchInput.value = '';
-        currentPtSearch = '';
-      }
-    };
-
-    window.closePeriodicModal = function() {
+    function closePeriodicModal() {
       if (periodicModal) periodicModal.classList.add('hidden');
       if (window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
       }
-    };
+    }
+    window.closePeriodicModal = closePeriodicModal;
 
-    window.setPtView = function(viewType) {
+    function setPtView(viewType) {
       currentPtView = viewType;
       const gridBtn = document.getElementById('ptViewGridBtn');
       const listBtn = document.getElementById('ptViewListBtn');
@@ -4572,33 +4723,35 @@
       if (viewType === 'grid') {
         if (ptGridView) ptGridView.classList.remove('hidden');
         if (ptListView) ptListView.classList.add('hidden');
-        if (gridBtn) { gridBtn.className = 'px-2 py-0.5 rounded font-medium bg-teal-600 text-white transition'; }
-        if (listBtn) { listBtn.className = 'px-2 py-0.5 rounded font-medium text-slate-400 hover:text-white transition'; }
+        if (gridBtn) gridBtn.className = 'keep-white px-2.5 py-0.5 rounded-full font-medium bg-teal-600 text-white transition';
+        if (listBtn) listBtn.className = 'px-2.5 py-0.5 rounded-full font-medium text-slate-400 hover:text-white transition';
         renderPeriodicTable();
       } else {
         if (ptGridView) ptGridView.classList.add('hidden');
         if (ptListView) ptListView.classList.remove('hidden');
-        if (listBtn) { listBtn.className = 'px-2 py-0.5 rounded font-medium bg-teal-600 text-white transition'; }
-        if (gridBtn) { gridBtn.className = 'px-2 py-0.5 rounded font-medium text-slate-400 hover:text-white transition'; }
+        if (listBtn) listBtn.className = 'keep-white px-2.5 py-0.5 rounded-full font-medium bg-teal-600 text-white transition';
+        if (gridBtn) gridBtn.className = 'px-2.5 py-0.5 rounded-full font-medium text-slate-400 hover:text-white transition';
         renderPeriodicList();
       }
-    };
+    }
+    window.setPtView = setPtView;
 
-    window.filterPtCategory = function(cat, btn) {
+    function filterPtCategory(cat, btn) {
       currentPtCategory = cat;
       if (ptCategoryFilter) ptCategoryFilter.value = cat;
 
-      document.querySelectorAll('.pt-filter-pill').forEach(p => {
-        p.classList.remove('active', 'border-teal-500/50', 'bg-teal-950/60', 'text-teal-300', 'font-medium');
-      });
-
       if (btn) {
+        document.querySelectorAll('.pt-filter-pill').forEach(p => {
+          p.classList.remove('active', 'border-teal-500/50', 'bg-teal-950/60', 'text-teal-300', 'font-medium');
+        });
         btn.classList.add('active', 'border-teal-500/50', 'bg-teal-950/60', 'text-teal-300', 'font-medium');
+      } else {
+        syncPtCategoryPills(cat);
       }
 
-      if (currentPtView === 'grid') renderPeriodicTable();
-      else renderPeriodicList();
-    };
+      applyPtSearchAndFilters(false);
+    }
+    window.filterPtCategory = filterPtCategory;
 
     window.sortPtList = function(sortMode) {
       currentPtSort = sortMode;
@@ -4656,24 +4809,31 @@
     if (ptSearchInput) {
       ptSearchInput.addEventListener('input', (e) => {
         currentPtSearch = e.target.value;
-        if (currentPtView === 'grid') renderPeriodicTable();
-        else renderPeriodicList();
+        applyPtSearchAndFilters(true);
+      });
+      ptSearchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const ranked = getRankedFilteredElements();
+          if (ranked.length > 0) {
+            selectElement(ranked[0].el.num);
+          }
+        }
       });
     }
 
     if (ptCategoryFilter) {
       ptCategoryFilter.addEventListener('change', (e) => {
         currentPtCategory = e.target.value;
-        if (currentPtView === 'grid') renderPeriodicTable();
-        else renderPeriodicList();
+        syncPtCategoryPills(currentPtCategory);
+        applyPtSearchAndFilters(false);
       });
     }
 
     if (ptPhaseFilter) {
       ptPhaseFilter.addEventListener('change', (e) => {
         currentPtPhase = e.target.value;
-        if (currentPtView === 'grid') renderPeriodicTable();
-        else renderPeriodicList();
+        applyPtSearchAndFilters(false);
       });
     }
 
@@ -4944,15 +5104,20 @@
         '```html\n' + codeLines + '\n```';
     }
 
-    // Attach helpers globally for Conversational AI
+    // Attach helpers globally for Conversational AI & unit testing
     if (typeof window !== 'undefined') {
       window.findElementInQuery = findElementInQuery;
       window.formatElementDossier = formatElementDossier;
       window.formatPeriodicTableOverview = formatPeriodicTableOverview;
+      window.getElementMatchScore = getElementMatchScore;
+      window.isElementMatchingFilters = isElementMatchingFilters;
     }
     if (typeof global !== 'undefined') {
       global.findElementInQuery = findElementInQuery;
       global.formatElementDossier = formatElementDossier;
       global.formatPeriodicTableOverview = formatPeriodicTableOverview;
+      global.getElementMatchScore = getElementMatchScore;
+      global.isElementMatchingFilters = isElementMatchingFilters;
+      global.ELEMENTS_DATA = ELEMENTS_DATA;
     }
 

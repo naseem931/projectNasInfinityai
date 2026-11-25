@@ -260,7 +260,7 @@
 
       // Offline Arcade Game Launch (pure intent)
       if (/^(play (a )?game|offline game|runner|arcade|play runner|launch runner)\??$/i.test(p)) {
-        return "### 🎮 NasInfinity Offline Arcade: Runner\n\nWhenever you are disconnected from the internet (or just need a fun brain break!), you can play our built-in offline arcade game: **Runner**!\n\n#### 🕹️ How to Play:\n* **<kbd>Spacebar</kbd> / <kbd>&uarr; Arrow</kbd> / Tap Screen:** Jump\n* **Double Tap <kbd>&uarr;</kbd> in Mid-Air:** Double-Jump over high obstacles!\n* **<kbd>&darr; Arrow</kbd> / Slide Down:** Duck under airborne glitch drones\n* **Collect 💎 Energy Orbs:** +50 Bonus Points\n* **Grab 🛡️ Shield Modules:** Absorb 1 crash impact\n\n> 🚀 **Launch Game Now:**\n> Click the **🎮 Arcade** button in the top navigation bar, or open it anytime!";
+        return "### 🎮 NasInfinity Offline Arcade: Runner\n\nWhenever you are disconnected from the internet (or just need a fun brain break!), you can play our built-in offline arcade game: **Runner**!\n\n#### 🕹️ How to Play:\n* **<kbd>Spacebar</kbd> / <kbd>&uarr; Arrow</kbd> / Tap Screen:** Jump\n* **Double Tap <kbd>&uarr;</kbd> in Mid-Air:** Double-Jump over high obstacles!\n* **<kbd>&darr; Arrow</kbd> / Slide Down:** Duck under airborne glitch drones\n* **Collect 💎 Energy Orbs:** +50 Bonus Points\n* **Grab 🛡️ Shield Modules:** Absorb 1 crash impact\n\n> 🚀 **Launch Game Now:**\n> Click the **🎮 Runner** button in the top navigation bar, or open it anytime!";
       }
 
       // Periodic Table & Chemical Elements Overview
@@ -373,7 +373,7 @@
 
       // 9. Pure Standalone Version Check ("version", "what is your version", "version number")
       if (/^(what('?s| is) (your|the) (current )?version( number)?|what version are you|which version|version( number)?)\??$/i.test(p)) {
-        return `### 🏷️ Version & Release Information\n\nYou are running **NasInfinity AI v${APP_VERSION}** (Production Release)!\n\n* **Version:** \`v${APP_VERSION}\`\n* **Release Channel:** Stable Production\n* **Architecture:** Browser-Native + Zero-Dependency Node.js Server\n* **Capabilities:** Live Internet AI, NLP Studio, 118-Element Periodic Table, Offline Zero-Gravity Arcade, Multi-Language Code Sandbox, and Speech-to-Text.\n\nAll systems are operational and up to date! How can I assist you today?`;
+        return `### 🏷️ Version & Release Information\n\nYou are running **NasInfinity AI v${APP_VERSION}** (Production Release)!\n\n* **Version:** \`v${APP_VERSION}\`\n* **Release Channel:** Stable Production\n* **Architecture:** Browser-Native + Zero-Dependency Node.js Server\n* **Capabilities:** Live Internet AI, NLP Studio, 118-Element Periodic Table, Offline Game (Runner), Multi-Language Code Sandbox, and Speech-to-Text.\n\nAll systems are operational and up to date! How can I assist you today?`;
       }
 
       // All substantive inquiries proceed to the AI engine (when online) or to synthesizeConversationalResponse (when offline)
@@ -473,7 +473,7 @@
 
       // 2. Identity, Creator, Nature & Capabilities
       if (/(what('?s| is) (your|the) (current )?version( number)?|what version are you|which version|version number)\b/i.test(pLower)) {
-        return `### 🏷️ Version & Release Information\n\nYou are running **NasInfinity AI v${APP_VERSION}** (Production Release)!\n\n* **Version:** \`v${APP_VERSION}\`\n* **Release Channel:** Stable Production\n* **Architecture:** Browser-Native + Zero-Dependency Node.js Server\n* **Capabilities:** Live Internet AI, NLP Studio, 118-Element Periodic Table, Offline Zero-Gravity Arcade, Multi-Language Code Sandbox, and Speech-to-Text.`;
+        return `### 🏷️ Version & Release Information\n\nYou are running **NasInfinity AI v${APP_VERSION}** (Production Release)!\n\n* **Version:** \`v${APP_VERSION}\`\n* **Release Channel:** Stable Production\n* **Architecture:** Browser-Native + Zero-Dependency Node.js Server\n* **Capabilities:** Live Internet AI, NLP Studio, 118-Element Periodic Table, Offline Game (Runner), Multi-Language Code Sandbox, and Speech-to-Text.`;
       }
       if (/(what('?s| is) (your|ur) name|who are you called|what are you called|tell me (your|ur) name|who are you|^your name\??$)/i.test(pLower)) {
         return `### 👩‍💼 My Name & Identity\n\nI am **NasInfinity AI**! 😊\n\nI am your versatile, intelligent AI assistant designed to understand all human conversation, help you write full-stack code, solve complex problems, and explore any topic together${nameGreeting}.\n\nHow can I help you today?`;
@@ -502,7 +502,7 @@
         return `### 💨 Let It Out — I Hear Your Frustration${nameGreeting}\n\nFeeling angry or frustrated is completely natural when things feel unfair, blocked, or out of your control.\n\n* ⏸️ **Take a pause:** Give yourself a minute before responding to anyone while adrenaline is high.\n* 🎯 **Separate the event from the emotion:** What is the core thing that felt crossing the line?\n* 🛡️ **Channel the energy:** Anger often points to a boundary that was crossed or a standard you care about.\n\nDo you want to talk through the situation and figure out the best move forward?`;
       }
       if (/(bored|nothing to do|entertain me|something fun|boredom)\b/i.test(pLower)) {
-        return `### 🎯 Boredom Busters${nameGreeting}\n\nHere are 5 engaging things we can do right now:\n\n1. 🎮 **Play Runner Arcade:** Click **🎮 Arcade** in the top navigation bar to play our offline retro runner!\n2. 🧩 **Riddles & Brainteasers:** Ask me *"tell me a riddle"* or *"give me a logic puzzle"*.\n3. 📖 **Story Time:** Tell me a theme (e.g. *"cyberpunk detective in Tokyo"*) and I'll write an original short story.\n4. 🧪 **Explore Chemistry:** Click **🧪 Periodic Table** in the top bar to inspect 118 elements and electron shells.\n5. 💡 **Learn a Cool Fact:** Ask me *"Tell me an amazing fact about space"* or *"How does memory work?"*.\n\nWhich one sounds interesting to you?`;
+        return `### 🎯 Boredom Busters${nameGreeting}\n\nHere are 5 engaging things we can do right now:\n\n1. 🎮 **Play Runner:** Click **🎮 Runner** in the top navigation bar to play our offline game!\n2. 🧩 **Riddles & Brainteasers:** Ask me *"tell me a riddle"* or *"give me a logic puzzle"*.\n3. 📖 **Story Time:** Tell me a theme (e.g. *"cyberpunk detective in Tokyo"*) and I'll write an original short story.\n4. 🧪 **Explore Chemistry:** Click **🧪 Periodic Table** in the top bar to inspect 118 elements and electron shells.\n5. 💡 **Learn a Cool Fact:** Ask me *"Tell me an amazing fact about space"* or *"How does memory work?"*.\n\nWhich one sounds interesting to you?`;
       }
 
       // 4. Creative Writing: Stories, Poems, Haikus, Jokes, Riddles

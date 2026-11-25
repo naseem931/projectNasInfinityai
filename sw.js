@@ -3,23 +3,23 @@
 // Network-first with ETag revalidation when online, cache fallback offline
 // =========================================================================
 
-const CACHE_NAME = 'nasinfinity-cache-v2.0.0-r6';
+const CACHE_NAME = 'nasinfinity-cache-v2.0.0-r8';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/style.css?v=2.0.0&rev=6',
+  '/style.css?v=2.0.0&rev=8',
   '/manifest.json',
   '/favicon.svg',
-  '/js/periodic-table.js?v=2.0.0&rev=6',
-  '/js/game.js?v=2.0.0&rev=6',
-  '/js/nlp.js?v=2.0.0&rev=6',
-  '/js/code-generators.js?v=2.0.0&rev=6',
-  '/js/coding-tutor.js?v=2.0.0&rev=6',
-  '/js/code-writer.js?v=2.0.0&rev=6',
-  '/js/conversational-ai.js?v=2.0.0&rev=6',
-  '/js/document-processor.js?v=2.0.0&rev=6',
-  '/js/python-runner.js?v=2.0.0&rev=6',
-  '/js/app.js?v=2.0.0&rev=6',
+  '/js/periodic-table.js?v=2.0.0&rev=8',
+  '/js/game.js?v=2.0.0&rev=8',
+  '/js/nlp.js?v=2.0.0&rev=8',
+  '/js/code-generators.js?v=2.0.0&rev=8',
+  '/js/coding-tutor.js?v=2.0.0&rev=8',
+  '/js/code-writer.js?v=2.0.0&rev=8',
+  '/js/conversational-ai.js?v=2.0.0&rev=8',
+  '/js/document-processor.js?v=2.0.0&rev=8',
+  '/js/python-runner.js?v=2.0.0&rev=8',
+  '/js/app.js?v=2.0.0&rev=8',
   '/assets/avatars/woman-3d-avatar.jpg'
 ];
 
